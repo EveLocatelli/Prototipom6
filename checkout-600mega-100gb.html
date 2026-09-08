@@ -24,6 +24,7 @@
     --gray-tertiary:#dbdbdb;
     --bg-page:#f8f8f8;
     --red-lightest:#ffe3e3;
+    --teal-dark:#005c66;
   }
 
   /* Breakpoints responsivos */
@@ -220,10 +221,18 @@
     align-items:center;
     justify-content:center;
   }
-  .detalhes-feature-icon i{
+  .detalhes-feature-icon i,
+  .detalhes-feature-icon span{
     font-size:32px;
     line-height:1;
     color:var(--red);
+  }
+  /* Ícones Mondrian com o modificador de tamanho (ex: .mdn-Icon--md) desenham
+     o glifo via ::before com o próprio font-size fixo (1.5rem/24px) — herda o
+     32px acima só na caixa do <span>, não no glifo. Sem isso o ícone renderiza
+     visivelmente menor que os irmãos (que não usam modificador de tamanho). */
+  .detalhes-feature-icon .mdn-Icon--md::before{
+    font-size:32px;
   }
   .detalhes-feature-text{
     flex:1;
@@ -245,74 +254,42 @@
     margin:0;
   }
 
-  /* ===== Grade de canais (mesmo componente de detalhes-box.html) ===== */
-  .detalhes-grade{background:var(--bg-page);padding:34px 16px;}
-  .pdp-grade-card{
-    background:#fff;
-    border:1px solid var(--gray-line);
-    border-radius:12px;
-    padding:16px;
+  /* Grupo com a(s) descrição(ões) de produto + toggle "Ver mais/Ver menos"
+     (produtos multi-contrato: 1º produto sempre visível, 2º só some com
+     "Ver mais" — ver detalhes-description[data-role="desc-second"]). */
+  .detalhes-description-group{
     display:flex;
     flex-direction:column;
-    gap:32px;
+    min-width:0;
   }
-  .pdp-grade-row{
+  /* Degradê de transparente pra branco, sobrepondo o fim do conteúdo visível
+     pra sugerir que há mais abaixo — some quando o 2º produto é revelado. */
+  .detalhes-fade{
+    height:54px;
+    margin-top:-54px;
+    background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 80%);
+    position:relative;
+    pointer-events:none;
+  }
+  .detalhes-vermais-row{
     display:flex;
     align-items:center;
     justify-content:center;
     gap:8px;
-    padding:0;
-    height:24px;
-    background:none;
+    width:100%;
+    padding:0 24px 24px;
+    background:#fff;
     border:none;
     cursor:pointer;
-    width:100%;
     transition:opacity 0.2s cubic-bezier(0.2,0,0,1);
   }
   @media (hover:hover){
-    .pdp-grade-row:hover{opacity:0.72;}
+    .detalhes-vermais-row:hover{opacity:0.72;}
   }
-  .pdp-grade-row-text{font-size:16px;font-weight:500;color:var(--ink);}
-  .pdp-grade-row i{font-size:24px;line-height:1;color:var(--ink);transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
-  .pdp-grade-row.open i{transform:rotate(180deg);}
-
-  /* Busca da grade (usa .mdn-Input Mondrian real, só sobrescreve o necessário) —
-     ver nota em detalhes-box.html: a classe Mondrian .mdn-Input-action--left só
-     posiciona/dimensiona o botão, não centraliza o ícone dentro dele. */
-  .grade-search.mdn-Input--actionLeft{min-width:0;}
-  .grade-search .mdn-Input-action--left,
-  .grade-search [data-mdn-action="clear-field"]{display:flex;align-items:center;justify-content:center;}
-
-  .grade-accordion{
-    display:flex;flex-direction:column;width:100%;
-    border:1px solid var(--gray-line);border-radius:12px;overflow:hidden;
-  }
-  .grade-category + .grade-category{border-top:1px solid var(--gray-line);}
-  .grade-category-header{
-    display:flex;align-items:center;justify-content:space-between;gap:24px;
-    width:100%;padding:24px;background:#fff;border:none;cursor:pointer;text-align:left;
-  }
-  .grade-category-name{font-size:16px;font-weight:500;color:var(--ink);}
-  .grade-category-icon{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
-  .grade-category.open .grade-category-icon{transform:rotate(180deg);}
-  .grade-category-content{
-    display:none;grid-template-columns:repeat(2,1fr);gap:16px 8px;
-    padding:0 16px 16px;background:#fff;
-  }
-  .grade-category.open .grade-category-content{display:grid;}
-  @media (min-width:700px){
-    .grade-category-content{grid-template-columns:repeat(auto-fill, minmax(180px,1fr));}
-  }
-  .grade-channel{display:flex;align-items:center;gap:12px;min-width:0;}
-  .grade-channel[hidden]{display:none;}
-  .grade-channel-logo{
-    width:40px;height:40px;flex-shrink:0;border-radius:8px;border:1px solid var(--gray-line);
-    background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;
-  }
-  .grade-channel-logo img{width:100%;height:100%;object-fit:contain;padding:6px;}
-  .grade-channel-logo--fallback{background:var(--red-lightest);color:var(--red);font-size:12px;font-weight:700;}
-  .grade-channel-name{font-size:14px;font-weight:400;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .grade-empty{font-size:16px;color:var(--gray-dark);margin:0;text-align:center;padding:24px 0;}
+  .detalhes-vermais-row span{font-size:16px;font-weight:500;color:var(--ink);}
+  /* O ícone troca de glifo via JS (baixo -> cima), não gira — diferente do
+     padrão de .detalhes-header/.pdp-grade-row que usa um ícone só e rotaciona. */
+  .detalhes-vermais-row i{font-size:24px;line-height:1;color:var(--ink);}
 
   /* "Incluso neste plano" - carrossel de streamings */
   .detalhes-plan{
@@ -507,6 +484,7 @@
   .agendamento-title{
     font-size:20px;
     font-weight:700;
+    font-family:'AMX', sans-serif;
     margin:0 0 8px;
   }
   .agendamento-subtitle{
@@ -536,6 +514,165 @@
     color:var(--ink);
     margin:0;
   }
+  /* Container Data/Período (Estado 1): 2 linhas, 8px entre elas — igual ao
+     Figma (Container data usa gap-8 em flex-col entre TODOS os filhos:
+     cabeçalho, linha Data e linha Período). */
+  [data-role="agendamento-summary"]{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    width:100%;
+  }
+  .agendamento-summary-row{
+    display:flex;
+    gap:8px;
+    font-size:16px;
+    color:var(--ink);
+    margin:0;
+  }
+  .agendamento-summary-row strong{flex-shrink:0;font-weight:700;}
+
+  /* Estado 2: seletor de período (Manhã/Tarde, comportamento de radio) */
+  .agendamento-periods{
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+    width:100%;
+  }
+  .agendamento-period{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    background:none;
+    border:none;
+    padding:0;
+    margin:0;
+    cursor:pointer;
+    text-align:left;
+    font-family:inherit;
+  }
+  .agendamento-period-heading{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .agendamento-period-heading i{font-size:24px;line-height:1;color:var(--ink);}
+  .agendamento-period-heading span{font-size:20px;font-weight:500;color:var(--ink);}
+  .agendamento-period-radio{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    font-size:16px;
+    color:var(--ink);
+  }
+  .agendamento-radio{
+    width:24px;
+    height:24px;
+    flex-shrink:0;
+    border:2px solid var(--gray-line);
+    border-radius:50%;
+    background:#fff;
+    position:relative;
+    transition:border-color 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  .agendamento-radio.active::after{
+    content:'';
+    position:absolute;
+    inset:4px;
+    border-radius:50%;
+    background:var(--teal-dark);
+  }
+
+  /* Estado 2: calendário (scroll horizontal — arrasto/toque + setas no desktop) */
+  .agendamento-calendar-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    min-width:0;
+  }
+  .agendamento-calendar{
+    display:flex;
+    gap:16px;
+    flex:1;
+    min-width:0;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+    cursor:grab;
+    user-select:none;
+  }
+  .agendamento-calendar::-webkit-scrollbar{display:none;}
+  .agendamento-calendar.dragging{cursor:grabbing;scroll-snap-type:none;}
+  .agendamento-calendar.dragging *{pointer-events:none;}
+  .agendamento-day{
+    flex:0 0 auto;
+    /* Sem width fixo: a caixa cresce com o conteúdo (padding 16/24, igual ao
+       Figma) pra ficar quadrada, não width fixo menor que a altura das 2
+       linhas de texto — que é o que tava esticando o card na vertical. */
+    padding:24px 16px;
+    border-radius:8px;
+    border:1px solid var(--gray-line);
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-family:'Roboto', sans-serif;
+    font-weight:500;
+    font-size:20px;
+    color:var(--ink);
+    white-space:nowrap;
+    filter:drop-shadow(0 0 2px rgba(49,49,49,0.15));
+    scroll-snap-align:start;
+    transition:background 0.2s cubic-bezier(0.2,0,0,1), color 0.2s cubic-bezier(0.2,0,0,1), border-color 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  .agendamento-day span{display:block;line-height:1.3;}
+  .agendamento-day.selected{
+    background:var(--red-dark);
+    border-color:var(--red-dark);
+    color:#fff;
+  }
+  /* No mobile o calendário rola por toque/arrasto, sem precisar de setas;
+     no desktop (>=1024px) reaproveita o .swiper-arrow já usado nos outros
+     carrosséis do Detalhes Container. */
+  .agendamento-calendar-arrow{display:none;}
+  @media (min-width:1024px){
+    .agendamento-calendar-arrow{display:flex;}
+  }
+
+  /* Botões Alterar/Cancelar — mesmo padrão visual do modal de remoção
+     (remove-modal-btn), só com nome próprio pro contexto do Agendamento. */
+  .agendamento-actions{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    width:100%;
+  }
+  .agendamento-btn{
+    height:40px;
+    width:100%;
+    border-radius:500px;
+    font-size:16px;
+    font-weight:500;
+    font-family:inherit;
+    cursor:pointer;
+    transition:filter 0.2s cubic-bezier(0.2,0,0,1), background 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .agendamento-btn:active{transform:scale(0.98);}
+  .agendamento-btn-primary{
+    background:var(--red);
+    border:1px solid var(--red);
+    color:#fff;
+  }
+  .agendamento-btn-primary:hover{filter:brightness(0.95);}
+  .agendamento-btn-secondary{
+    background:#fff;
+    border:1px solid var(--red);
+    color:var(--red);
+  }
+  .agendamento-btn-secondary:hover{background:#fff5f5;}
 
   /* Termos Container (expandível) */
   .termos-container{
@@ -608,14 +745,28 @@
   }
   .termos-content.open{display:flex;flex-direction:column;gap:8px;}
 
+  /* .termos-item é a caixa (borda/padding/radius); pode conter só 1 linha
+     (Termo de Adesão) ou 2 linhas + divisória (Condições de oferta, quando
+     o pedido tem mais de um produto). */
   .termos-item{
     display:flex;
-    align-items:center;
+    flex-direction:column;
     gap:16px;
     padding:24px;
     border:1px solid var(--gray-line);
     border-radius:12px;
     background:#fff;
+  }
+  .termos-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    width:100%;
+  }
+  .termos-divider{
+    width:100%;
+    height:1px;
+    background:var(--gray-tertiary);
   }
   .termos-item-title{
     flex:1;
@@ -644,6 +795,60 @@
     font-size:16px;
     line-height:1;
     color:#fff;
+  }
+
+  /* Permanece no seu plano (produtos não alterados nessa troca de plano) —
+     sem card branco envolvendo tudo, só título + linha(s) com borda, igual
+     ao Figma. Único componente, sem duplicar por breakpoint: a linha usa
+     w-100% e se adapta à largura do container (mobile ou desktop). */
+  .permanece-container{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    width:100%;
+  }
+  .permanece-title{
+    font-size:20px;
+    font-weight:700;
+    font-family:'AMX', sans-serif;
+    color:var(--ink);
+    margin:0;
+  }
+  .permanece-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:16px;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    width:100%;
+  }
+  .permanece-item i{
+    font-size:24px;
+    line-height:1;
+    color:var(--ink);
+    flex-shrink:0;
+  }
+  .permanece-item-text{
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .permanece-item-name{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0;
+  }
+  .permanece-item-price{
+    font-size:14px;
+    font-weight:400;
+    color:var(--gray-dark);
+    margin:0;
+    white-space:nowrap;
   }
 
   /* Order Summary (sidebar desktop, full-width mobile) */
@@ -687,6 +892,24 @@
     color:var(--green-text);
     width:fit-content;
   }
+  .action-card-current{
+    width:100%;
+    background:var(--bg-page);
+    border-radius:12px;
+    padding:12px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    gap:4px;
+  }
+  .action-card-current p{
+    font-size:12px;
+    line-height:1.3;
+    color:var(--ink);
+    margin:0;
+  }
+  .action-card-current-label{font-weight:700;}
+  .action-card-current-value{font-weight:400;}
   .action-card-product{
     display:flex;
     align-items:center;
@@ -1263,7 +1486,8 @@
   .order-summary,
   .detalhes-container,
   .agendamento-container,
-  .termos-container {
+  .termos-container,
+  .permanece-container {
     opacity: 0;
     animation: slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
   }
@@ -1271,6 +1495,7 @@
   .detalhes-container { animation-delay: 60ms; }
   .agendamento-container { animation-delay: 120ms; }
   .termos-container { animation-delay: 180ms; }
+  .permanece-container { animation-delay: 240ms; }
   .order-summary-desktop { animation-delay: 60ms; }
 
   /* Stagger dos cards dentro dos carrosséis de Detalhes (streaming / serviços) */
@@ -1299,14 +1524,8 @@
   .termos-content.open {
     animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);
   }
-  /* Grade de canais: mesmo fade plano acima, tanto pro reveal da busca+lista
-     de categorias (Ver grade completa) quanto pra cada categoria abrindo
-     individualmente. */
-  .grade-search:not([hidden]),
-  #gradeAccordion:not([hidden]) {
-    animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);
-  }
-  .grade-category.open .grade-category-content {
+  /* Descrição do 2º produto (Ver mais/Ver menos): mesmo fade plano acima. */
+  [data-role="desc-second"]:not([hidden]) {
     animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);
   }
 
@@ -1411,6 +1630,10 @@
       align-self:auto;
     }
 
+    /* "Incluso neste plano" só tem 2 cards (Amazon Prime + Globoplay), que
+       cabem inteiros na largura do desktop — sem scroll, as setas não fazem
+       sentido. "Serviços digitais" continua com as setas (mais cards). */
+    .detalhes-plan .detalhes-swiper-nav{display:none;}
   }
 </style>
 </head>
@@ -1468,16 +1691,20 @@
       <div class="order-summary order-summary-mobile">
         <h2 class="order-summary-title">Resumo do seu pedido</h2>
 
-        <!-- Action Card -->
-        <div class="action-card" data-action-card>
-          <span class="action-card-tag">Novo plano adicionado</span>
+        <!-- Action Card: 600 Mega -->
+        <div class="action-card" data-action-card data-base-price="99.90">
+          <span class="action-card-tag">Plano alterado</span>
+
+          <div class="action-card-current">
+            <p><span class="action-card-current-label">Valor do plano atual:</span> <span class="action-card-current-value">R$ 89,90/mês</span></p>
+          </div>
 
           <div class="action-card-product">
             <div class="action-card-product-name">
               <div class="action-card-icon">
-                <i class="mdn-Icon-tv"></i>
+                <i class="mdn-Icon-wifi"></i>
               </div>
-              <p class="action-card-name">Claro tv+ Box</p>
+              <p class="action-card-name">600 Mega</p>
             </div>
             <img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal()">
           </div>
@@ -1490,7 +1717,49 @@
             <p class="action-card-price-label">Valor do plano</p>
             <div class="action-card-price-inner">
               <span class="price-prefix">R$</span>
-              <span class="price-amount">139,90</span>
+              <span class="price-amount">99,90</span>
+              <span class="price-suffix">/mês</span>
+            </div>
+          </div>
+
+          <div class="action-card-link" data-role="toggle">
+            <span data-role="toggle-text">Incluir adicionais</span>
+            <i class="mdn-Icon-baixo mdn-Icon--md action-card-toggle-icon" data-role="toggle-icon"></i>
+          </div>
+
+          <div class="action-card-addlist" data-role="addlist" hidden>
+            <div class="action-card-addlist-items" data-role="addlist-items"></div>
+            <div class="action-card-vermais" data-role="vermais" hidden><span>Ver mais</span></div>
+          </div>
+        </div>
+
+        <!-- Action Card: Pós 100GB -->
+        <div class="action-card" data-action-card data-base-price="59.90">
+          <span class="action-card-tag">Plano alterado</span>
+
+          <div class="action-card-current">
+            <p><span class="action-card-current-label">Valor do plano atual:</span> <span class="action-card-current-value">R$ 59,90/mês</span></p>
+          </div>
+
+          <div class="action-card-product">
+            <div class="action-card-product-name">
+              <div class="action-card-icon">
+                <i class="mdn-Icon-celular-5g"></i>
+              </div>
+              <p class="action-card-name">Pós 100GB</p>
+            </div>
+            <img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal()">
+          </div>
+
+          <div class="action-card-selected-list" data-role="selected-list" hidden></div>
+
+          <div class="action-card-divider"></div>
+
+          <div class="action-card-price">
+            <p class="action-card-price-label">Valor do plano</p>
+            <div class="action-card-price-inner">
+              <span class="price-prefix">R$</span>
+              <span class="price-amount">59,90</span>
               <span class="price-suffix">/mês</span>
             </div>
           </div>
@@ -1517,86 +1786,91 @@
         </div>
         <div class="detalhes-content">
 
-          <div class="detalhes-description">
-            <div class="detalhes-heading">
-              <p class="detalhes-heading-label">Claro tv+ Box</p>
-              <p class="detalhes-heading-title">Descrição do produto</p>
-            </div>
-            <div class="detalhes-body">
-              <p>A Box transforma qualquer TV com entrada HDMI em uma Smart TV completa e pode ser levada para onde você quiser, desde que haja conexão com a internet. Tenha acesso aos principais streamings, TV ao vivo, gravação de programas e controle por voz com Alexa integrada.</p>
-              <p><strong>O que vem na caixa:</strong><br>Aparelho + fonte de alimentação + cabo HDMI 2.0 + controle remoto.</p>
-              <p><strong>Necessário ter:</strong><br>TV com entrada HDMI<br>Conexão de internet (Wi-Fi ou Cabo) de 10Mbps (mínimo recomendado)</p>
-              <p><strong>Autoinstalação:</strong><br>Instale você mesmo!</p>
-            </div>
-
-            <div class="detalhes-features">
-              <div class="detalhes-feature">
-                <div class="detalhes-feature-icon"><i class="mdn-Icon-video-reuniao"></i></div>
-                <div class="detalhes-feature-text">
-                  <p class="detalhes-feature-title">Mais de 120 canais ao vivo</p>
-                  <p class="detalhes-feature-desc">Filmes, séries, notícias, músicas e muito mais: fique por dentro de tudo que passa no mundo!</p>
-                </div>
-              </div>
-              <div class="detalhes-feature">
-                <div class="detalhes-feature-icon"><i class="mdn-Icon-controle-remoto"></i></div>
-                <div class="detalhes-feature-text">
-                  <p class="detalhes-feature-title">Controle remoto por voz</p>
-                  <p class="detalhes-feature-desc">Busque, troque de canal e dê o play com um comando de voz.</p>
-                </div>
-              </div>
-              <div class="detalhes-feature">
-                <div class="detalhes-feature-icon"><i class="mdn-Icon-computador-celular"></i></div>
-                <div class="detalhes-feature-text">
-                  <p class="detalhes-feature-title">Multitelas</p>
-                  <p class="detalhes-feature-desc">No smartphone, no tablet, na TV ou no computador: assista onde o seu coração mandar.</p>
-                </div>
-              </div>
-              <div class="detalhes-feature">
-                <div class="detalhes-feature-icon"><i class="mdn-Icon-atualizar-play"></i></div>
-                <div class="detalhes-feature-text">
-                  <p class="detalhes-feature-title">Replay TV</p>
-                  <p class="detalhes-feature-desc">Volte a programação em até 7 dias</p>
-                </div>
-              </div>
-              <div class="detalhes-feature">
-                <div class="detalhes-feature-icon"><i class="mdn-Icon-gravador"></i></div>
-                <div class="detalhes-feature-text">
-                  <p class="detalhes-feature-title">Gravação e bloqueio</p>
-                  <p class="detalhes-feature-desc">Grave conteúdos ao vivo para assistir depois e bloqueie canais impróprios para a criançada.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Grade de canais (mesmo componente de detalhes-box.html) -->
-          <div class="detalhes-grade">
-            <div class="pdp-grade-card">
+          <div class="detalhes-description-group" data-role="desc-group">
+            <div class="detalhes-description">
               <div class="detalhes-heading">
-                <p class="detalhes-heading-title">Grade de canais</p>
-                <p class="detalhes-plan-subtitle">São mais de 120 canais para curtir o seu conteúdo favorito.</p>
+                <p class="detalhes-heading-label">600 Mega</p>
+                <p class="detalhes-heading-title">Descrição do produto</p>
+              </div>
+              <div class="detalhes-body">
+                <p>Internet fixa de 600 Mega instalada na sua residência para conectar diversos dispositivos pelo Wi-Fi ou cabo, com mais velocidade para streaming, jogos online, home office e uma rotina com vários aparelhos conectados.</p>
               </div>
 
-              <!-- Busca (componente real Mondrian: componentes-web-input--search), só aparece com a grade expandida -->
-              <div class="mdn-Input mdn-Input--actionLeft grade-search" hidden>
-                <button type="button" class="mdn-Input-action mdn-Input-action--left" tabindex="-1">
-                  <em aria-hidden="true" class="mdn-Icon-busca mdn-Icon--md"></em>
-                </button>
-                <input type="text" id="gradeSearchInput" class="mdn-Input-field" data-mdn-type="search" autocomplete="off" value="">
-                <label for="gradeSearchInput" class="mdn-Input-label">Busque no plano</label>
-                <button type="button" class="mdn-Input-action" data-mdn-action="clear-field" style="display:none" onclick="clearGradeSearch()">
-                  <em aria-hidden="true" class="mdn-Icon-fechar mdn-Icon--md"></em>
-                </button>
+              <div class="detalhes-features">
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><i class="mdn-Icon-download"></i></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Velocidade de download</p>
+                    <p class="detalhes-feature-desc">600 Mbps</p>
+                  </div>
+                </div>
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><i class="mdn-Icon-upload"></i></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Velocidade de upload</p>
+                    <p class="detalhes-feature-desc">Até 50 Mbps</p>
+                  </div>
+                </div>
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><i class="mdn-Icon-wifi"></i></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Modem com Wi-Fi 6</p>
+                    <p class="detalhes-feature-desc">Dual-band (2.4GHz e 5,0GHz)</p>
+                  </div>
+                </div>
               </div>
-
-              <!-- Acordeões por categoria, preenchidos via JS a partir de CHANNELS_DATA -->
-              <div class="grade-accordion" id="gradeAccordion" hidden></div>
-              <p class="grade-empty" id="gradeEmpty" hidden>Nenhum canal encontrado.</p>
-
-              <button type="button" class="pdp-grade-row" id="gradeToggleBtn" onclick="toggleGrade()">
-                <span class="pdp-grade-row-text" id="gradeToggleText">Ver grade completa</span>
-                <i class="mdn-Icon-baixo" id="gradeToggleIcon"></i>
-              </button>
             </div>
+
+            <div class="detalhes-description" data-role="desc-second" hidden>
+              <div class="detalhes-heading">
+                <p class="detalhes-heading-label">Pós 100GB</p>
+                <p class="detalhes-heading-title">Descrição do produto</p>
+              </div>
+
+              <div class="detalhes-features">
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><i class="mdn-Icon-presente"></i></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Assinatura Amazon Prime</p>
+                    <p class="detalhes-feature-desc">Inclusa por 3 meses</p>
+                  </div>
+                </div>
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><span class="mdn-Icon-whatsapp mdn-Icon--md" aria-label="whatsapp"></span></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Whatsapp ilimitado</p>
+                    <p class="detalhes-feature-desc">Ligação, voz e vídeos sem descontar da sua franquia.</p>
+                  </div>
+                </div>
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><i class="mdn-Icon-aviao"></i></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Passaporte Américas</p>
+                    <p class="detalhes-feature-desc">Utilize a franquia do seu plano no Brasil e mais 46 países das Américas.</p>
+                  </div>
+                </div>
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><i class="mdn-Icon-nuvem"></i></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Armazenamento em nuvem incluso</p>
+                    <p class="detalhes-feature-desc">Escolha entre os serviços de armazenamento em nuvem iCloud+ de 200GB ou Google One de 200GB.</p>
+                  </div>
+                </div>
+                <div class="detalhes-feature">
+                  <div class="detalhes-feature-icon"><i class="mdn-Icon-smartwatch"></i></div>
+                  <div class="detalhes-feature-text">
+                    <p class="detalhes-feature-title">Claro Sync</p>
+                    <p class="detalhes-feature-desc">Faça e receba ligações no seu smartwatch, acesse apps, mesmo com o celular desligado.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detalhes-fade" data-role="desc-fade"></div>
+            <button type="button" class="detalhes-vermais-row" data-role="desc-toggle" onclick="toggleDescricaoSegundoProduto(this)">
+              <span data-role="desc-toggle-text">Ver mais</span>
+              <i class="mdn-Icon-baixo mdn-Icon--md" data-role="desc-toggle-icon"></i>
+            </button>
           </div>
 
           <div class="detalhes-plan">
@@ -1606,18 +1880,11 @@
                 <p class="detalhes-plan-subtitle">O melhor do entretenimento escolhido especialmente para você e sua família.</p>
               </div>
               <div class="streaming-carousel" data-role="streaming-carousel">
-                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-disney.png')">
-                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+"></div>
-                  <div class="streaming-card-text">
-                    <p class="streaming-card-title">Disney +</p>
-                    <p class="streaming-card-desc">Plano padrão com anúncios e 2 usuários simultâneos.</p>
-                  </div>
-                </div>
                 <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
                   <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime"></div>
                   <div class="streaming-card-text">
                     <p class="streaming-card-title">Amazon Prime</p>
-                    <p class="streaming-card-desc">Prime Video com anúncios, Amazon Music, Prime Gaming, Prime Reading e Frete Grátis para milhões de produtos.</p>
+                    <p class="streaming-card-desc">Prime Video com anúncios, Amazon Music, Prime Gaming, Prime Reading e Frete Grátis para milhões de produtos.<br>Incluso por 3 meses.</p>
                   </div>
                 </div>
                 <div class="streaming-card streaming-card--overlay" style="background-image:url('assets/detalhes/bg-globoplay.png');background-size:100.13% 146.6%;background-position:center bottom;">
@@ -1625,27 +1892,6 @@
                   <div class="streaming-card-text">
                     <p class="streaming-card-title">Globoplay</p>
                     <p class="streaming-card-desc">Plano Premium: Até 5 telas simultâneas.</p>
-                  </div>
-                </div>
-                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-appletv.png')">
-                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV"></div>
-                  <div class="streaming-card-text">
-                    <p class="streaming-card-title">Apple TV</p>
-                    <p class="streaming-card-desc">Todos os conteúdos estarão disponíveis e 5 usuários simultâneos</p>
-                  </div>
-                </div>
-                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
-                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/netflix.svg" alt="Netflix"></div>
-                  <div class="streaming-card-text">
-                    <p class="streaming-card-title">Netflix</p>
-                    <p class="streaming-card-desc">Plano com Anúncios: Até 2 telas simultâneas e qualidade de imagem full HD.</p>
-                  </div>
-                </div>
-                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-hbomax.png')">
-                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/hbo-max.svg" alt="HBO Max"></div>
-                  <div class="streaming-card-text">
-                    <p class="streaming-card-title">HBO Max</p>
-                    <p class="streaming-card-desc">Plano básico com anúncios e 2 usuários simultâneos, Full HD + Canal HBO 2.</p>
                   </div>
                 </div>
               </div>
@@ -1688,6 +1934,20 @@
                   </div>
                   <p class="service-card-desc">Plataforma digital que reúne os livros mais vendidos em forma de áudio com diversas categorias como: ficção, romance, biografia, autoajuda e outros.</p>
                 </div>
+                <div class="service-card">
+                  <div class="service-card-header">
+                    <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/truecaller.svg" alt=""></div>
+                    <p class="service-card-name">Truecaller</p>
+                  </div>
+                  <p class="service-card-desc">Identifique e bloqueie chamadas indesejadas e spam.</p>
+                </div>
+                <div class="service-card">
+                  <div class="service-card-header">
+                    <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/claro-banca.svg" alt=""></div>
+                    <p class="service-card-name">Claro Banca</p>
+                  </div>
+                  <p class="service-card-desc">O Claro banca é um serviço fácil de usar que contém as principais revistas e jornais do país para você ler onde e quando quiser. Cliente Banda Larga possui exclusividade nos conteúdos: Folha de São Paulo, Isto É e Isto É Dinheiro.</p>
+                </div>
               </div>
               <div class="detalhes-swiper-nav">
                 <button type="button" class="swiper-arrow" data-role="services-prev" aria-label="Anterior">
@@ -1703,7 +1963,8 @@
         </div>
       </div>
 
-      <!-- Alert (Mondrian: componentes-web-alert--danger-light) -->
+      <!-- Alert (Mondrian: componentes-web-alert--danger-light) — oculto a pedido,
+           mantido comentado (não deletado) pra poder voltar fácil se precisar.
       <div class="mdn-Alert mdn-Alert--danger mdn-Alert--light mdn-is-open" id="alertBox" aria-hidden="false" tabindex="0">
         <div class="mdn-Alert-content">
           <div class="mdn-Topic mdn-Topic--horizontal mdn-Topic--sm">
@@ -1717,18 +1978,19 @@
           <span class="mdn-Icon mdn-Icon-fechar mdn-Icon--md"></span>
         </button>
       </div>
+      -->
 
-      <!-- Container Agendamento -->
+      <!-- Container Agendamento (2 estados: resumo e formulário de reagendamento) -->
       <div class="agendamento-container">
         <div>
-          <h3 class="agendamento-title">Entrega do pedido</h3>
-          <p class="agendamento-subtitle">Confira o prazo de entrega do seu aparelho.</p>
+          <h3 class="agendamento-title">Agendamento da instalação</h3>
+          <p class="agendamento-subtitle">Este pedido requer instalação. Ajuste a data e o período, se preferir.</p>
         </div>
 
         <div class="agendamento-section">
           <p class="agendamento-label">
             <i class="mdn-Icon-casa"></i>
-            Endereço de entrega
+            Endereço de instalação
           </p>
           <p class="agendamento-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
         </div>
@@ -1736,9 +1998,61 @@
         <div class="agendamento-section">
           <p class="agendamento-label">
             <i class="mdn-Icon-calendario"></i>
-            Prazo de entrega
+            Agendamento da instalação
           </p>
-          <p class="agendamento-value">3 dias úteis</p>
+          <!-- Estado 1: resumo da data/período confirmados -->
+          <div data-role="agendamento-summary">
+            <p class="agendamento-summary-row"><strong>Data:</strong> <span data-role="agendamento-summary-date"></span></p>
+            <p class="agendamento-summary-row"><strong>Período:</strong> <span data-role="agendamento-summary-period"></span></p>
+          </div>
+          <!-- Estado 2: intro do formulário -->
+          <p class="agendamento-value" data-role="agendamento-form-intro" hidden>Escolha o período e a data da visita técnica:</p>
+        </div>
+
+        <!-- Estado 2: seletor Manhã/Tarde -->
+        <div class="agendamento-periods" data-role="agendamento-periods" hidden>
+          <button type="button" class="agendamento-period" data-role="agendamento-period" data-period="manha" onclick="selectAgendamentoPeriod('manha')">
+            <span class="agendamento-period-heading"><i class="mdn-Icon-sol"></i><span>Manhã</span></span>
+            <span class="agendamento-period-radio">
+              <span class="agendamento-radio" data-role="agendamento-radio-manha"></span>
+              <span>Das 08:00 — Até 12:00</span>
+            </span>
+          </button>
+          <button type="button" class="agendamento-period" data-role="agendamento-period" data-period="tarde" onclick="selectAgendamentoPeriod('tarde')">
+            <span class="agendamento-period-heading"><i class="mdn-Icon-sol-se-pondo"></i><span>Tarde</span></span>
+            <span class="agendamento-period-radio">
+              <span class="agendamento-radio" data-role="agendamento-radio-tarde"></span>
+              <span>Das 12:00 — Até 18:00</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Estado 2: calendário (scroll por toque/arrasto; setas só no desktop) -->
+        <div class="agendamento-calendar-row" data-role="agendamento-calendar-row" hidden>
+          <button type="button" class="swiper-arrow agendamento-calendar-arrow" data-role="agendamento-cal-prev" aria-label="Anterior">
+            <i class="mdn-Icon-esquerda"></i>
+          </button>
+          <div class="agendamento-calendar" data-role="agendamento-calendar"></div>
+          <button type="button" class="swiper-arrow agendamento-calendar-arrow" data-role="agendamento-cal-next" aria-label="Próximo">
+            <i class="mdn-Icon-direita"></i>
+          </button>
+        </div>
+
+        <div class="agendamento-actions">
+          <button type="button" class="agendamento-btn agendamento-btn-primary" data-role="agendamento-primary-btn" onclick="handleAgendamentoPrimary()">Alterar</button>
+          <button type="button" class="agendamento-btn agendamento-btn-secondary" data-role="agendamento-cancel-btn" onclick="cancelAgendamento()" hidden>Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Permanece no seu plano (produtos não alterados nessa troca) -->
+      <div class="permanece-container">
+        <h3 class="permanece-title">Permanece no seu plano</h3>
+        <div class="permanece-item">
+          <i class="mdn-Icon-telefone-fixo"></i>
+          <div class="permanece-item-text">
+            <p class="permanece-item-name">Telefone fixo</p>
+            <p class="permanece-item-price">R$ 35,00/mês</p>
+          </div>
         </div>
       </div>
 
@@ -1757,16 +2071,27 @@
         </div>
         <div class="termos-content">
           <div class="termos-item">
-            <p class="termos-item-title">Condições de oferta - TV</p>
-            <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
-              <i class="mdn-Icon-olho"></i>
-            </button>
+            <div class="termos-row">
+              <p class="termos-item-title">Condições de oferta - Banda Larga</p>
+              <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - Banda Larga">
+                <i class="mdn-Icon-olho"></i>
+              </button>
+            </div>
+            <div class="termos-divider"></div>
+            <div class="termos-row">
+              <p class="termos-item-title">Condições de oferta - Plano de Celular</p>
+              <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - Plano de Celular">
+                <i class="mdn-Icon-olho"></i>
+              </button>
+            </div>
           </div>
           <div class="termos-item">
-            <p class="termos-item-title">Termo de Adesão</p>
-            <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão">
-              <i class="mdn-Icon-olho"></i>
-            </button>
+            <div class="termos-row">
+              <p class="termos-item-title">Termo de Adesão</p>
+              <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão">
+                <i class="mdn-Icon-olho"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1779,16 +2104,20 @@
       <div class="order-summary order-summary-desktop">
         <h2 class="order-summary-title">Resumo do seu pedido</h2>
 
-        <!-- Action Card -->
-        <div class="action-card" data-action-card>
-          <span class="action-card-tag">Novo plano adicionado</span>
+        <!-- Action Card: 600 Mega -->
+        <div class="action-card" data-action-card data-base-price="99.90">
+          <span class="action-card-tag">Plano alterado</span>
+
+          <div class="action-card-current">
+            <p><span class="action-card-current-label">Valor do plano atual:</span> <span class="action-card-current-value">R$ 89,90/mês</span></p>
+          </div>
 
           <div class="action-card-product">
             <div class="action-card-product-name">
               <div class="action-card-icon">
-                <i class="mdn-Icon-tv"></i>
+                <i class="mdn-Icon-wifi"></i>
               </div>
-              <p class="action-card-name">Claro tv+ Box</p>
+              <p class="action-card-name">600 Mega</p>
             </div>
             <img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal()">
           </div>
@@ -1801,7 +2130,49 @@
             <p class="action-card-price-label">Valor do plano</p>
             <div class="action-card-price-inner">
               <span class="price-prefix">R$</span>
-              <span class="price-amount">139,90</span>
+              <span class="price-amount">99,90</span>
+              <span class="price-suffix">/mês</span>
+            </div>
+          </div>
+
+          <div class="action-card-link" data-role="toggle">
+            <span data-role="toggle-text">Incluir adicionais</span>
+            <i class="mdn-Icon-baixo mdn-Icon--md action-card-toggle-icon" data-role="toggle-icon"></i>
+          </div>
+
+          <div class="action-card-addlist" data-role="addlist" hidden>
+            <div class="action-card-addlist-items" data-role="addlist-items"></div>
+            <div class="action-card-vermais" data-role="vermais" hidden><span>Ver mais</span></div>
+          </div>
+        </div>
+
+        <!-- Action Card: Pós 100GB -->
+        <div class="action-card" data-action-card data-base-price="59.90">
+          <span class="action-card-tag">Plano alterado</span>
+
+          <div class="action-card-current">
+            <p><span class="action-card-current-label">Valor do plano atual:</span> <span class="action-card-current-value">R$ 59,90/mês</span></p>
+          </div>
+
+          <div class="action-card-product">
+            <div class="action-card-product-name">
+              <div class="action-card-icon">
+                <i class="mdn-Icon-celular-5g"></i>
+              </div>
+              <p class="action-card-name">Pós 100GB</p>
+            </div>
+            <img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal()">
+          </div>
+
+          <div class="action-card-selected-list" data-role="selected-list" hidden></div>
+
+          <div class="action-card-divider"></div>
+
+          <div class="action-card-price">
+            <p class="action-card-price-label">Valor do plano</p>
+            <div class="action-card-price-inner">
+              <span class="price-prefix">R$</span>
+              <span class="price-amount">59,90</span>
               <span class="price-suffix">/mês</span>
             </div>
           </div>
@@ -1842,7 +2213,7 @@
           <p class="order-total-label">Total do seu carrinho</p>
           <div class="order-total-value">
             <span class="total-prefix">R$</span>
-            <span class="total-amount">139,90</span>
+            <span class="total-amount">159,80</span>
             <span class="total-suffix">/mês</span>
           </div>
           <p class="order-adjusted">ajustado à sua fatura</p>
@@ -1883,7 +2254,7 @@
     <div class="footer-total-text">
       <p class="footer-cart-text">Total do seu carrinho:</p>
       <div class="footer-price">
-        <span class="footer-price-amount">R$ 139,90</span>
+        <span class="footer-price-amount">R$ 159,80</span>
         <span class="footer-price-suffix">/ mês</span>
       </div>
       <p class="footer-adjusted">ajustado à sua fatura</p>
@@ -1928,6 +2299,26 @@
     if (isOpen) {
       carouselNavRefreshers.forEach(fn => fn());
     }
+  }
+
+  // Toggle "Ver mais/Ver menos" dentro do Detalhes: revela a descrição do
+  // 2º produto (Pós 100GB), escondida por padrão pra não abrir a tela toda
+  // de uma vez com dois produtos. Some junto o degradê que só faz sentido
+  // enquanto o 2º produto está escondido.
+  function toggleDescricaoSegundoProduto(btn) {
+    const group = btn.closest('[data-role="desc-group"]');
+    const second = group.querySelector('[data-role="desc-second"]');
+    const fade = group.querySelector('[data-role="desc-fade"]');
+    const text = group.querySelector('[data-role="desc-toggle-text"]');
+    const icon = group.querySelector('[data-role="desc-toggle-icon"]');
+    const expanding = second.hidden;
+
+    second.hidden = !expanding;
+    fade.hidden = expanding;
+    btn.classList.toggle('open', expanding);
+    text.textContent = expanding ? 'Ver menos' : 'Ver mais';
+    icon.classList.toggle('mdn-Icon-baixo', !expanding);
+    icon.classList.toggle('mdn-Icon-cima', expanding);
   }
 
   // Permite arrastar os carrosséis com o mouse (clicar e segurar), já que
@@ -2007,9 +2398,10 @@
     }
     updateNav();
     carouselNavRefreshers.push(updateNav);
+    return updateNav;
   }
 
-  document.querySelectorAll('.streaming-carousel, .services-carousel').forEach(makeDraggable);
+  document.querySelectorAll('.streaming-carousel, .services-carousel, .agendamento-calendar').forEach(makeDraggable);
   initCarouselNav(
     document.querySelector('[data-role="streaming-carousel"]'),
     document.querySelector('[data-role="streaming-prev"]'),
@@ -2021,214 +2413,133 @@
     document.querySelector('[data-role="services-next"]')
   );
 
-  // ===== Grade de canais (acordeão + busca; mesmo componente de detalhes-box.html) =====
-  // Logos reais buscados em mondrian.claro.com.br/channels; os 2 canais sem
-  // logo no catálogo (TBS HD, Like) caem no fallback de iniciais em texto.
-  const CHANNELS_DATA = [
-    { name: 'Canais abertos HD', items: [
-      { label: 'Globo HD', src: 'https://mondrian.claro.com.br/channels/default/globo.svg' },
-      { label: 'Band HD', src: 'https://mondrian.claro.com.br/channels/default/band.svg' },
-      { label: 'REDE TV! HD', src: 'https://mondrian.claro.com.br/channels/default/redetv!.svg' },
-      { label: 'SBT HD', src: 'https://mondrian.claro.com.br/channels/default/sbt.svg' },
-      { label: 'Cultura HD', src: 'https://mondrian.claro.com.br/channels/default/cultura.svg' },
-      { label: 'RECORD HD', src: 'https://mondrian.claro.com.br/channels/default/record-tv.svg' },
-      { label: 'TV Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/tv-brasil.svg' },
-      { label: 'Gazeta HD', src: 'https://mondrian.claro.com.br/channels/default/gazeta.svg' },
-    ]},
-    { name: 'Documentários', items: [
-      { label: 'Animal Planet HD', src: 'https://mondrian.claro.com.br/channels/default/animal-planet.svg' },
-      { label: 'Discovery HD', src: 'https://mondrian.claro.com.br/channels/default/discovery.svg' },
-      { label: 'Discovery Science HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-science.svg' },
-      { label: 'Discovery Theater HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-theater.svg' },
-      { label: 'Discovery Turbo HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-turbo.svg' },
-      { label: 'Discovery World HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-world.svg' },
-      { label: 'Futura HD', src: 'https://mondrian.claro.com.br/channels/default/futura.svg' },
-      { label: 'H2 HD', src: 'https://mondrian.claro.com.br/channels/default/history-2.svg' },
-      { label: 'The History Channel HD', src: 'https://mondrian.claro.com.br/channels/default/history-channel.svg' },
-      { label: 'Discovery ID HD', src: 'https://mondrian.claro.com.br/channels/default/investigacao-discovery.svg' },
-    ]},
-    { name: 'Entretenimento', items: [
-      { label: 'Polishop', src: 'https://mondrian.claro.com.br/channels/default/polishop.svg' },
-      { label: 'Modo Viagem HD', src: 'https://mondrian.claro.com.br/channels/default/modo-viagem.svg' },
-      { label: 'HGTV', src: 'https://mondrian.claro.com.br/channels/default/hgtv.svg' },
-      { label: 'BIS HD', src: 'https://mondrian.claro.com.br/channels/default/bis.svg' },
-      { label: 'MTV HD', src: 'https://mondrian.claro.com.br/channels/default/mtv.svg' },
-      { label: 'Play TV', src: 'https://mondrian.claro.com.br/channels/default/play-tv.svg' },
-      { label: 'Music Box Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/music-boxbrazil.svg' },
-      { label: "MTV's00", src: 'https://mondrian.claro.com.br/channels/default/mtv-00s.svg' },
-      { label: 'MTV Live HD', src: 'https://mondrian.claro.com.br/channels/default/mtv-live-hd.svg' },
-      { label: 'Trace Brazuca HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/trace-brasil.svg' },
-    ]},
-    { name: 'Esportes', items: [
-      { label: 'ESPN HD', src: 'https://mondrian.claro.com.br/channels/default/espn.svg' },
-      { label: 'ESPN 2 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-2.svg' },
-      { label: 'ESPN 3 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-3.svg' },
-      { label: 'ESPN 4 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-4.svg' },
-      { label: 'ESPN 5 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-5.svg' },
-      { label: 'ESPN 6 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-6.svg' },
-      { label: 'Band Sports HD', src: 'https://mondrian.claro.com.br/channels/default/band-sports.svg' },
-      { label: 'SporTV 3 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-3.svg' },
-      { label: 'SporTV 2 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-2.svg' },
-      { label: 'SporTV HD', src: 'https://mondrian.claro.com.br/channels/default/sportv.svg' },
-    ]},
-    { name: 'Filmes', items: [
-      { label: 'Film&Arts HD', src: 'https://mondrian.claro.com.br/channels/default/film-e-arts.svg' },
-      { label: 'Canal Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/canal-brasil.svg' },
-      { label: 'TNT HD', src: 'https://mondrian.claro.com.br/channels/default/tnt.svg' },
-      { label: 'Megapix HD', src: 'https://mondrian.claro.com.br/channels/default/megapix.svg' },
-      { label: 'Space HD', src: 'https://mondrian.claro.com.br/channels/default/space.svg' },
-      { label: 'Cinemax HD', src: 'https://mondrian.claro.com.br/channels/default/cinemax.svg' },
-      { label: 'Studio Universal HD', src: 'https://mondrian.claro.com.br/channels/default/studio-universal.svg' },
-      { label: 'Paramount Network HD', src: 'https://mondrian.claro.com.br/channels/default/paramount-network.svg' },
-      { label: 'TCM', src: 'https://mondrian.claro.com.br/channels/default/tcm.svg' },
-      { label: 'HBO2', src: 'https://mondrian.claro.com.br/channels/default/hbo-2.svg' },
-    ]},
-    { name: 'Infantil', items: [
-      { label: 'Gloobinho HD', src: 'https://mondrian.claro.com.br/channels/default/gloobinho.svg' },
-      { label: 'Discovery Kids HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-kids.svg' },
-      { label: 'Gloob HD', src: 'https://mondrian.claro.com.br/channels/default/gloob.svg' },
-      { label: 'Nickelodeon HD', src: 'https://mondrian.claro.com.br/channels/default/nickelodeon.svg' },
-      { label: 'Cartoon Network HD', src: 'https://mondrian.claro.com.br/channels/default/cartoon-network.svg' },
-      { label: 'NICK Jr HD', src: 'https://mondrian.claro.com.br/channels/default/nick-jr.svg' },
-      { label: 'Cartoonito HD', src: 'https://mondrian.claro.com.br/channels/default/cartoonito.svg' },
-      { label: 'TV Rá Tim Bum HD', src: 'https://mondrian.claro.com.br/channels/default/tv-ra-tim-bum.svg' },
-      { label: 'DumDum HD', src: 'https://mondrian.claro.com.br/channels/default/dum-dum.svg' },
-    ]},
-    { name: 'Notícias', items: [
-      { label: 'GloboNews HD', src: 'https://mondrian.claro.com.br/channels/default/globonews.svg' },
-      { label: 'CNN Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil.svg' },
-      { label: 'Record News', src: 'https://mondrian.claro.com.br/channels/default/recordnews.svg' },
-      { label: 'Band News HD', src: 'https://mondrian.claro.com.br/channels/default/band-news.svg' },
-      { label: 'AgroMais HD', src: 'https://mondrian.claro.com.br/channels/default/agroplus.svg' },
-      { label: 'BBC World News', src: 'https://mondrian.claro.com.br/channels/default/bbc-world-news.svg' },
-      { label: 'JP News HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/jp-news-vertical.svg' },
-      { label: 'Times Exclusivo CNBC', src: 'https://mondrian.claro.com.br/channels/default/times-exclusivo-cnbc.svg' },
-      { label: 'CNN Brasil Money HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil-money.svg' },
-      { label: 'BM&C NEWS', src: 'https://mondrian.claro.com.br/channels/default/bmec-news.svg' },
-      { label: 'Canal UOL', src: 'https://mondrian.claro.com.br/channels/default/canal-uol.svg' },
-    ]},
-    { name: 'Mundo', items: [
-      { label: 'CNN Internacional', src: 'https://mondrian.claro.com.br/channels/default/cnn-internacional.svg' },
-      { label: 'Bloomberg TV', src: 'https://mondrian.claro.com.br/channels/default/bloomberg.svg' },
-      { label: 'RAI International', src: 'https://mondrian.claro.com.br/channels/default/rai-italia.svg' },
-      { label: 'TV5 Monde', src: 'https://mondrian.claro.com.br/channels/default/tv-5-monde.svg' },
-      { label: 'TVE International', src: 'https://mondrian.claro.com.br/channels/default/tve.svg' },
-      { label: 'DW-TV', src: 'https://mondrian.claro.com.br/channels/default/dw.svg' },
-      { label: 'France 24 HD', src: 'https://mondrian.claro.com.br/channels/default/france-24.svg' },
-      { label: 'Euro Channel', src: 'https://mondrian.claro.com.br/channels/default/euro-channel.svg' },
-    ]},
-    { name: 'Séries', items: [
-      { label: 'A&E HD', src: 'https://mondrian.claro.com.br/channels/default/aee.svg' },
-      { label: 'AMC HD', src: 'https://mondrian.claro.com.br/channels/default/amc.svg' },
-      { label: 'AXN HD', src: 'https://mondrian.claro.com.br/channels/default/axn.svg' },
-      { label: 'Comedy Central HD', src: 'https://mondrian.claro.com.br/channels/default/comedy-central.svg' },
-      { label: 'Lifetime HD', src: 'https://mondrian.claro.com.br/channels/default/lifetime.svg' },
-      { label: 'Sony HD', src: 'https://mondrian.claro.com.br/channels/default/sony.svg' },
-      { label: 'TBS HD', src: null },
-      { label: 'TNT Series HD', src: 'https://mondrian.claro.com.br/channels/default/tnt-series.svg' },
-      { label: 'TNT Novelas', src: 'https://mondrian.claro.com.br/channels/default/tnt-novelas.svg' },
-      { label: 'Universal TV HD', src: 'https://mondrian.claro.com.br/channels/default/universal-channel.svg' },
-    ]},
-    { name: 'Variedades', items: [
-      { label: 'Arte 1 HD', src: 'https://mondrian.claro.com.br/channels/default/arte1.svg' },
-      { label: 'Discovery Home Health HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-home-and-health.svg' },
-      { label: 'E! HD', src: 'https://mondrian.claro.com.br/channels/default/e!.svg' },
-      { label: 'Fashion TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fashion-tv.svg' },
-      { label: 'Fish TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fish-tv.svg' },
-      { label: 'Food Network HD', src: 'https://mondrian.claro.com.br/channels/default/food-network.svg' },
-      { label: 'GNT HD', src: 'https://mondrian.claro.com.br/channels/default/gnt.svg' },
-      { label: 'Like', src: null },
-      { label: 'Multishow HD', src: 'https://mondrian.claro.com.br/channels/default/multishow.svg' },
-      { label: 'OFF HD', src: 'https://mondrian.claro.com.br/channels/default/canal-off.svg' },
-    ]},
-  ];
+  // ===== Agendamento da instalação (resumo <-> formulário) =====
+  // "confirmed" é o que aparece no resumo (Estado 1); "draft" é a seleção em
+  // andamento no formulário (Estado 2), só vira "confirmed" se o usuário
+  // clicar em Alterar — em Cancelar o draft é descartado.
+  const AGENDAMENTO_PERIODS = {
+    manha: { label: 'Manhã', summaryRange: 'Das 08:00 até 12:00' },
+    tarde: { label: 'Tarde', summaryRange: 'Das 12:00 até 18:00' },
+  };
+  const AGENDAMENTO_WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const AGENDAMENTO_WEEKDAYS_FULL = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  const AGENDAMENTO_DAYS_COUNT = 14;
 
-  function normalizeSearch(str) {
-    return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  function buildAgendamentoDays() {
+    const days = [];
+    const today = new Date();
+    for (let i = 1; i <= AGENDAMENTO_DAYS_COUNT; i++) {
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+      days.push(d);
+    }
+    return days;
+  }
+  function isSameAgendamentoDay(a, b) {
+    return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+  function formatAgendamentoDayMonth(d) {
+    return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0');
   }
 
-  function renderGradeAccordion() {
-    const container = document.getElementById('gradeAccordion');
-    if (!container) return;
-    container.innerHTML = CHANNELS_DATA.map((cat, catIndex) => `
-      <div class="grade-category" data-category-index="${catIndex}">
-        <button type="button" class="grade-category-header" onclick="toggleGradeCategory(this)">
-          <span class="grade-category-name">${cat.name}</span>
-          <i class="mdn-Icon-baixo grade-category-icon"></i>
-        </button>
-        <div class="grade-category-content">
-          ${cat.items.map((ch, chIndex) => `
-            <div class="grade-channel" data-channel-index="${chIndex}" data-search="${normalizeSearch(ch.label)}">
-              ${ch.src
-                ? `<span class="grade-channel-logo"><img src="${ch.src}" alt="" loading="lazy"></span>`
-                : `<span class="grade-channel-logo grade-channel-logo--fallback">${ch.label.slice(0, 2).toUpperCase()}</span>`
-              }
-              <span class="grade-channel-name">${ch.label}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('');
+  const agendamentoDays = buildAgendamentoDays();
+  const agendamentoState = {
+    confirmed: { period: 'manha', date: agendamentoDays[0] },
+    draft: { period: 'manha', date: agendamentoDays[0] },
+  };
+  let updateAgendamentoCalendarNav = null;
+
+  function renderAgendamentoSummary() {
+    const { period, date } = agendamentoState.confirmed;
+    document.querySelector('[data-role="agendamento-summary-date"]').textContent =
+      formatAgendamentoDayMonth(date) + ' - ' + AGENDAMENTO_WEEKDAYS_FULL[date.getDay()];
+    const p = AGENDAMENTO_PERIODS[period];
+    document.querySelector('[data-role="agendamento-summary-period"]').textContent = p.label + ' - ' + p.summaryRange;
   }
 
-  function toggleGradeCategory(headerEl) {
-    headerEl.closest('.grade-category').classList.toggle('open');
+  function updateAgendamentoPeriodUI() {
+    document.querySelectorAll('[data-role="agendamento-period"]').forEach(btn => {
+      const active = btn.dataset.period === agendamentoState.draft.period;
+      btn.querySelector('.agendamento-radio').classList.toggle('active', active);
+    });
   }
 
-  function toggleGrade() {
-    const search = document.querySelector('.grade-search');
-    const accordion = document.getElementById('gradeAccordion');
-    const btn = document.getElementById('gradeToggleBtn');
-    const text = document.getElementById('gradeToggleText');
-    const isOpen = btn.classList.toggle('open');
+  function renderAgendamentoCalendar() {
+    const track = document.querySelector('[data-role="agendamento-calendar"]');
+    track.innerHTML = '';
+    agendamentoDays.forEach(d => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'agendamento-day';
+      const selected = isSameAgendamentoDay(d, agendamentoState.draft.date);
+      btn.classList.toggle('selected', selected);
+      btn.innerHTML = '<span>' + AGENDAMENTO_WEEKDAYS_SHORT[d.getDay()] + '</span><span>' + formatAgendamentoDayMonth(d) + '</span>';
+      btn.addEventListener('click', () => {
+        agendamentoState.draft.date = d;
+        renderAgendamentoCalendar();
+      });
+      track.appendChild(btn);
+    });
+  }
 
-    search.hidden = !isOpen;
-    accordion.hidden = !isOpen;
-    text.textContent = isOpen ? 'Ocultar grade' : 'Ver grade completa';
+  function selectAgendamentoPeriod(period) {
+    agendamentoState.draft.period = period;
+    updateAgendamentoPeriodUI();
+  }
 
-    if (!isOpen) {
-      // Reset ao colapsar: fecha categorias e limpa a busca
-      document.getElementById('gradeSearchInput').value = '';
-      filterGradeChannels('');
-      accordion.querySelectorAll('.grade-category.open').forEach(c => c.classList.remove('open'));
+  function handleAgendamentoPrimary() {
+    const formOpen = !document.querySelector('[data-role="agendamento-periods"]').hidden;
+    if (formOpen) {
+      confirmAgendamento();
+    } else {
+      openAgendamentoForm();
     }
   }
 
-  function filterGradeChannels(rawQuery) {
-    const query = normalizeSearch(rawQuery.trim());
-    const categories = document.querySelectorAll('#gradeAccordion .grade-category');
-    let totalMatches = 0;
+  function openAgendamentoForm() {
+    // Reabre sempre a partir do que já está confirmado, não do que ficou
+    // pela metade numa tentativa anterior cancelada.
+    agendamentoState.draft.period = agendamentoState.confirmed.period;
+    agendamentoState.draft.date = agendamentoState.confirmed.date;
 
-    categories.forEach(cat => {
-      let matchesInCategory = 0;
-      cat.querySelectorAll('.grade-channel').forEach(ch => {
-        const matches = !query || ch.dataset.search.includes(query);
-        ch.hidden = !matches;
-        if (matches) matchesInCategory++;
-      });
-      cat.hidden = query && matchesInCategory === 0;
-      cat.classList.toggle('open', !!query && matchesInCategory > 0);
-      totalMatches += matchesInCategory;
-    });
+    document.querySelector('[data-role="agendamento-summary"]').hidden = true;
+    document.querySelector('[data-role="agendamento-form-intro"]').hidden = false;
+    document.querySelector('[data-role="agendamento-periods"]').hidden = false;
+    document.querySelector('[data-role="agendamento-calendar-row"]').hidden = false;
+    document.querySelector('[data-role="agendamento-cancel-btn"]').hidden = false;
 
-    document.getElementById('gradeEmpty').hidden = !(query && totalMatches === 0);
-
-    const clearBtn = document.querySelector('.grade-search [data-mdn-action="clear-field"]');
-    if (clearBtn) clearBtn.style.display = rawQuery ? 'flex' : 'none';
+    updateAgendamentoPeriodUI();
+    renderAgendamentoCalendar();
+    // O calendário nasce dentro de um container hidden (display:none) — igual
+    // aos carrosséis do Detalhes Container, precisa recalcular as setas na
+    // hora de abrir em vez de confiar só no ResizeObserver.
+    if (updateAgendamentoCalendarNav) updateAgendamentoCalendarNav();
   }
 
-  function clearGradeSearch() {
-    const input = document.getElementById('gradeSearchInput');
-    input.value = '';
-    input.focus();
-    filterGradeChannels('');
+  function confirmAgendamento() {
+    agendamentoState.confirmed.period = agendamentoState.draft.period;
+    agendamentoState.confirmed.date = agendamentoState.draft.date;
+    renderAgendamentoSummary();
+    closeAgendamentoForm();
   }
 
-  renderGradeAccordion();
-  const gradeSearchInput = document.getElementById('gradeSearchInput');
-  if (gradeSearchInput) {
-    gradeSearchInput.addEventListener('input', (e) => filterGradeChannels(e.target.value));
+  function cancelAgendamento() {
+    closeAgendamentoForm();
   }
+
+  function closeAgendamentoForm() {
+    document.querySelector('[data-role="agendamento-summary"]').hidden = false;
+    document.querySelector('[data-role="agendamento-form-intro"]').hidden = true;
+    document.querySelector('[data-role="agendamento-periods"]').hidden = true;
+    document.querySelector('[data-role="agendamento-calendar-row"]').hidden = true;
+    document.querySelector('[data-role="agendamento-cancel-btn"]').hidden = true;
+  }
+
+  renderAgendamentoSummary();
+  updateAgendamentoCalendarNav = initCarouselNav(
+    document.querySelector('[data-role="agendamento-calendar"]'),
+    document.querySelector('[data-role="agendamento-cal-prev"]'),
+    document.querySelector('[data-role="agendamento-cal-next"]')
+  );
 
   // Toggle Termos (com ícone de seta)
   function toggleTermos(headerEl) {
@@ -2282,7 +2593,6 @@
     { id: 'ufc',        name: 'UFC',                 price: 'R$ 29,90 / mês', icon: MONDRIAN_BRANDS + 'ufc.svg',                          boxed: false },
   ];
   const ACTION_CARD_PAGE_SIZE = 6;
-  const ACTION_CARD_BASE_PRICE = 139.90; // Valor do plano (Claro tv+ Box)
 
   // "R$ 29,90 / mês" -> 29.9
   function parsePriceBRL(str) {
@@ -2295,16 +2605,35 @@
     return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  // Reflete a base do plano + adicionais selecionados no total do pedido
-  // (card "Total do seu carrinho" no desktop e no carrinho fixo do mobile).
-  function syncOrderTotal(selectedIds) {
-    const extra = selectedIds.reduce((sum, id) => {
-      const item = ACTION_CARD_CATALOG.find(i => i.id === id);
-      return sum + (item ? parsePriceBRL(item.price) : 0);
-    }, 0);
-    const formatted = formatPriceBRL(ACTION_CARD_BASE_PRICE + extra);
-    document.querySelectorAll('.total-amount').forEach(el => { el.textContent = formatted; });
-    document.querySelectorAll('.footer-price-amount').forEach(el => { el.textContent = 'R$ ' + formatted; });
+  // Cada Action Card tem seu próprio preço base (data-base-price) e sua própria
+  // seleção de adicionais. getSelected() é registrado por initActionCard e lido
+  // aqui na hora de somar — não guardamos o array em si porque ele é reatribuído
+  // (não mutado) a cada render().
+  const actionCardSelectedGetters = new Map();
+
+  // Soma todos os Action Cards da MESMA seção (mobile ou desktop — são duas
+  // árvores de estado independentes, ver Action Card no COMPONENTES.md) e reflete
+  // no total daquela seção: "Total do seu carrinho" no desktop, carrinho fixo no mobile.
+  function syncOrderTotal(root) {
+    const orderSummary = root.closest('.order-summary');
+    const cards = orderSummary ? orderSummary.querySelectorAll('[data-action-card]') : [root];
+    let total = 0;
+    cards.forEach(card => {
+      const basePrice = parseFloat(card.dataset.basePrice) || 0;
+      const getSelected = actionCardSelectedGetters.get(card);
+      const selected = getSelected ? getSelected() : [];
+      const extra = selected.reduce((sum, id) => {
+        const item = ACTION_CARD_CATALOG.find(i => i.id === id);
+        return sum + (item ? parsePriceBRL(item.price) : 0);
+      }, 0);
+      total += basePrice + extra;
+    });
+    const formatted = formatPriceBRL(total);
+    if (orderSummary && orderSummary.classList.contains('order-summary-mobile')) {
+      document.querySelectorAll('.footer-price-amount').forEach(el => { el.textContent = 'R$ ' + formatted; });
+    } else {
+      document.querySelectorAll('.total-amount').forEach(el => { el.textContent = formatted; });
+    }
   }
 
   function initActionCard(root) {
@@ -2318,6 +2647,7 @@
     };
 
     const state = { expanded: false, selected: [], visibleCount: ACTION_CARD_PAGE_SIZE };
+    actionCardSelectedGetters.set(root, () => state.selected);
 
     function iconEl(item, extraClass) {
       const wrap = document.createElement('div');
@@ -2408,7 +2738,7 @@
       const hasSelected = state.selected.length > 0;
       root.dataset.state = (state.expanded ? 'expanded' : 'collapsed') + '-' + (hasSelected ? 'selected' : 'default');
 
-      syncOrderTotal(state.selected);
+      syncOrderTotal(root);
     }
 
     els.toggle.addEventListener('click', () => {
