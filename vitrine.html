@@ -270,6 +270,8 @@
   .price-value .amount .prefix{font-size:16px;font-weight:700;}
   .price-value .amount .cents{font-size:16px;font-weight:700;}
   .price-value .amount .big{font-size:36px;font-weight:700;line-height:1;font-family:inherit;}
+  .price-was{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
+  .price-was s{text-decoration:line-through;}
   .price-value .suffix{font-size:12px;color:var(--ink);padding-top:4px;}
   .btn-yellow{
     width:100%;background:var(--yellow);border:1px solid var(--yellow);border-radius:500px;
@@ -785,7 +787,7 @@
             <div class="card-top">
               <div class="card-tags-row">
                 <div class="tags-group">
-                  <span class="tag tag-success"><i class="mdn-Icon-check mdn-Icon--sm"></i>Exclusivo cliente Claro</span>
+                  <span class="tag tag-success"><i class="mdn-Icon-presente mdn-Icon--sm"></i>Amazon Prime por 3 meses</span>
                 </div>
                 <div class="context-badge">Multi</div>
               </div>
@@ -793,29 +795,27 @@
             <div class="card-middle">
               <div class="product-block">
                 <div class="product-name"><i class="mdn-Icon-wifi mdn-Icon--sm"></i><strong>600 Mega</strong></div>
-                <p class="product-desc">Wi-Fi e instalação grátis</p>
+                <p class="product-desc">Com Globoplay</p>
                 <div class="product-items">
-                  <div class="item-row"><span class="label">Globoplay incluso</span>
-                    <div class="brands"><img src="https://www.figma.com/api/mcp/asset/c5f0b287-5e9b-41ec-8fc2-ccd077c7a049.svg" alt=""></div>
+                  <div class="item-row"><span class="label">Wi-Fi e instalação grátis</span>
+                    <i class="mdn-Icon-casa-wifi mdn-Icon--sm"></i>
                   </div>
-                  <div class="item-row"><span class="label">ChatGPT Plus incluso por 2 meses</span>
-                    <div class="brands"><img src="https://www.figma.com/api/mcp/asset/a3c9f746-09e4-484e-a28c-755e632661dc.svg" alt=""></div>
+                  <div class="item-row"><span class="label">Globoplay incluso</span>
+                    <div class="brands"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay"></div>
                   </div>
                 </div>
               </div>
               <div class="product-block">
-                <div class="product-name"><i class="mdn-Icon-celular mdn-Icon--sm"></i><strong>Pós 60GB</strong></div>
-                <p class="product-desc">WhatsApp ilimitado + apps</p>
+                <div class="product-name"><i class="mdn-Icon-celular mdn-Icon--sm"></i><strong>Pós 100GB</strong></div>
+                <p class="product-desc">50GB + 50GB Bônus</p>
                 <div class="product-items">
-                  <div class="item-row"><span class="label">Claro App tv+ (30 dias)</span>
-                    <div class="brands"><img src="https://www.figma.com/api/mcp/asset/c5f0b287-5e9b-41ec-8fc2-ccd077c7a049.svg" alt=""></div>
+                  <div class="item-row"><span class="label">Whatsapp ilimitado</span>
+                    <div class="brands"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/whatsapp.svg" alt="WhatsApp"></div>
                   </div>
-                  <div class="item-row"><span class="label">Redes sociais e apps</span>
+                  <div class="item-row"><span class="label">Armazenamento em nuvem: Google One ou iCloud+</span>
                     <div class="brands">
-                      <img src="https://www.figma.com/api/mcp/asset/a3c9f746-09e4-484e-a28c-755e632661dc.svg" alt="">
-                      <img src="https://www.figma.com/api/mcp/asset/81cce586-5017-4500-84d3-0678ec1a0950.svg" alt="">
-                      <img src="https://www.figma.com/api/mcp/asset/9e5e8e5e-bed7-4d73-9586-9649a247e5e1.svg" alt="">
-                      <img src="https://www.figma.com/api/mcp/asset/81eed3a7-fd1b-47e0-bc88-0f7e528286b0.svg" alt="">
+                      <img src="https://mondrian.claro.com.br/brands/app/32px-alternative/google-one.svg" alt="Google One">
+                      <img src="https://mondrian.claro.com.br/brands/app/32px-alternative/icloudplus.svg" alt="iCloud+">
                     </div>
                   </div>
                 </div>
@@ -825,7 +825,8 @@
               <div class="price-row">
                 <span class="price-label">Valor mensal</span>
                 <div class="price-value">
-                  <div class="amount"><span class="prefix">R$</span><span class="big">159</span><span class="cents">,80</span></div>
+                  <p class="price-was">De <s>R$ 199,80</s> por:</p>
+                  <div class="amount"><span class="prefix">R$</span><span class="big">159</span><span class="cents">,90</span></div>
                 </div>
               </div>
               <button class="btn-yellow">Assinar</button>
