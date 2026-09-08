@@ -1,0 +1,1912 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitrine · M6 (Piloto)</title>
+
+<!-- Mondrian via CDN -->
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/tokens/claro-tokens-3.0.0.custom-properties.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.css">
+<!-- Mondrian Icons já vem junto com o Vanilla acima; deixado explícito por clareza -->
+<link rel="stylesheet" href="https://mondrian.claro.com.br/icons/mondrian-icons-latest.css">
+
+<style>
+  :root{
+    --red-dark:#b41e13;
+    --red:#da291c;
+    --yellow:#ffc722;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --green-bg:#ddf9ed;
+    --green-text:#006b4f;
+    --error-bg:#ffe3e3;
+    --error-text:#b41e13;
+    --gray-tertiary:#dbdbdb; /* bg/action/tertiary-default */
+    --bg-page:#f8f8f8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Roboto', sans-serif;
+    background:var(--bg-page);
+    color:var(--ink);
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Topbar ===== */
+  /* Bars are full-bleed (background spans the viewport); the inner wrapper
+     is capped at the same max-width + side padding as .content below, so
+     header and body content always line up regardless of viewport width. */
+  .topbar-inner{
+    width:100%;
+    max-width:1440px;
+    margin:0 auto;
+    padding:0 80px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar-utility{
+    background:var(--red-dark);
+    height:46px;
+    display:flex;
+  }
+  .topbar-utility .topbar-inner{height:100%;}
+  .topbar-location{
+    display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;
+  }
+  .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-a11y{display:flex;align-items:center;gap:16px;}
+  .topbar-a11y i{font-size:16px;line-height:1;}
+
+  .topbar-brand{
+    background:var(--red);
+    height:70px;
+    display:flex;
+  }
+  .topbar-brand .topbar-inner{height:100%;}
+  .brand-logo img{height:38px;display:block;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .topbar-actions i{font-size:24px;line-height:1;}
+  .topbar-exit{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+
+  /* ===== Content wrapper ===== */
+  .content{
+    max-width:1440px;
+    margin:0 auto;
+    padding:48px 80px 0; /* espaço inferior fica a cargo do último bloco (.plans-body) */
+  }
+
+  /* Breadcrumb: componente real Mondrian (mdn-Breadcrumb--mobile), ver
+     https://mondrian.claro.com.br/snippets/vanilla/index.html?path=/story/componentes-web-breadcrumb--mobile-default
+     Só o espaçamento abaixo dele é nosso (o componente em si não define). */
+  .mdn-Breadcrumb{margin-bottom:48px;}
+
+  .greeting{margin-bottom:32px;}
+  .greeting h1{font-size:28px;font-weight:700;margin:0 0 4px;}
+  .greeting p{font-size:16px;color:var(--gray-dark);margin:0;}
+
+  /* ===== Categorias ===== */
+  /* Full-bleed + sticky: ocupa a viewport inteira e fica fixo no topo ao
+     rolar. O wrapper interno usa o mesmo max-width/padding do resto do
+     conteúdo, então o alinhamento não muda mesmo sendo full-bleed. */
+  .categories{
+    background:var(--bg-page);
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    margin-bottom:64px; /* respiro entre o menu de categorias e a próxima seção — ver nota de espaçamento abaixo */
+    padding:16px 0;
+    position:sticky;
+    top:0;
+    z-index:30;
+  }
+  .categories-inner{
+    max-width:1440px;
+    width:100%;
+    margin:0 auto;
+    padding:0 80px;
+    box-sizing:border-box;
+  }
+  .categories h2{font-size:16px;font-weight:400;color:var(--gray-dark);margin:0 0 24px;}
+  .category-grid{display:flex;gap:16px;flex-wrap:wrap;}
+  .category-item{width:70px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
+  .category-circle{
+    width:64px;height:64px;border-radius:999px;border:2px solid var(--gray-line);
+    background:#fff;display:flex;align-items:center;justify-content:center;
+  }
+  .category-circle i{font-size:24px;color:var(--ink);}
+  .category-item.active .category-circle{background:var(--red);border-color:var(--red);}
+  .category-item.active .category-circle i{color:#fff;}
+  .category-item span{font-size:12px;color:var(--gray-dark);line-height:1.3;}
+  .category-item span b{font-weight:700;display:block;}
+
+  /* ===== Seção genérica ===== */
+  /* Espaçamento vertical entre seções: 64px no desktop / 40px no mobile (ver
+     media query lá embaixo). Escala de 8px — respiro generoso o bastante
+     agora que as linhas divisórias foram removidas. Pedir pra Eve replicar
+     esses valores no Figma (gap do auto-layout entre os blocos de seção). */
+  .section{margin-top:64px;scroll-margin-top:200px;} /* altura do menu fixo (~177px) + respiro */
+  .section-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+  .section-icon{
+    width:64px;height:64px;border-radius:999px;background:#fff;border:2px solid var(--gray-line);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    transition:background .15s,border-color .15s;
+  }
+  .section-icon i{font-size:24px;color:var(--ink);transition:color .15s;}
+  .section-icon.active{background:var(--red);border-color:var(--red);}
+  .section-icon.active i{color:#fff;}
+  .section-title h2{font-size:24px;font-weight:700;margin:0 0 4px;}
+  .section-title p{font-size:14px;color:var(--gray-dark);margin:0;}
+
+  /* ===== Cards ===== */
+  /* align-items:stretch (padrão do flex) já iguala a altura dos cards numa mesma
+     linha/slide-row; o .card em si preenche 100% dessa altura em qualquer container
+     (grid antigo ou swiper-slide real), e o card-bottom fica sempre colado embaixo
+     (margin-top:auto), então preço/botão alinham na mesma linha mesmo com quantidade
+     de labels diferente entre os cards. */
+  .card-grid{display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;}
+
+  /* ===== Componente real Mondrian Swiper (carrossel de cards, desktop e mobile) =====
+     O bundle mondrian-vanilla.js/css já define este layout (flex + transform) e o
+     comportamento de arrastar/paginar sozinho; as regras abaixo são só um fallback
+     de layout (mesmo resultado visual) caso o CDN não carregue por algum motivo.
+     BUG CORRIGIDO: inspecionei o DOM real do componente no Storybook e o
+     .mdn-Swiper-pagination-custom (setas prev/next) precisa ficar DENTRO do
+     container .swiper.mdn-Swiper, como irmão do .swiper-wrapper — e não depois/fora
+     dele, como estava. Fora do container, o JS do Swiper não encontra os botões pra
+     conectar a navegação (por isso as setas não funcionavam) e o layout também
+     quebrava visualmente (efeito de "atrás dos cards"). Ajustei o HTML de todos os
+     7 carrosséis pra essa estrutura. overflow-x:hidden (só corta o carrossel na
+     horizontal, sem cortar a paginação abaixo dele na vertical) reproduz o
+     "overflow: clip visible" do componente real.
+     BUG CORRIGIDO #2 (último card cortado): quando o JS do Swiper carrega de
+     verdade, ele mesmo aplica o espaçamento entre slides via margin-right inline
+     (lido de data-mdn-space-between, setado como 16 em cada .mdn-Swiper no HTML)
+     — não usa o gap do flexbox. O nosso gap:16px daqui embaixo SOMAVA em cima
+     desse margin inline (32px reais por vão em vez de 16), mas o cálculo interno
+     do Swiper de "até onde dá pra arrastar" só conhecia o próprio margin — então
+     ele parava sempre 16px×(nº de vãos) curto do fim de verdade, cortando o
+     último card. Por isso o gap só entra como fallback (.mdn-Swiper-initialized
+     é a classe que o Swiper adiciona ao terminar de inicializar — sem ela, o
+     JS não rodou e este CSS puro assume o layout). */
+  .swiper.mdn-Swiper{overflow-x:hidden;overflow-y:visible;position:relative;}
+  .swiper-wrapper{display:flex;align-items:stretch;}
+  .swiper.mdn-Swiper:not(.mdn-Swiper-initialized) .swiper-wrapper{gap:16px;}
+  .swiper-slide{height:auto;width:296px;flex-shrink:0;display:flex;}
+  .mdn-Swiper-pagination-custom{display:flex;justify-content:center;gap:16px;margin-top:24px;}
+  /* O bundle real do Swiper reserva espaço/mostra uma bolinha de paginação (bullets)
+     por padrão, mesmo sem a gente ter pedido isso (só usamos as setas prev/next
+     customizadas) — isso criava um vão em branco entre o card e as setas. Removendo. */
+  .swiper .swiper-pagination,
+  .swiper .swiper-pagination-bullets,
+  .swiper-pagination-bullet{display:none!important;}
+
+  .card{
+    width:296px;
+    height:100%;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    box-shadow:0 4px 8px rgba(0,0,0,.08);
+    background:#fff;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  .card-top{padding:0 16px 4px;display:flex;flex-direction:column;gap:8px;}
+  .card-tags-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+  .tags-group{display:flex;gap:8px;flex-wrap:nowrap;padding-top:12px;}
+  .tag{
+    display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:4px;
+    font-size:12px;font-weight:500;border:1px solid transparent;white-space:nowrap;
+  }
+  .tag i{font-size:16px;line-height:1;}
+  .tag-success{background:var(--green-bg);border-color:var(--green-bg);color:var(--green-text);}
+  .tag-dark{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .tag-outline{background:#fff;border-color:var(--ink);color:var(--ink);}
+  .tag-error{background:var(--error-bg);border-color:var(--error-bg);color:var(--error-text);}
+  .context-badge{
+    background:var(--red);color:#fff;font-size:16px;font-weight:700;
+    height:36px;padding:8px 16px;border-radius:0 0 12px 12px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .card-title-block{padding-top:16px;}
+  .card-title-block h3{font-size:24px;font-weight:700;margin:0 0 4px;}
+  .card-title-block p{font-size:14px;color:var(--red);margin:0;font-weight:500;}
+  .card-title-block p.brand-label{font-size:12px;}
+
+  .spec-row{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+  .spec-row .label{font-size:12px;font-weight:700;color:var(--gray-dark);}
+  .spec-row .value{font-size:16px;font-weight:700;color:var(--ink);}
+  .price-value .topline{font-size:12px;font-weight:700;margin:0 0 2px;align-self:flex-end;}
+  .price-value .installment-suffix{font-size:12px;color:var(--ink);padding-top:4px;align-self:flex-end;}
+
+  .card-middle{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1;justify-content:center;min-height:0;}
+  .product-block{display:flex;flex-direction:column;}
+  .product-name{display:flex;gap:8px;align-items:flex-start;padding-bottom:4px;}
+  .product-name i{font-size:16px;line-height:1;margin-top:6px;flex-shrink:0;}
+  .product-name strong{font-size:20px;font-weight:700;}
+  .product-desc{padding-left:24px;font-size:14px;color:var(--red);font-weight:500;margin:0 0 8px;}
+  .product-items{padding-left:24px;display:flex;flex-direction:column;gap:8px;}
+  .item-row{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+  .item-row .label{font-size:12px;font-weight:700;color:var(--gray-dark);}
+  .item-row i{font-size:16px;line-height:1;}
+  .brands{display:flex;align-items:center;}
+  .brands img{width:24px;height:24px;margin-right:-4px;}
+
+  .card-simple-item{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+  .card-simple-item .label{font-size:12px;font-weight:700;color:var(--gray-dark);}
+  .card-simple-item i{font-size:16px;line-height:1;flex-shrink:0;}
+
+  .card-image{width:100%;height:212px;display:flex;align-items:center;justify-content:center;background:#fff;}
+  .card-image img{max-width:100%;max-height:100%;object-fit:contain;}
+
+  .card-bottom{
+    border-top:1px solid var(--gray-line);
+    padding:16px;display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:auto;
+  }
+  .price-row{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:88px;} /* spec Figma: 88px (conferido no node do card de Telefone Fixo) */
+  .price-label{font-size:16px;color:var(--gray-dark);font-weight:500;max-width:110px;}
+  .price-value{display:flex;flex-direction:column;align-items:flex-end;}
+  .price-value .amount{display:flex;align-items:flex-end;gap:4px;}
+  .price-value .amount .prefix{font-size:16px;font-weight:700;}
+  .price-value .amount .cents{font-size:16px;font-weight:700;}
+  .price-value .amount .big{font-size:36px;font-weight:700;line-height:1;font-family:inherit;}
+  .price-value .suffix{font-size:12px;color:var(--ink);padding-top:4px;}
+  .btn-yellow{
+    width:100%;background:var(--yellow);border:1px solid var(--yellow);border-radius:500px;
+    height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;
+    color:var(--ink);cursor:pointer;
+  }
+  .btn-yellow:hover{filter:brightness(0.95);}
+  .card-actions{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:16px;width:100%;}
+  .card-link{font-size:16px;font-weight:500;color:var(--teal-dark, #005c66);text-decoration:underline;}
+
+  /* ===== Banner promocional ===== */
+  /* Carrossel simples de banners: um slide fica visível por vez (display:none nos
+     demais); troca via dots ou automaticamente (ver script no fim do arquivo). */
+  .promo-banner-slider{position:relative;width:100%;}
+  .promo-banner-slide{display:none;}
+  .promo-banner-slide.active{display:block;}
+  .promo-banner{width:100%;aspect-ratio:1920/420;border-radius:12px;overflow:hidden;background:#111;}
+  .promo-banner img{width:100%;height:100%;object-fit:cover;display:block;}
+  /* Mobile usa uma imagem com corte vertical próprio (não é o banner largo do
+     desktop redimensionado) — proporção 1536/1740 conforme o frame Figma mobile. */
+  .promo-banner--mobile{aspect-ratio:1536/1740;}
+  .promo-dots{display:flex;justify-content:center;align-items:center;gap:16px;padding:12px 0;}
+  .promo-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--gray-line);background:#fff;padding:0;cursor:pointer;}
+  .promo-dot.active{background:var(--red);border-color:var(--red);}
+
+  /* ===== Marcas relacionadas ===== */
+  .brands-block{margin-top:24px;}
+  .brands-block p.brands-lead{font-size:16px;color:var(--gray-dark);margin:0 0 8px;}
+  .brands-grid{display:flex;gap:8px;flex-wrap:wrap;}
+  .brand-chip{display:flex;flex-direction:column;align-items:center;gap:8px;width:70px;background:none;border:none;cursor:pointer;}
+  .brand-chip .brand-circle{
+    width:64px;height:64px;border-radius:999px;border:2px solid var(--gray-line);
+    background:#fff;display:flex;align-items:center;justify-content:center;padding:10px;box-sizing:border-box;
+  }
+  .brand-chip.active .brand-circle{background:var(--red);border-color:var(--red);}
+  .brand-chip.active .brand-circle i{color:#fff;}
+  .brand-chip .brand-circle img{max-width:100%;max-height:100%;object-fit:contain;}
+  .brand-chip .brand-circle--flat{border:none;background:none;padding:0;}
+  .brand-chip span{font-size:12px;font-weight:700;color:var(--gray-dark);}
+
+  /* ===== Card CTA (institucional) ===== */
+  .card-cta{
+    width:296px;border:1px solid var(--gray-line);border-radius:12px;
+    box-shadow:0 4px 8px rgba(0,0,0,.08);background:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:48px;padding:16px;
+  }
+  .card-cta-text{display:flex;flex-direction:column;gap:12px;align-items:center;}
+  .card-cta-text h3{font-size:24px;font-weight:700;margin:0;max-width:248px;}
+  .card-cta-text p{font-size:16px;color:var(--gray-dark);margin:0;}
+  .btn-red-pill{
+    background:var(--red);color:#fff;border:1px solid var(--red);border-radius:500px;
+    height:40px;padding:8px 24px;font-size:16px;font-weight:500;cursor:pointer;
+  }
+  .btn-red-pill:hover{filter:brightness(0.95);}
+
+  /* ===== Bloco Info Plano Atual (Meus Planos) ===== */
+  .plan-info{font-size:14px;color:var(--gray-dark);margin:0;}
+  .plan-info b{font-weight:700;}
+
+  /* ===== Corpo Meus Planos ===== */
+  /* Full-bleed, mesmo padrão do header/rodapé, com a cor bg/action/tertiary-default */
+  .plans-body{
+    background:var(--gray-tertiary);
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    margin-top:64px;
+    padding-bottom:64px;
+  }
+  .plans-body-inner{
+    max-width:1440px;
+    width:100%;
+    margin:0 auto;
+    padding:48px 80px 0; /* padding-top (não margin) de propósito: .plans-body-inner
+      não tem padding/borda própria, então um margin-top no filho (.plans-greeting)
+      colapsa através dela e se funde com o margin-top do .plans-body — o respiro
+      "some" (fica só fora da caixa cinza, não dentro). padding-top cria uma
+      fronteira de verdade e evita o colapso. Respiro: 48px desktop / 32px mobile. */
+    box-sizing:border-box;
+  }
+  .plans-greeting{margin-top:0;margin-bottom:0;}
+
+  /* ===== Rodapé ===== */
+  /* Componente real Mondrian Footer (variante "Public Simple") — ver skill
+     mondrian-figma-prototype. Trocamos o footer "na mão" (flex row fixo, sem
+     empilhar no mobile) pelo componente de verdade: o CSS do CDN já empilha
+     .mdn-Footer-content em coluna abaixo de 992px e vira linha só acima disso,
+     então o quebra no mobile se resolve sozinho, sem media query nossa.
+     ATENÇÃO — pegadinha de versão: o Storybook público mostra sempre a versão
+     mais nova do Mondrian (hoje 6.50.0), que usa classes tipo
+     `mdn-Footer-disclaimer-list`. Nosso CDN está travado na 6.0.7 (pin
+     antigo do projeto), onde essa mesma lista se chama `mdn-Footer-list` /
+     `mdn-Footer-list-item` — copiar a classe da versão nova sem checar contra
+     a versão realmente carregada faz o CSS simplesmente não casar (a lista
+     cai no comportamento padrão do navegador, cada link em uma linha, sem
+     erro nenhum no console). Sempre conferir as classes de fato existentes
+     no CSS da versão pinada (`fetch` do arquivo .css e checar o nome exato)
+     antes de usar markup copiado do Storybook ao vivo. O selo de Libras
+     também tem classe própria nessa versão (`mdn-Footer-disclaimer-librasLink`),
+     então nem precisou de CSS customizado nosso pra ele. */
+
+  /* ===== Carrossel controles ===== */
+  .carousel-controls{display:flex;justify-content:center;gap:16px;margin-top:24px;}
+  .carousel-btn{
+    width:48px;height:48px;border-radius:12px;background:var(--red);
+    display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;
+  }
+  .carousel-btn i{font-size:20px;line-height:1;}
+  .carousel-btn.disabled{opacity:.32;cursor:not-allowed;}
+
+  /* ===== MATERIAL DESIGN MOTION ===== */
+  /* Easing curves do Material Design 3 */
+  /* standard: cubic-bezier(0.2, 0, 0, 1) - movimento padrão */
+  /* emphasized: cubic-bezier(0.05, 0.7, 0.1, 1) - entrada com ênfase */
+  /* decelerated: cubic-bezier(0, 0, 0.2, 1) - saída desacelerada */
+
+  /* Skeleton Loader */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--gray-tertiary) 0%,
+      #fff 50%,
+      var(--gray-tertiary) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+  }
+  @keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Fade-in Animation (entrada suave) */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Slide-up Animation (entrada com slide) */
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Scale Animation (crescimento suave) */
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Section fade-in com stagger */
+  .section {
+    animation: fade-in 0.5s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  /* Card animations com stagger */
+  .card {
+    opacity: 0;
+    animation: slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1);
+    animation-fill-mode: forwards;
+  }
+
+  /* Stagger effect para cards do Swiper */
+  .swiper-slide:nth-child(1) .card { animation-delay: 0ms; }
+  .swiper-slide:nth-child(2) .card { animation-delay: 60ms; }
+  .swiper-slide:nth-child(3) .card { animation-delay: 120ms; }
+  .swiper-slide:nth-child(4) .card { animation-delay: 180ms; }
+  .swiper-slide:nth-child(5) .card { animation-delay: 240ms; }
+  .swiper-slide:nth-child(6) .card { animation-delay: 300ms; }
+  .swiper-slide:nth-child(7) .card { animation-delay: 360ms; }
+
+  /* Category Menu Animation */
+  .category-item {
+    opacity: 0;
+    animation: slide-up 0.3s cubic-bezier(0.05, 0.7, 0.1, 1);
+    animation-fill-mode: forwards;
+  }
+
+  /* Stagger para categorias */
+  .category-item:nth-child(1) { animation-delay: 0ms; }
+  .category-item:nth-child(2) { animation-delay: 40ms; }
+  .category-item:nth-child(3) { animation-delay: 80ms; }
+  .category-item:nth-child(4) { animation-delay: 120ms; }
+  .category-item:nth-child(5) { animation-delay: 160ms; }
+  .category-item:nth-child(6) { animation-delay: 200ms; }
+  .category-item:nth-child(7) { animation-delay: 240ms; }
+
+  /* Category Circle Transition */
+  .category-circle {
+    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1),
+                border-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+                transform 0.2s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .category-item:active .category-circle {
+    transform: scale(0.95);
+  }
+
+  /* Button Transitions (Material Design) */
+  .btn-yellow {
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    position: relative;
+  }
+
+  .btn-yellow:active {
+    transform: scale(0.98);
+  }
+
+  .btn-red-pill {
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .btn-red-pill:active {
+    transform: scale(0.98);
+  }
+
+  /* Card Hover Effect */
+  .card {
+    transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1),
+                transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  /* Banner Fade Transition */
+  .promo-banner-slide {
+    animation: fade-in 0.4s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  /* Greeting Animation */
+  .greeting {
+    animation: slide-up 0.5s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .greeting h1 {
+    animation: slide-up 0.5s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .greeting p {
+    animation: fade-in 0.5s cubic-bezier(0, 0, 0.2, 1);
+    animation-delay: 0.1s;
+    animation-fill-mode: forwards;
+    opacity: 0;
+  }
+
+  /* Section Header Animation */
+  .section-header {
+    animation: slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .section-icon {
+    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1),
+                border-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+                transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .section-icon:active {
+    transform: scale(0.98);
+  }
+
+  /* Promo Dot Transition */
+  .promo-dot {
+    transition: background 0.3s cubic-bezier(0.2, 0, 0, 1),
+                border-color 0.3s cubic-bezier(0.2, 0, 0, 1),
+                transform 0.2s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .promo-dot:active {
+    transform: scale(0.9);
+  }
+
+  /* Carousel Button Transition */
+  .carousel-btn {
+    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1),
+                transform 0.2s cubic-bezier(0.05, 0.7, 0.1, 1),
+                opacity 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .carousel-btn:active:not(.disabled) {
+    transform: scale(0.95);
+  }
+
+  /* Brand Chip Transition */
+  .brand-chip .brand-circle {
+    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1),
+                border-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+                transform 0.2s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  .brand-chip:active .brand-circle {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 1300px){
+    .content{padding:32px 24px 0;}
+    .topbar-inner{padding:0 24px;}
+    .card-grid{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px;}
+  }
+
+  /* ===== Mobile (breakpoint baseado no frame Figma "Vitrine Mobile", 360px) ===== */
+  .mobile-only{display:none;}
+  @media (max-width: 599px){
+    .content{padding:24px 16px 0;}
+    .topbar-inner{padding:0 16px;}
+
+    /* Espaçamento entre seções reduzido no mobile: 40px (em vez dos 64px do
+       desktop) — mesma escala, proporcional ao viewport menor. */
+    .section{margin-top:40px;}
+    .plans-greeting{margin-top:32px;}
+
+    .section-header{gap:16px;margin-bottom:16px;}
+    .section-icon{width:42px;height:42px;}
+    .section-icon i{font-size:20px;}
+    .section-title h2{font-size:20px;}
+
+    /* Menu "Navegue por categorias": no mobile os círculos/ícones encolhem
+       pra 42px/20px (confirmado pela Eve), acompanhando o .section-icon acima. */
+    .categories{padding:12px 0;margin-bottom:40px;}
+    .categories-inner{padding:0 16px;}
+    .category-grid{
+      flex-wrap:nowrap;overflow-x:auto;gap:12px;padding-bottom:4px;
+      scrollbar-width:none; /* Firefox */
+      -ms-overflow-style:none; /* Edge legado */
+    }
+    .category-grid::-webkit-scrollbar{display:none;} /* Chrome, Safari */
+    .category-item{flex-shrink:0;}
+    .category-circle{width:42px;height:42px;}
+    .category-circle i{font-size:20px;}
+
+    /* "Corpo · Meus Planos" (Produtos que você já possui): padding lateral
+       reduzido igual ao resto do conteúdo — sem isso ficava com borda enorme
+       (80px de cada lado, herdado do desktop) num viewport de 375px. */
+    .plans-body-inner{padding:32px 16px 0;}
+
+    .desktop-only{display:none;}
+    .mobile-only{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar-utility">
+    <div class="topbar-inner">
+      <div class="topbar-location">
+        <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
+        <span>Nome da Rua</span>
+        <i class="mdn-Icon-seta-baixo-preenchida mdn-Icon--sm mdn-Icon--inverse"></i>
+      </div>
+      <div class="topbar-a11y">
+        <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
+        <i class="mdn-Icon-libras mdn-Icon--sm mdn-Icon--inverse" title="Libras"></i>
+        <i class="mdn-Icon-alto-contraste mdn-Icon--sm mdn-Icon--inverse" title="Contraste"></i>
+        <i class="mdn-Icon-tamanho-diminuir mdn-Icon--sm mdn-Icon--inverse" title="Diminuir fonte"></i>
+        <i class="mdn-Icon-tamanho-aumentar mdn-Icon--sm mdn-Icon--inverse" title="Aumentar fonte"></i>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-brand">
+    <div class="topbar-inner">
+      <a href="vitrine.html" class="brand-logo">
+        <img src="https://www.figma.com/api/mcp/asset/d2f7d440-f89f-4a74-90ea-4a697a03396d.svg" alt="MinhaClaro">
+      </a>
+      <div class="topbar-actions">
+        <i class="mdn-Icon-notificacao mdn-Icon--md mdn-Icon--inverse" title="Notificações"></i>
+        <a href="#" class="topbar-exit">
+          <i class="mdn-Icon-sair mdn-Icon--md mdn-Icon--inverse"></i>
+          Sair
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile"><a class="mdn-Breadcrumb-link"><i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md" aria-hidden="true"></i>Voltar</a></nav>
+
+  <section class="greeting">
+    <h1>Olá, <b>Rodrigo</b>!</h1>
+    <p>Veja o que separamos para você hoje.</p>
+  </section>
+
+  <nav class="categories">
+   <div class="categories-inner">
+    <h2>Navegue por categorias</h2>
+    <div class="category-grid">
+      <a href="#melhores-ofertas" class="category-item active" data-target="melhores-ofertas">
+        <div class="category-circle"><i class="mdn-Icon-cupom-porcentagem mdn-Icon--md"></i></div>
+        <span>Melhores ofertas</span>
+      </a>
+      <a href="#internet-residencial" class="category-item" data-target="internet-residencial">
+        <div class="category-circle"><i class="mdn-Icon-wifi mdn-Icon--md"></i></div>
+        <span>Internet residencial</span>
+      </a>
+      <a href="#planos-tv" class="category-item" data-target="planos-tv">
+        <div class="category-circle"><i class="mdn-Icon-tv mdn-Icon--md"></i></div>
+        <span>Planos de TV</span>
+      </a>
+      <a href="#planos-celular" class="category-item" data-target="planos-celular">
+        <div class="category-circle"><i class="mdn-Icon-celular-5g mdn-Icon--md"></i></div>
+        <span>Planos de celular</span>
+      </a>
+      <a href="#telefone-fixo-section" class="category-item" data-target="telefone-fixo-section">
+        <div class="category-circle"><i class="mdn-Icon-telefone-fixo mdn-Icon--md"></i></div>
+        <span>Telefone<br>fixo</span>
+      </a>
+      <a href="#aparelhos" class="category-item" data-target="aparelhos">
+        <div class="category-circle"><i class="mdn-Icon-celular mdn-Icon--md"></i></div>
+        <span>Celulares e smartphones</span>
+      </a>
+      <a href="#acessorios" class="category-item" data-target="acessorios">
+        <div class="category-circle"><i class="mdn-Icon-fone-de-ouvido mdn-Icon--md"></i></div>
+        <span>Acessórios e eletrônicos</span>
+      </a>
+    </div>
+   </div>
+  </nav>
+
+  <section class="section" id="melhores-ofertas">
+    <div class="section-header">
+      <div class="section-icon active">
+        <i class="mdn-Icon-cupom-porcentagem"></i>
+      </div>
+      <div class="section-title">
+        <h2>Melhores ofertas</h2>
+        <p>Uma seleção feita especialmente para você</p>
+      </div>
+    </div>
+
+    <!-- Componente real Mondrian Swiper (ver skill mondrian-figma-prototype) - desktop e mobile -->
+    <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-melhores-ofertas">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group">
+                  <span class="tag tag-success"><i class="mdn-Icon-check mdn-Icon--sm"></i>Exclusivo no app</span>
+                </div>
+                <div class="context-badge">Multi</div>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-wifi mdn-Icon--sm"></i><strong>600 Mega</strong></div>
+                <p class="product-desc">Wi-Fi e instalação grátis</p>
+                <div class="product-items">
+                  <div class="item-row"><span class="label">Globoplay incluso</span>
+                    <div class="brands"><img src="https://www.figma.com/api/mcp/asset/c5f0b287-5e9b-41ec-8fc2-ccd077c7a049.svg" alt=""></div>
+                  </div>
+                </div>
+              </div>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-celular mdn-Icon--sm"></i><strong>Pós 60GB</strong></div>
+                <p class="product-desc">WhatsApp ilimitado + apps</p>
+                <div class="product-items">
+                  <div class="item-row"><span class="label">Label</span>
+                    <div class="brands">
+                      <img src="https://www.figma.com/api/mcp/asset/a3c9f746-09e4-484e-a28c-755e632661dc.svg" alt="">
+                      <img src="https://www.figma.com/api/mcp/asset/81cce586-5017-4500-84d3-0678ec1a0950.svg" alt="">
+                      <img src="https://www.figma.com/api/mcp/asset/9e5e8e5e-bed7-4d73-9586-9649a247e5e1.svg" alt="">
+                      <img src="https://www.figma.com/api/mcp/asset/81eed3a7-fd1b-47e0-bc88-0f7e528286b0.svg" alt="">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-tv mdn-Icon--sm"></i><strong>Box Claro tv+</strong></div>
+                <p class="product-desc">+120 canais ao vivo</p>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <div class="amount"><span class="prefix">R$</span><span class="big">284</span><span class="cents">,70</span></div>
+                </div>
+              </div>
+              <button class="btn-yellow">Assinar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group">
+                  <span class="tag tag-success"><i class="mdn-Icon-check mdn-Icon--sm"></i>Exclusivo cliente Claro</span>
+                </div>
+                <div class="context-badge">Multi</div>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-wifi mdn-Icon--sm"></i><strong>600 Mega</strong></div>
+                <p class="product-desc">Wi-Fi e instalação grátis</p>
+                <div class="product-items">
+                  <div class="item-row"><span class="label">Globoplay incluso</span>
+                    <div class="brands"><img src="https://www.figma.com/api/mcp/asset/c5f0b287-5e9b-41ec-8fc2-ccd077c7a049.svg" alt=""></div>
+                  </div>
+                  <div class="item-row"><span class="label">ChatGPT Plus incluso por 2 meses</span>
+                    <div class="brands"><img src="https://www.figma.com/api/mcp/asset/a3c9f746-09e4-484e-a28c-755e632661dc.svg" alt=""></div>
+                  </div>
+                </div>
+              </div>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-celular mdn-Icon--sm"></i><strong>Pós 60GB</strong></div>
+                <p class="product-desc">WhatsApp ilimitado + apps</p>
+                <div class="product-items">
+                  <div class="item-row"><span class="label">Claro App tv+ (30 dias)</span>
+                    <div class="brands"><img src="https://www.figma.com/api/mcp/asset/c5f0b287-5e9b-41ec-8fc2-ccd077c7a049.svg" alt=""></div>
+                  </div>
+                  <div class="item-row"><span class="label">Redes sociais e apps</span>
+                    <div class="brands">
+                      <img src="https://www.figma.com/api/mcp/asset/a3c9f746-09e4-484e-a28c-755e632661dc.svg" alt="">
+                      <img src="https://www.figma.com/api/mcp/asset/81cce586-5017-4500-84d3-0678ec1a0950.svg" alt="">
+                      <img src="https://www.figma.com/api/mcp/asset/9e5e8e5e-bed7-4d73-9586-9649a247e5e1.svg" alt="">
+                      <img src="https://www.figma.com/api/mcp/asset/81eed3a7-fd1b-47e0-bc88-0f7e528286b0.svg" alt="">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <div class="amount"><span class="prefix">R$</span><span class="big">159</span><span class="cents">,80</span></div>
+                </div>
+              </div>
+              <button class="btn-yellow">Assinar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group">
+                  <span class="tag tag-success">
+                    <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+                    Oferta recomendada
+                  </span>
+                </div>
+                <div class="context-badge">TV</div>
+              </div>
+              <div class="card-title-block">
+                <h3>Claro tv+ Box</h3>
+                <p>6 streamings em 1 assinatura</p>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="card-simple-item">
+                <span class="label">Mais de 120 canais ao vivo</span>
+                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+              </div>
+              <div class="card-simple-item">
+                <span class="label">6 streamings inclusos</span>
+                <div class="brands">
+                  <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
+                </div>
+              </div>
+              <div class="card-simple-item">
+                <span class="label">Leve para onde quiser</span>
+                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <div class="amount"><span class="prefix">R$</span><span class="big">139</span><span class="cents">,90</span></div>
+                </div>
+              </div>
+              <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group">
+                  <span class="tag tag-outline"><i class="mdn-Icon-fone-de-ouvido mdn-Icon--sm"></i>Fone de ouvido</span>
+                  <span class="tag tag-error"><i class="mdn-Icon-raio mdn-Icon--sm"></i>Oferta Black Friday</span>
+                </div>
+              </div>
+              <div class="card-image">
+                <img src="https://www.figma.com/api/mcp/asset/00725418-dec3-4ce6-aa5a-87ac93dc47fa.png" alt="Fone de ouvido JBL T520">
+              </div>
+              <div class="card-title-block">
+                <h3>Fone de ouvido JBL</h3>
+                <p>T520 - Preto</p>
+              </div>
+            </div>
+            <div class="card-middle"></div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Por apenas:</span>
+                <div class="price-value">
+                  <div class="amount"><span class="prefix">R$</span><span class="big">249</span><span class="cents">,00</span></div>
+                  <span class="suffix">Ou 4x de R$ 62,25 sem juros</span>
+                </div>
+              </div>
+              <button class="btn-yellow">Eu quero</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="4">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group">
+                  <span class="tag tag-success">
+                    <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+                    Oferta recomendada
+                  </span>
+                </div>
+                <div class="context-badge">TV</div>
+              </div>
+              <div class="card-title-block">
+                <h3>Claro tv+ Box</h3>
+                <p>6 streamings em 1 assinatura</p>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="card-simple-item">
+                <span class="label">Mais de 120 canais ao vivo</span>
+                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+              </div>
+              <div class="card-simple-item">
+                <span class="label">6 streamings inclusos</span>
+                <div class="brands">
+                  <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
+                </div>
+              </div>
+              <div class="card-simple-item">
+                <span class="label">Leve para onde quiser</span>
+                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <div class="amount"><span class="prefix">R$</span><span class="big">139</span><span class="cents">,90</span></div>
+                </div>
+              </div>
+              <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="5">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group">
+                  <span class="tag tag-success">
+                    <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+                    Oferta recomendada
+                  </span>
+                </div>
+                <div class="context-badge">TV</div>
+              </div>
+              <div class="card-title-block">
+                <h3>Claro tv+ Box</h3>
+                <p>6 streamings em 1 assinatura</p>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="card-simple-item">
+                <span class="label">Mais de 120 canais ao vivo</span>
+                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+              </div>
+              <div class="card-simple-item">
+                <span class="label">6 streamings inclusos</span>
+                <div class="brands">
+                  <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
+                  <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
+                </div>
+              </div>
+              <div class="card-simple-item">
+                <span class="label">Leve para onde quiser</span>
+                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <div class="amount"><span class="prefix">R$</span><span class="big">139</span><span class="cents">,90</span></div>
+                </div>
+              </div>
+              <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-0"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-0"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- Banner Promocional -->
+  <section class="section" id="banner-promocional">
+    <div class="promo-banner-slider" id="promoBannerSlider" role="region" aria-roledescription="carrossel" aria-label="Banners promocionais">
+      <!-- Slide 1: Claro Multi -->
+      <div class="promo-banner-slide active" data-slide-index="0">
+        <!-- Desktop: banner largo (formato paisagem) -->
+        <div class="promo-banner desktop-only">
+          <img src="https://www.figma.com/api/mcp/asset/add1f8e1-804c-4d8c-859f-266343803269.png" alt="Claro Multi tá na sua, com a melhor conexão na Fibra e no 5G">
+        </div>
+        <!-- Mobile: banner com corte vertical próprio (imagem diferente do desktop, ver Figma mobile) -->
+        <div class="promo-banner promo-banner--mobile mobile-only">
+          <img src="https://www.figma.com/api/mcp/asset/c1d83374-5689-433d-9e0f-c9e169dfc030.png" alt="Claro Multi tá na sua, com a melhor conexão na Fibra e no 5G">
+        </div>
+      </div>
+      <!-- Slide 2: Claro tv+ (Figma node 8680:30391 desktop / 8680:30398 mobile) -->
+      <div class="promo-banner-slide" data-slide-index="1">
+        <div class="promo-banner desktop-only">
+          <img src="https://www.figma.com/api/mcp/asset/717d08ed-8a3e-4aa1-8952-ae4a169112bd.png" alt="Onde tem o melhor do streaming, tem Claro tv+. 6 streamings em 1 assinatura, 120 canais ao vivo, por apenas R$ 159,90 por mês">
+        </div>
+        <div class="promo-banner promo-banner--mobile mobile-only">
+          <img src="https://www.figma.com/api/mcp/asset/90f014d5-52cf-4881-8312-75ac88db3413.png" alt="Onde tem o melhor do streaming, tem Claro tv+. 6 streamings em 1 assinatura, 120 canais ao vivo, tudo por apenas R$ 139,90 por mês no Multi com Claro Fibra">
+        </div>
+      </div>
+    </div>
+    <div class="promo-dots">
+      <button class="promo-dot active" aria-label="Ir para o slide 1 de 2" data-slide-target="0"></button>
+      <button class="promo-dot" aria-label="Ir para o slide 2 de 2" data-slide-target="1"></button>
+    </div>
+  </section>
+
+
+  <!-- Seção TV -->
+  <section class="section" id="planos-tv">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="mdn-Icon-tv"></i>
+      </div>
+      <div class="section-title">
+        <h2>Planos de TV</h2>
+        <p>Canais ao vivo e streamings em um só lugar</p>
+      </div>
+    </div>
+
+    <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-planos-tv">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+      <!-- Card TV 1 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+<div class="card">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group">
+              <span class="tag tag-success">
+                <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+                Oferta recomendada
+              </span>
+            </div>
+            <div class="context-badge">TV</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Claro tv+ Box</h3>
+            <p>6 streamings em 1 assinatura</p>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Mais de 120 canais ao vivo</span>
+            <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">6 streamings inclusos</span>
+            <div class="brands">
+              <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
+            </div>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Leve para onde quiser</span>
+            <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">139</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
+            <a href="detalhes-box.html" class="card-link swiper-no-swiping">Mais detalhes</a>
+          </div>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card TV 2 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
+<div class="card">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">TV</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Claro tv+ Box Cabo</h3>
+            <p>6 streamings em 1 assinatura</p>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Mais de 120 canais ao vivo</span>
+            <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">6 streamings inclusos</span>
+            <div class="brands">
+              <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
+            </div>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Instalação via Técnico Claro</span>
+            <i class="mdn-Icon-ferramenta mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">169</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-yellow">Assinar</button>
+            <a href="#" class="card-link">Mais detalhes</a>
+          </div>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card TV 3 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
+<div class="card">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group">
+              <span class="tag tag-success">
+                <i class="mdn-Icon-check mdn-Icon--sm"></i>
+                Autoinstalável
+              </span>
+            </div>
+            <div class="context-badge">TV</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Claro tv+ Soundbox</h3>
+            <p>6 streamings em 1 assinatura</p>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Mais de 120 canais ao vivo</span>
+            <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">6 streamings inclusos</span>
+            <div class="brands">
+              <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
+            </div>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Qualidade de imagem 4K e som Dolby Atmos</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">269</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-yellow">Assinar</button>
+            <a href="#" class="card-link">Mais detalhes</a>
+          </div>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card TV 4 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
+<div class="card">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group">
+              <span class="tag tag-success">
+                <i class="mdn-Icon-ferramenta mdn-Icon--sm"></i>
+                Instalação via Técnico Claro
+              </span>
+            </div>
+            <div class="context-badge">TV</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Claro tv+ Soundbox Cabo</h3>
+            <p>6 streamings em 1 assinatura</p>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Mais de 120 canais ao vivo</span>
+            <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">6 streamings inclusos</span>
+            <div class="brands">
+              <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
+              <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
+            </div>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Qualidade de imagem 4K e som Dolby Atmos</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">269</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-yellow">Assinar</button>
+            <a href="#" class="card-link">Mais detalhes</a>
+          </div>
+        </div>
+      </div>
+        </div>
+
+    </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-1"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-1"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+    </div>
+  </section>
+
+
+  <!-- Seção Aparelhos -->
+  <section class="section" id="aparelhos">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="mdn-Icon-celular"></i>
+      </div>
+      <div class="section-title">
+        <h2>Celulares e smartphones</h2>
+        <p>Os melhores smartphones para você escolher</p>
+      </div>
+    </div>
+
+    <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-aparelhos">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+      <!-- Card Aparelho 1 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+<div class="card">
+        <div class="card-top">
+          <div class="card-image">
+            <img src="https://www.figma.com/api/mcp/asset/32de3596-8ea4-45c3-ab91-54c42d37bea9.png" alt="Galaxy A06 5G">
+          </div>
+          <div class="card-title-block">
+            <h3>Galaxy A06</h3>
+            <p class="brand-label">Samsung</p>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="spec-row"><span class="label">Capacidade</span><span class="value">128GB</span></div>
+          <div class="spec-row"><span class="label">No plano</span><span class="value">Controle 25GB</span></div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Por apenas:</span>
+            <div class="price-value">
+              <p class="topline">21x de</p>
+              <div class="amount"><span class="prefix">R$</span><span class="big">27</span><span class="cents">,00</span></div>
+              <p class="installment-suffix">À vista: R$ 549,00</p>
+            </div>
+          </div>
+          <button class="btn-yellow">Eu quero</button>
+        </div>
+      </div>
+        </div>
+
+    </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-2"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-2"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+
+    <div class="brands-block">
+      <p class="brands-lead">Conheça outras ofertas de aparelhos</p>
+      <div class="brands-grid">
+        <button class="brand-chip active">
+          <div class="brand-circle"><i class="mdn-Icon-cupom-porcentagem mdn-Icon--md mdn-Icon--inverse"></i></div>
+          <span>Todas</span>
+        </button>
+        <button class="brand-chip">
+          <div class="brand-circle"><img src="https://www.figma.com/api/mcp/asset/fc9394a4-dc7d-405a-911c-6372a8bd5178.svg" alt="Apple"></div>
+          <span>Apple</span>
+        </button>
+        <button class="brand-chip">
+          <div class="brand-circle"><img src="https://www.figma.com/api/mcp/asset/dba6fa09-2ced-4d26-89c4-5fbb9902c4f5.svg" alt="Motorola"></div>
+          <span>Motorola</span>
+        </button>
+        <button class="brand-chip">
+          <div class="brand-circle brand-circle--flat"><img src="https://www.figma.com/api/mcp/asset/5c0d3a6f-2422-4bd6-96bb-52ec0f6c16bd.svg" alt="Samsung"></div>
+          <span>Samsung</span>
+        </button>
+        <button class="brand-chip">
+          <div class="brand-circle"><img src="https://www.figma.com/api/mcp/asset/0aafb208-8a5f-4074-a955-325e6ca8d464.svg" alt="Jovi"></div>
+          <span>Jovi</span>
+        </button>
+      </div>
+    </div>
+    </div>
+  </section>
+
+
+  <!-- Seção Acessórios -->
+  <section class="section" id="acessorios">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="mdn-Icon-fone-de-ouvido"></i>
+      </div>
+      <div class="section-title">
+        <h2>Acessórios e eletrônicos</h2>
+        <p>Conecte-se com os melhores acessórios e eletrônicos</p>
+      </div>
+    </div>
+
+    <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-acessorios">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+      <!-- Card Acessório 1 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+<div class="card">
+        <div class="card-top">
+          <div class="card-image">
+            <img src="https://www.figma.com/api/mcp/asset/64fdf3e3-9682-485f-9542-f9d732ba19de.png" alt="Galaxy A06 5G">
+          </div>
+          <div class="card-title-block">
+            <h3>Galaxy A06</h3>
+            <p class="brand-label">Samsung</p>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="spec-row"><span class="label">Capacidade</span><span class="value">128GB</span></div>
+          <div class="spec-row"><span class="label">No plano</span><span class="value">Controle 25GB</span></div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Por apenas:</span>
+            <div class="price-value">
+              <p class="topline">21x de</p>
+              <div class="amount"><span class="prefix">R$</span><span class="big">27</span><span class="cents">,00</span></div>
+              <p class="installment-suffix">À vista: R$ 549,00</p>
+            </div>
+          </div>
+          <button class="btn-yellow">Eu quero</button>
+        </div>
+      </div>
+        </div>
+
+    </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-3"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-3"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- Corpo · Meus Planos -->
+  <div class="plans-body">
+   <div class="plans-body-inner">
+
+    <section class="greeting plans-greeting">
+      <h1 style="font-size:24px;">Produtos que você já possui</h1>
+      <p>Veja seus produtos atuais e altere seus planos quando quiser.</p>
+    </section>
+
+    <!-- Seção Internet Residencial -->
+    <section class="section" id="internet-residencial">
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="mdn-Icon-wifi"></i>
+        </div>
+        <div class="section-title">
+          <h2>Internet residencial</h2>
+          <p><b>Valor do plano atual:</b> R$ 89,90/mês</p>
+        </div>
+      </div>
+
+      <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-internet-residencial">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+        <!-- Card Internet 1 -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+<div class="card">
+          <div class="card-top">
+            <div class="card-tags-row">
+              <div class="tags-group">
+                <span class="tag tag-success">
+                  <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+                  Melhor oferta
+                </span>
+              </div>
+              <div class="context-badge">Fibra</div>
+            </div>
+            <div class="card-title-block">
+              <h3>600 Mega</h3>
+              <p>Com Globoplay incluso</p>
+            </div>
+          </div>
+          <div class="card-middle">
+            <div class="card-simple-item">
+              <span class="label">Wi-Fi grátis</span>
+              <i class="mdn-Icon-wifi mdn-Icon--sm"></i>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Streaming incluso</span>
+              <div class="brands"><img src="https://www.figma.com/api/mcp/asset/516ffab9-d095-420c-9c9d-6fc690a57059.svg" alt="Globoplay"></div>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Serviços digitais</span>
+              <div class="brands">
+                <img src="https://www.figma.com/api/mcp/asset/b913c6c0-292c-4223-8190-7c5369160743.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/2d269a90-fcbb-45a0-8706-a0e663bd5e54.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/71110d47-8dc8-4244-8fd8-aafe10418ee0.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/e9738ec3-6a44-484e-a646-a7e1a0dd0c59.svg" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="price-row">
+              <span class="price-label">Valor mensal</span>
+              <div class="price-value">
+                <div class="amount"><span class="prefix">R$</span><span class="big">99</span><span class="cents">,90</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-yellow">Mudar para este</button>
+              <a href="#" class="card-link">Mais detalhes</a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- Card Internet 2 -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
+<div class="card">
+          <div class="card-top">
+            <div class="card-tags-row">
+              <div class="tags-group">
+                <span class="tag tag-success">
+                  <i class="mdn-Icon-wifi mdn-Icon--sm"></i>
+                  Wi-Fi 6
+                </span>
+              </div>
+              <div class="context-badge">Fibra</div>
+            </div>
+            <div class="card-title-block">
+              <h3>1 Giga</h3>
+              <p>Com Globoplay incluso</p>
+            </div>
+          </div>
+          <div class="card-middle">
+            <div class="card-simple-item">
+              <span class="label">Conexão mais rápida com Wi-Fi 6 grátis</span>
+              <i class="mdn-Icon-wifi mdn-Icon--sm"></i>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Streaming incluso</span>
+              <div class="brands"><img src="https://www.figma.com/api/mcp/asset/516ffab9-d095-420c-9c9d-6fc690a57059.svg" alt="Globoplay"></div>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Serviços digitais</span>
+              <div class="brands">
+                <img src="https://www.figma.com/api/mcp/asset/e9738ec3-6a44-484e-a646-a7e1a0dd0c59.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/94a0d53a-a3de-4b73-8242-97fe5560abf6.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/f4c5a157-7cc5-475b-9f85-bf010261a480.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/e9738ec3-6a44-484e-a646-a7e1a0dd0c59.svg" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="price-row">
+              <span class="price-label">Valor mensal</span>
+              <div class="price-value">
+                <div class="amount"><span class="prefix">R$</span><span class="big">170</span><span class="cents">,90</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-yellow">Mudar para este</button>
+              <a href="#" class="card-link">Mais detalhes</a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- Card institucional -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
+<div class="card-cta">
+          <div class="card-cta-text">
+            <h3>Ainda não encontrou o produto desejado?</h3>
+            <p>Clique no botão abaixo e veja mais ofertas disponíveis para você.</p>
+          </div>
+          <button class="btn-red-pill">Ver ofertas</button>
+        </div>
+        </div>
+
+      </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-4"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-4"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+    </div>
+    </section>
+
+
+    <!-- Seção Planos de Celular -->
+    <section class="section" id="planos-celular">
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="mdn-Icon-celular-5g"></i>
+        </div>
+        <div class="section-title">
+          <h2>Planos de celular</h2>
+          <p><b>Valor do plano atual:</b> R$ 59,90/mês</p>
+        </div>
+      </div>
+
+      <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-planos-celular">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+        <!-- Card Celular 1 -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+<div class="card">
+          <div class="card-top">
+            <div class="card-tags-row">
+              <div class="tags-group"></div>
+              <div class="context-badge">Pós</div>
+            </div>
+            <div class="card-title-block">
+              <h3>Pós 50GB</h3>
+              <p>Com Amazon Prime por 3 Meses</p>
+            </div>
+          </div>
+          <div class="card-middle">
+            <div class="card-simple-item">
+              <span class="label">Roaming: Passaporte Américas</span>
+              <i class="mdn-Icon-mundo mdn-Icon--sm"></i>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Incluso até 100GB de armazenamento na nuvem</span>
+              <div class="brands">
+                <img src="https://www.figma.com/api/mcp/asset/0cda7b1d-80f3-42a5-b96d-f1a684d6b455.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/9dc763b3-ad6f-4498-a878-a5f534c5bc71.svg" alt="">
+              </div>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Claro Sync: smartwatch conectado</span>
+              <i class="mdn-Icon-relogio mdn-Icon--sm"></i>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="price-row">
+              <span class="price-label">Valor mensal</span>
+              <div class="price-value">
+                <div class="amount"><span class="prefix">R$</span><span class="big">124</span><span class="cents">,90</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-yellow">Mudar para este</button>
+              <a href="#" class="card-link">Mais detalhes</a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- Card Celular 2 -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
+<div class="card">
+          <div class="card-top">
+            <div class="card-tags-row">
+              <div class="tags-group"></div>
+              <div class="context-badge">Pós</div>
+            </div>
+            <div class="card-title-block">
+              <h3>Pós 100GB</h3>
+              <p>Com Amazon Prime por 3 Meses</p>
+            </div>
+          </div>
+          <div class="card-middle">
+            <div class="card-simple-item">
+              <span class="label">Roaming: Passaporte Américas</span>
+              <i class="mdn-Icon-mundo mdn-Icon--sm"></i>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Incluso até 100GB de armazenamento na nuvem</span>
+              <div class="brands">
+                <img src="https://www.figma.com/api/mcp/asset/0cda7b1d-80f3-42a5-b96d-f1a684d6b455.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/9dc763b3-ad6f-4498-a878-a5f534c5bc71.svg" alt="">
+              </div>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Claro Sync: smartwatch conectado</span>
+              <i class="mdn-Icon-relogio mdn-Icon--sm"></i>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="price-row">
+              <span class="price-label">Valor mensal</span>
+              <div class="price-value">
+                <div class="amount"><span class="prefix">R$</span><span class="big">179</span><span class="cents">,90</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-yellow">Mudar para este</button>
+              <a href="#" class="card-link">Mais detalhes</a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- Card Celular 3 -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
+<div class="card">
+          <div class="card-top">
+            <div class="card-tags-row">
+              <div class="tags-group"></div>
+              <div class="context-badge">Pós</div>
+            </div>
+            <div class="card-title-block">
+              <h3>Pós 200GB</h3>
+              <p>Com Amazon Prime por 3 Meses</p>
+            </div>
+          </div>
+          <div class="card-middle">
+            <div class="card-simple-item">
+              <span class="label">Roaming: Passaporte Mundo</span>
+              <i class="mdn-Icon-mundo mdn-Icon--sm"></i>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Incluso até 100GB de armazenamento na nuvem</span>
+              <div class="brands">
+                <img src="https://www.figma.com/api/mcp/asset/0cda7b1d-80f3-42a5-b96d-f1a684d6b455.svg" alt="">
+                <img src="https://www.figma.com/api/mcp/asset/9dc763b3-ad6f-4498-a878-a5f534c5bc71.svg" alt="">
+              </div>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Claro Sync: smartwatch conectado</span>
+              <i class="mdn-Icon-relogio mdn-Icon--sm"></i>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="price-row">
+              <span class="price-label">Valor mensal</span>
+              <div class="price-value">
+                <div class="amount"><span class="prefix">R$</span><span class="big">339</span><span class="cents">,90</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-yellow">Mudar para este</button>
+              <a href="#" class="card-link">Mais detalhes</a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- Card institucional -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
+<div class="card-cta">
+          <div class="card-cta-text">
+            <h3>Ainda não encontrou o produto desejado?</h3>
+            <p>Clique no botão abaixo e veja mais ofertas disponíveis para você.</p>
+          </div>
+          <button class="btn-red-pill">Ver ofertas</button>
+        </div>
+        </div>
+
+      </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-5"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-5"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+    </div>
+    </section>
+
+
+    <!-- Seção Telefone Fixo -->
+    <section class="section" id="telefone-fixo-section">
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="mdn-Icon-telefone-fixo"></i>
+        </div>
+        <div class="section-title">
+          <h2>Telefone fixo</h2>
+          <p><b>Valor do plano atual:</b> R$ 35,00/mês</p>
+        </div>
+      </div>
+
+      <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-telefone-fixo">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+        <!-- Card Telefone Fixo 1 -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+<div class="card">
+          <div class="card-top">
+            <div class="card-tags-row">
+              <div class="tags-group"></div>
+              <div class="context-badge">Telefone fixo</div>
+            </div>
+            <div class="card-title-block">
+              <h3>Ilimitado Mundo</h3>
+            </div>
+          </div>
+          <div class="card-middle">
+            <div class="card-simple-item">
+              <span class="label">Identificador de chamadas</span>
+              <i class="mdn-Icon-identificador-chamadas mdn-Icon--sm"></i>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Conferência a três</span>
+              <i class="mdn-Icon-adicionar-pessoa mdn-Icon--sm"></i>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Bloqueio de ligações</span>
+              <i class="mdn-Icon-bloquear-chamada mdn-Icon--sm"></i>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="price-row">
+              <span class="price-label">Valor mensal</span>
+              <div class="price-value">
+                <div class="amount"><span class="prefix">R$</span><span class="big">65</span><span class="cents">,00</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-yellow">Mudar para este</button>
+              <a href="#" class="card-link">Mais detalhes</a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+      </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-6"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-6"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+    </div>
+    </section>
+   </div>
+  </div>
+
+</main>
+
+<!-- Componente real Mondrian Footer, variante "Public Simple"
+     (https://mondrian.claro.com.br/snippets/vanilla/index.html?path=/story/componentes-web-footer--public-simple) -->
+<footer class="mdn-Footer mdn-Footer--default mdn-Footer--signature mdn-Footer--simple" role="contentinfo">
+  <div class="mdn-Container">
+    <div class="mdn-Footer-content">
+      <div class="mdn-Footer-disclaimer">
+        <ul class="mdn-Footer-list">
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Política de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Portal de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-librasLink" href="#" title="Libras">
+              <i class="mdn-Icon-libras mdn-Icon--sm" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">
+          <strong>© 2026 Claro. Todos os direitos reservados <span class="mdn-Text-dash">- </span>
+            <br>CNPJ: 40.432.544/0001-47 <span class="mdn-Text-dash">- </span>
+            <br>Rua Henri Dunant, 780 - São Paulo - SP
+          </strong>
+        </p>
+      </div>
+      <div class="mdn-Footer-logo">
+        <img class="mdn-Footer-logo-image" src="https://mondrian.claro.com.br/brands/nosvg/assinatura-claro.png" alt="Claro">
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.js"></script>
+<script>
+  // Navegação por categorias: clicar em uma categoria ativa ela (círculo vermelho),
+  // desativa as demais (inclusive o ícone de título da seção correspondente) e rola até a seção.
+  (function(){
+    var categoryItems = Array.prototype.slice.call(document.querySelectorAll('.category-item[data-target]'));
+
+    function setActiveCategory(targetId){
+      categoryItems.forEach(function(item){
+        var isActive = item.getAttribute('data-target') === targetId;
+        item.classList.toggle('active', isActive);
+      });
+      document.querySelectorAll('.section-icon.active').forEach(function(icon){
+        icon.classList.remove('active');
+      });
+      var section = document.getElementById(targetId);
+      if (section) {
+        var icon = section.querySelector('.section-icon');
+        if (icon) icon.classList.add('active');
+      }
+    }
+
+    categoryItems.forEach(function(item){
+      item.addEventListener('click', function(e){
+        e.preventDefault();
+        var targetId = item.getAttribute('data-target');
+        setActiveCategory(targetId);
+        var section = document.getElementById(targetId);
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  })();
+
+  // Carrossel do Banner Promocional: troca de slide via dots + auto-avanço.
+  // Intervalo de 6s segue a prática comum para banners promocionais (tempo
+  // suficiente para ler texto + preço + CTA antes de trocar). Pausa ao passar
+  // o mouse ou ao focar via teclado, conforme WCAG 2.2.2 (conteúdo com
+  // movimento automático deve poder ser pausado).
+  (function(){
+    var slider = document.getElementById('promoBannerSlider');
+    if (!slider) return;
+    var slides = Array.prototype.slice.call(slider.querySelectorAll('.promo-banner-slide'));
+    var dotsWrap = slider.parentElement.querySelector('.promo-dots');
+    var dots = dotsWrap ? Array.prototype.slice.call(dotsWrap.querySelectorAll('.promo-dot')) : [];
+    var AUTOPLAY_MS = 3000;
+    var current = 0;
+    var timer = null;
+
+    function goToSlide(index){
+      current = (index + slides.length) % slides.length;
+      slides.forEach(function(slide, i){
+        slide.classList.toggle('active', i === current);
+      });
+      dots.forEach(function(dot, i){
+        dot.classList.toggle('active', i === current);
+      });
+    }
+
+    function startAutoplay(){
+      stopAutoplay();
+      timer = setInterval(function(){ goToSlide(current + 1); }, AUTOPLAY_MS);
+    }
+
+    function stopAutoplay(){
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    dots.forEach(function(dot){
+      dot.addEventListener('click', function(){
+        var target = parseInt(dot.getAttribute('data-slide-target'), 10);
+        goToSlide(target);
+        startAutoplay(); // reinicia a contagem após interação manual
+      });
+    });
+
+    slider.addEventListener('mouseenter', stopAutoplay);
+    slider.addEventListener('mouseleave', startAutoplay);
+    slider.addEventListener('focusin', stopAutoplay);
+    slider.addEventListener('focusout', startAutoplay);
+    dotsWrap && dotsWrap.addEventListener('mouseenter', stopAutoplay);
+    dotsWrap && dotsWrap.addEventListener('mouseleave', startAutoplay);
+
+    if (slides.length > 1) startAutoplay();
+  })();
+
+  // Material Design Motion: inicializa animações ao carregar
+  (function(){
+    // Marca a página como carregada para ativar transições suaves
+    document.documentElement.setAttribute('data-page-loaded', 'true');
+
+    // Valida que as animações estão funcionando corretamente
+    var cards = document.querySelectorAll('.card');
+    var categoryItems = document.querySelectorAll('.category-item');
+
+    console.log('Motion Design Animations loaded:');
+    console.log('- Cards with animations:', cards.length);
+    console.log('- Category items with animations:', categoryItems.length);
+    console.log('- Stagger intervals: 60ms for cards, 40ms for categories');
+  })();
+</script>
+</body>
+</html>

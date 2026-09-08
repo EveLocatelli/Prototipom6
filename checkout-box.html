@@ -1,0 +1,2431 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Box · M6 (Piloto)</title>
+
+<!-- Mondrian via CDN -->
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/tokens/claro-tokens-3.0.0.custom-properties.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/icons/mondrian-icons-latest.css">
+
+<style>
+  :root{
+    --red-dark:#b41e13;
+    --red:#da291c;
+    --yellow:#ffc722;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --green-bg:#ddf9ed;
+    --green-text:#006b4f;
+    --gray-tertiary:#dbdbdb;
+    --bg-page:#f8f8f8;
+    --red-lightest:#ffe3e3;
+  }
+
+  /* Breakpoints responsivos */
+  /* Mobile: 360px (Figma)
+     Desktop: 1440px (Figma) */
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  body{
+    margin:0;
+    font-family: 'Roboto', sans-serif;
+    background:var(--bg-page);
+    color:var(--ink);
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Topbar ===== */
+  .topbar-inner{
+    width:100%;
+    max-width:1440px;
+    margin:0 auto;
+    padding:0 80px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar-utility{
+    background:var(--red-dark);
+    height:46px;
+    display:flex;
+  }
+  .topbar-utility .topbar-inner{height:100%;}
+  .topbar-location{
+    display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;
+  }
+  .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-a11y{display:flex;align-items:center;gap:16px;}
+  .topbar-a11y i{font-size:16px;line-height:1;}
+
+  .topbar-brand{
+    background:var(--red);
+    height:70px;
+    display:flex;
+  }
+  .topbar-brand .topbar-inner{height:100%;}
+  .brand-logo img{height:38px;display:block;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .topbar-actions i{font-size:24px;line-height:1;}
+  .topbar-exit{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+
+  /* ===== Content wrapper ===== */
+  .content{
+    max-width:1440px;
+    margin:0 auto;
+    padding:48px 80px 0;
+  }
+
+  /* Breadcrumb */
+  .mdn-Breadcrumb{margin-bottom:48px;}
+
+  /* ===== Checkout Layout (two-column desktop, single-column mobile) ===== */
+  .checkout-container{
+    display:flex;
+    gap:48px;
+    margin-top:48px;
+    margin-bottom:48px;
+  }
+  .checkout-left{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .checkout-right{
+    width:480px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ===== Team Components (customizados com tokens Mondrian) ===== */
+
+  /* Detalhes Container (expandível) */
+  .detalhes-container{
+    min-width:0;
+    border-radius:12px;
+  }
+  .detalhes-header{
+    display:flex;
+    align-items:center;
+    gap:24px;
+    padding:24px;
+    background:#fff;
+    border-radius:12px;
+    cursor:pointer;
+    user-select:none;
+    transition:box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+  /* @media (hover:hover) evita que o box-shadow fique "grudado" em telas
+     touch: sem mouse pra sair do elemento, :hover normal nunca desliga
+     depois do tap, e a sombra vira uma linha cinza perene sob o header. */
+  @media (hover:hover){
+    .detalhes-header:hover{box-shadow:0 8px 16px rgba(0, 0, 0, 0.12);}
+  }
+  .detalhes-header.open{
+    border-radius:12px 12px 0 0;
+  }
+  .detalhes-text{
+    flex:1;
+    min-width:0;
+    font-size:16px;
+    font-weight:500;
+    color:var(--ink);
+    margin:0;
+  }
+  .detalhes-icon{
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    color:var(--ink);
+    transition:transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+  }
+  .detalhes-header.open .detalhes-icon{
+    transform:rotate(180deg);
+  }
+  .detalhes-content{display:none;}
+  .detalhes-content.open{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+
+  /* Descrição do produto + características */
+  .detalhes-description{
+    background:#fff;
+    padding:0 16px 34px;
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+  }
+  .detalhes-heading{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .detalhes-heading-label{
+    font-size:12px;
+    font-weight:400;
+    color:var(--gray-dark);
+    margin:0;
+  }
+  .detalhes-heading-title{
+    font-size:20px;
+    font-weight:700;
+    font-family:'AMX', sans-serif;
+    color:var(--ink);
+    margin:0;
+  }
+  .detalhes-body{
+    font-size:16px;
+    font-weight:400;
+    color:var(--gray-dark);
+    line-height:1.3;
+  }
+  .detalhes-body p{margin:0 0 16px;}
+  .detalhes-body p:last-child{margin-bottom:0;}
+  .detalhes-body strong{font-weight:700;}
+
+  .detalhes-features{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .detalhes-feature{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .detalhes-feature-icon{
+    width:48px;
+    height:48px;
+    flex-shrink:0;
+    background:var(--red-lightest);
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .detalhes-feature-icon i{
+    font-size:32px;
+    line-height:1;
+    color:var(--red);
+  }
+  .detalhes-feature-text{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .detalhes-feature-title{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0;
+  }
+  .detalhes-feature-desc{
+    font-size:14px;
+    font-weight:400;
+    color:var(--gray-dark);
+    margin:0;
+  }
+
+  /* ===== Grade de canais (mesmo componente de detalhes-box.html) ===== */
+  .detalhes-grade{background:var(--bg-page);padding:34px 16px;}
+  .pdp-grade-card{
+    background:#fff;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+  }
+  .pdp-grade-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:0;
+    height:24px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    width:100%;
+    transition:opacity 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  @media (hover:hover){
+    .pdp-grade-row:hover{opacity:0.72;}
+  }
+  .pdp-grade-row-text{font-size:16px;font-weight:500;color:var(--ink);}
+  .pdp-grade-row i{font-size:24px;line-height:1;color:var(--ink);transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .pdp-grade-row.open i{transform:rotate(180deg);}
+
+  /* Busca da grade (usa .mdn-Input Mondrian real, só sobrescreve o necessário) —
+     ver nota em detalhes-box.html: a classe Mondrian .mdn-Input-action--left só
+     posiciona/dimensiona o botão, não centraliza o ícone dentro dele. */
+  .grade-search.mdn-Input--actionLeft{min-width:0;}
+  .grade-search .mdn-Input-action--left,
+  .grade-search [data-mdn-action="clear-field"]{display:flex;align-items:center;justify-content:center;}
+
+  .grade-accordion{
+    display:flex;flex-direction:column;width:100%;
+    border:1px solid var(--gray-line);border-radius:12px;overflow:hidden;
+  }
+  .grade-category + .grade-category{border-top:1px solid var(--gray-line);}
+  .grade-category-header{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    width:100%;padding:24px;background:#fff;border:none;cursor:pointer;text-align:left;
+  }
+  .grade-category-name{font-size:16px;font-weight:500;color:var(--ink);}
+  .grade-category-icon{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .grade-category.open .grade-category-icon{transform:rotate(180deg);}
+  .grade-category-content{
+    display:none;grid-template-columns:repeat(2,1fr);gap:16px 8px;
+    padding:0 16px 16px;background:#fff;
+  }
+  .grade-category.open .grade-category-content{display:grid;}
+  @media (min-width:700px){
+    .grade-category-content{grid-template-columns:repeat(auto-fill, minmax(180px,1fr));}
+  }
+  .grade-channel{display:flex;align-items:center;gap:12px;min-width:0;}
+  .grade-channel[hidden]{display:none;}
+  .grade-channel-logo{
+    width:40px;height:40px;flex-shrink:0;border-radius:8px;border:1px solid var(--gray-line);
+    background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .grade-channel-logo img{width:100%;height:100%;object-fit:contain;padding:6px;}
+  .grade-channel-logo--fallback{background:var(--red-lightest);color:var(--red);font-size:12px;font-weight:700;}
+  .grade-channel-name{font-size:14px;font-weight:400;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .grade-empty{font-size:16px;color:var(--gray-dark);margin:0;text-align:center;padding:24px 0;}
+
+  /* "Incluso neste plano" - carrossel de streamings */
+  .detalhes-plan{
+    background:#fff;
+    padding:34px 16px;
+  }
+  .detalhes-plan-inner{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    width:100%;
+    min-width:0;
+  }
+  .detalhes-plan-subtitle{
+    font-size:16px;
+    font-weight:400;
+    color:var(--ink);
+    margin:0;
+  }
+  .streaming-carousel{
+    display:flex;
+    gap:8px;
+    min-width:0;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+    margin:0 -16px;
+    padding:0 16px;
+    cursor:grab;
+    user-select:none;
+    /* Sem isso, scroll-snap-align:start no primeiro card ignora o padding e
+       alinha a borda do card com a borda do viewport, comendo o respiro
+       esquerdo que devia bater com o título "Incluso neste plano". */
+    scroll-padding-left:16px;
+  }
+  .streaming-carousel.dragging,
+  .services-carousel.dragging{
+    cursor:grabbing;
+    scroll-snap-type:none;
+  }
+  .streaming-carousel.dragging *,
+  .services-carousel.dragging *{
+    pointer-events:none;
+  }
+  .streaming-carousel::-webkit-scrollbar{display:none;}
+  .streaming-card{
+    position:relative;
+    flex:0 0 auto;
+    width:260px;
+    height:340px;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid rgba(0,0,0,0.16);
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:24px;
+    scroll-snap-align:start;
+  }
+  /* Globoplay: no Figma esse card tem um gradiente escuro próprio por cima da
+     imagem (rgba(0,0,0,0.55) no topo até quase preto a 82%) — os outros cards
+     do carrossel não têm esse overlay, a imagem de fundo deles já vem escura. */
+  .streaming-card--overlay::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, #000 82%, #000 100%);
+    pointer-events:none;
+  }
+  .streaming-card-logo{width:64px;height:64px;flex-shrink:0;position:relative;z-index:1;}
+  .streaming-card-logo img{width:100%;height:100%;display:block;}
+  .streaming-card-text{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1;}
+  .streaming-card-title{
+    font-size:20px;
+    font-weight:700;
+    font-family:'AMX', sans-serif;
+    color:#fff;
+    margin:0;
+  }
+  .streaming-card-desc{
+    font-size:16px;
+    font-weight:400;
+    color:#fff;
+    margin:0;
+  }
+
+  /* "Serviços digitais" - carrossel de cards */
+  .detalhes-services{
+    background:var(--bg-page);
+    padding:24px;
+    border-radius:0 0 12px 12px;
+  }
+  .detalhes-services-inner{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    min-width:0;
+  }
+  .detalhes-services-subtitle{
+    font-size:16px;
+    font-weight:400;
+    color:var(--gray-dark);
+    margin:0;
+  }
+  .services-carousel{
+    display:flex;
+    gap:8px;
+    min-width:0;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+    cursor:grab;
+    user-select:none;
+  }
+  .services-carousel::-webkit-scrollbar{display:none;}
+  .service-card{
+    flex:0 0 auto;
+    width:260px;
+    min-height:250px;
+    background:#fff;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    scroll-snap-align:start;
+  }
+  .service-card-header{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .service-card-icon{
+    width:32px;
+    height:32px;
+    flex-shrink:0;
+  }
+  .service-card-icon img{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .service-card-name{
+    font-size:16px;
+    font-weight:500;
+    color:var(--ink);
+    margin:0;
+    white-space:nowrap;
+  }
+  .service-card-desc{
+    padding-left:40px;
+    font-size:16px;
+    font-weight:400;
+    color:var(--ink);
+    margin:8px 0 0;
+  }
+
+  .detalhes-swiper-nav{
+    display:flex;
+    gap:16px;
+    align-self:center;
+  }
+  .swiper-arrow{
+    width:48px;
+    height:48px;
+    flex-shrink:0;
+    border:none;
+    border-radius:12px;
+    background:var(--red);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:opacity 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .swiper-arrow i{font-size:20px;color:#fff;line-height:1;}
+  .swiper-arrow:disabled{opacity:0.32;cursor:default;}
+  .swiper-arrow:active:not(:disabled){transform:scale(0.95);}
+
+
+  /* Container Agendamento */
+  .agendamento-container{
+    background:#fff;
+    border-radius:12px;
+    padding:32px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+  }
+  .agendamento-title{
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 8px;
+  }
+  .agendamento-subtitle{
+    font-size:16px;
+    color:var(--gray-dark);
+    margin:0;
+  }
+  .agendamento-section{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .agendamento-label{
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+    font-size:16px;
+    font-weight:700;
+    margin:0;
+  }
+  .agendamento-label i{
+    font-size:24px;
+    line-height:1;
+  }
+  .agendamento-value{
+    font-size:16px;
+    color:var(--ink);
+    margin:0;
+  }
+
+  /* Termos Container (expandível) */
+  .termos-container{
+    border-radius:12px;
+  }
+  .termos-header{
+    display:flex;
+    align-items:center;
+    gap:24px;
+    padding:24px;
+    background:#fff;
+    border-radius:12px;
+    cursor:pointer;
+    user-select:none;
+    transition:box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+  @media (hover:hover){
+    .termos-header:hover{box-shadow:0 8px 16px rgba(0, 0, 0, 0.12);}
+  }
+  .termos-header.open{
+    border-radius:12px 12px 0 0;
+  }
+  .termos-header-text{
+    display:flex;
+    flex:1;
+    min-width:0;
+    align-items:center;
+    gap:16px;
+  }
+  .termos-icon-wrapper{
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    color:var(--ink);
+    line-height:1;
+  }
+  .termos-text{
+    flex:1;
+    font-size:16px;
+    font-weight:500;
+    color:var(--ink);
+    margin:0;
+  }
+  .termos-toggle-icon{
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    color:var(--ink);
+    line-height:1;
+    transition:transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+  }
+  .termos-header.open .termos-toggle-icon{
+    transform:rotate(180deg);
+  }
+  .termos-content{
+    display:none;
+    padding:24px;
+    background:#fff;
+    border-radius:0 0 12px 12px;
+  }
+  .termos-content.open{display:flex;flex-direction:column;gap:8px;}
+
+  .termos-item{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:24px;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    background:#fff;
+  }
+  .termos-item-title{
+    flex:1;
+    min-width:0;
+    font-size:16px;
+    font-weight:400;
+    color:var(--ink);
+    margin:0;
+  }
+  .termos-item-icon{
+    width:32px;
+    height:32px;
+    flex-shrink:0;
+    border:none;
+    border-radius:50%;
+    background:var(--red);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    padding:0;
+    transition:transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .termos-item-icon:active{transform:scale(0.9);}
+  .termos-item-icon i{
+    font-size:16px;
+    line-height:1;
+    color:#fff;
+  }
+
+  /* Order Summary (sidebar desktop, full-width mobile) */
+  .order-summary{
+    background:#fff;
+    border-radius:24px;
+    padding:32px 16px 16px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .order-summary-title{
+    font-size:20px;
+    font-weight:700;
+    font-family:'AMX', sans-serif;
+    margin:0;
+  }
+
+  /* Action Card (produto adicionado) */
+  .action-card{
+    width:100%;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    background:#fff;
+    align-items:flex-start;
+  }
+  .action-card-tag{
+    background:var(--green-bg);
+    border:1px solid var(--green-bg);
+    border-radius:4px;
+    padding:4px 8px;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:12px;
+    font-weight:500;
+    color:var(--green-text);
+    width:fit-content;
+  }
+  .action-card-product{
+    display:flex;
+    align-items:center;
+    gap:24px;
+    width:100%;
+    align-self:stretch;
+  }
+  .action-card-product-name{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:1;
+    min-width:0;
+  }
+  .action-card-icon{
+    width:32px;
+    height:32px;
+    padding:7px;
+    border:1px solid var(--gray-line);
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    background:#fff;
+  }
+  .action-card-icon i{
+    font-size:18px;
+    line-height:1;
+  }
+  .action-card-name{
+    flex:1;
+    font-size:20px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0;
+  }
+  .action-card-delete{
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+    cursor:pointer;
+    transition:transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .action-card-delete:active{transform:scale(0.9);}
+
+  .action-card-divider{
+    width:100%;
+    height:1px;
+    background:var(--gray-line);
+    align-self:stretch;
+  }
+
+  .action-card-price-label{
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0;
+  }
+  .action-card-price{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0;
+    width:fit-content;
+    max-width:200px;
+  }
+  .action-card-price-inner{
+    display:flex;
+    align-items:flex-end;
+    gap:4px;
+  }
+  .price-prefix{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .price-amount{
+    font-size:24px;
+    font-weight:700;
+    font-family:'AMX';
+    color:var(--ink);
+  }
+  .price-suffix{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+  }
+
+  .action-card-link{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    width:100%;
+    align-self:stretch;
+    font-size:16px;
+    font-weight:400;
+    color:var(--red);
+    text-decoration:none;
+    margin:0;
+    cursor:pointer;
+    transition:opacity 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+  .action-card-link:active{opacity:0.7;}
+  .action-card-link i{
+    font-size:16px;
+    line-height:1;
+    color:var(--red);
+  }
+
+  /* Action Card - Item(ns) adicional(is) selecionado(s) */
+  .action-card-selected-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    width:100%;
+  }
+  .action-card-selected-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:100%;
+  }
+  .action-card-selected-icon{
+    width:32px;
+    height:32px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .action-card-selected-icon img{width:100%;height:100%;display:block;}
+  .action-card-selected-icon.boxed{
+    border:1px solid var(--gray-line);
+    border-radius:16px;
+    background:#fff;
+    padding:7px;
+  }
+  .action-card-selected-icon.boxed img{width:18px;height:18px;}
+  .action-card-selected-text{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    font-size:14px;
+  }
+  .action-card-selected-name{font-weight:500;margin:0;color:var(--ink);}
+  .action-card-selected-price{font-weight:400;margin:0;color:var(--ink);}
+  .action-card-selected-delete{
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+    cursor:pointer;
+    border:none;
+    background:none;
+    padding:0;
+    transition:transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .action-card-selected-delete:active{transform:scale(0.9);}
+  .action-card-selected-delete img{width:100%;height:100%;display:block;}
+
+  /* Action Card - Toggle (Incluir/Ocultar adicionais) */
+  .action-card-toggle-icon{transition:transform 0.2s cubic-bezier(0.2, 0, 0, 1);}
+  .action-card-link.open .action-card-toggle-icon{transform:rotate(180deg);}
+
+  /* Action Card - Lista de adicionais (expandida) */
+  .action-card-addlist{
+    background:var(--bg-page);
+    border-radius:12px;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    width:100%;
+  }
+  .action-card-addlist-items{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+  }
+  .action-card-addlist-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    padding:8px 0;
+  }
+  .action-card-addlist-item:first-child{padding-top:0;}
+  .action-card-addlist-item:not(:last-child){
+    border-bottom:1px solid var(--gray-line);
+  }
+  .action-card-addlist-item-left{
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .action-card-addlist-icon{
+    width:32px;
+    height:32px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .action-card-addlist-icon img{width:100%;height:100%;display:block;}
+  .action-card-addlist-icon.boxed{
+    border:1px solid var(--gray-line);
+    border-radius:16px;
+    background:#fff;
+    padding:7px;
+  }
+  .action-card-addlist-icon.boxed img{width:18px;height:18px;}
+  .action-card-addlist-text{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    font-size:14px;
+  }
+  .action-card-addlist-name{font-weight:500;margin:0;color:var(--ink);}
+  .action-card-addlist-price{font-weight:400;margin:0;color:var(--ink);}
+
+  .btn-add{
+    background:var(--yellow);
+    border:none;
+    border-radius:500px;
+    height:28px;
+    padding:8px 12px;
+    font-size:12px;
+    font-weight:500;
+    color:var(--ink);
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+    transition:filter 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .btn-add:hover{filter:brightness(0.95);}
+  .btn-add:active{transform:scale(0.95);}
+
+  .action-card-vermais{
+    text-align:center;
+    font-size:16px;
+    font-weight:400;
+    color:var(--red);
+    cursor:pointer;
+    width:100%;
+  }
+  .action-card-vermais:hover{text-decoration:underline;}
+
+
+  /* Order Summary Details */
+  .order-details{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    font-size:14px;
+  }
+  .order-detail-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .order-detail-label{
+    font-weight:700;
+    color:var(--ink);
+  }
+  .order-detail-value{
+    font-weight:400;
+    text-align:right;
+  }
+
+  .order-divider{
+    height:1px;
+    background:var(--gray-line);
+  }
+
+  .order-total{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .order-total-label{
+    font-size:12px;
+    font-weight:700;
+    color:var(--gray-dark);
+    margin:0;
+  }
+  .order-total-value{
+    display:flex;
+    align-items:flex-end;
+    gap:4px;
+  }
+  .total-prefix{
+    font-size:16px;
+    font-weight:700;
+  }
+  .total-amount{
+    font-size:36px;
+    font-weight:700;
+    font-family:'AMX';
+    line-height:1;
+  }
+  .total-suffix{
+    font-size:16px;
+    font-weight:700;
+  }
+  .order-adjusted{
+    font-size:12px;
+    font-weight:400;
+    color:var(--gray-dark);
+    margin:0;
+  }
+
+  /* Button Sale (conclusão) */
+  .btn-sale{
+    background:var(--yellow);
+    border:none;
+    border-radius:500px;
+    padding:16px 32px;
+    height:48px;
+    font-size:16px;
+    font-weight:500;
+    color:var(--ink);
+    cursor:pointer;
+    width:100%;
+    transition:filter 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .btn-sale:hover{filter:brightness(0.95);}
+  .btn-sale:active{transform:scale(0.98);}
+
+  /* Sticky Footer / Miniatura Carrinho (mobile) — dois estados: Default e Expanded */
+  .checkout-footer{
+    display:none;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:var(--ink);
+    border-radius:12px 12px 0 0;
+    padding:12px 16px;
+    gap:16px;
+    flex-direction:column;
+    z-index:100;
+  }
+  .footer-total-row{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    width:100%;
+  }
+  .checkout-footer-toggle{
+    width:24px;
+    height:24px;
+    flex-shrink:0;
+    border:none;
+    background:none;
+    padding:0;
+    color:#fff;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .checkout-footer-toggle:active{transform:scale(0.9);}
+  .checkout-footer-toggle i{font-size:24px;line-height:1;}
+  .footer-total-text{flex:1;min-width:0;}
+  .footer-cart-text{
+    color:#fff;
+    font-size:16px;
+    font-weight:400;
+    margin:0;
+  }
+  .footer-price{
+    color:#fff;
+    display:flex;
+    align-items:baseline;
+    gap:2px;
+    margin:4px 0 0;
+  }
+  .footer-price-amount{
+    font-size:24px;
+    font-weight:700;
+    font-family:'AMX';
+  }
+  .footer-price-suffix{
+    font-size:16px;
+    font-weight:700;
+  }
+  .footer-adjusted{
+    color:#fff;
+    font-size:12px;
+    font-weight:400;
+    margin:0;
+  }
+
+  /* Conteúdo exclusivo do estado Expanded */
+  .footer-expanded-info{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    width:100%;
+  }
+  .footer-expanded-info[hidden]{display:none;}
+  .footer-disclaimer{
+    color:#fff;
+    font-size:14px;
+    font-weight:400;
+    text-align:center;
+    margin:0;
+  }
+  .footer-taxas{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    width:100%;
+  }
+  .footer-taxa-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+    width:100%;
+    color:#fff;
+    font-size:14px;
+  }
+  .footer-taxa-label{font-weight:700;margin:0;}
+  .footer-taxa-value{font-weight:400;text-align:right;margin:0;}
+  .footer-divider{
+    height:1px;
+    background:var(--gray-line);
+    width:100%;
+  }
+
+  /* Modal de confirmação (remover produto principal do carrinho) */
+  .remove-modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(31,29,29,0.5); /* color/neutral/inverse (--ink) a 50% */
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    z-index:999;
+  }
+  .remove-modal-overlay[hidden]{display:none;}
+  .remove-modal{
+    background:#fff;
+    border-radius:12px;
+    width:400px;
+    max-width:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  .remove-modal-header{
+    display:flex;
+    justify-content:flex-end;
+    padding:16px;
+  }
+  .remove-modal-close{
+    width:32px;
+    height:32px;
+    flex-shrink:0;
+    border:none;
+    background:none;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .remove-modal-close:active{transform:scale(0.9);}
+  .remove-modal-close i{font-size:20px;line-height:1;}
+  .remove-modal-body{
+    padding:4px 16px;
+  }
+  .remove-modal-title{
+    font-size:24px;
+    font-weight:700;
+    font-family:'AMX', sans-serif;
+    color:var(--ink);
+    text-align:center;
+    margin:0;
+  }
+  .remove-modal-footer{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding:16px;
+  }
+  .remove-modal-btn{
+    height:40px;
+    width:100%;
+    border-radius:500px;
+    font-size:16px;
+    font-weight:500;
+    font-family:inherit;
+    cursor:pointer;
+    transition:filter 0.2s cubic-bezier(0.2, 0, 0, 1), background 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .remove-modal-btn:active{transform:scale(0.98);}
+  .remove-modal-btn-primary{
+    background:var(--red);
+    border:1px solid var(--red);
+    color:#fff;
+  }
+  .remove-modal-btn-primary:hover{filter:brightness(0.95);}
+  .remove-modal-btn-secondary{
+    background:#fff;
+    border:1px solid var(--red);
+    color:var(--red);
+  }
+  .remove-modal-btn-secondary:hover{background:#fff5f5;}
+
+  /* ===== MATERIAL DESIGN MOTION ===== */
+  /* Easing curves do Material Design 3 (mesmas de vitrine.html) */
+  /* standard: cubic-bezier(0.2, 0, 0, 1) - movimento padrão */
+  /* emphasized: cubic-bezier(0.05, 0.7, 0.1, 1) - entrada com ênfase */
+  /* decelerated: cubic-bezier(0, 0, 0.2, 1) - saída desacelerada */
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Fade "plano" (sem translateY) — usado onde o conteúdo já nasce colado
+     no elemento acima dele (ex.: conteúdo do accordion logo abaixo do header).
+     Com translateY, o conteúdo some 8px abaixo da posição final por um
+     instante, criando uma "divisão"/vão visível entre o header e o conteúdo. */
+  @keyframes content-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .checkout-container {
+    animation: fade-in 0.5s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  /* Entrada com stagger dos blocos da coluna esquerda + resumo do pedido
+     (não inclui o .mdn-Alert, que é componente Mondrian nativo) */
+  .order-summary,
+  .detalhes-container,
+  .agendamento-container,
+  .termos-container {
+    opacity: 0;
+    animation: slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
+  }
+  .order-summary-mobile { animation-delay: 0ms; }
+  .detalhes-container { animation-delay: 60ms; }
+  .agendamento-container { animation-delay: 120ms; }
+  .termos-container { animation-delay: 180ms; }
+  .order-summary-desktop { animation-delay: 60ms; }
+
+  /* Stagger dos cards dentro dos carrosséis de Detalhes (streaming / serviços) */
+  .streaming-card,
+  .service-card {
+    opacity: 0;
+    animation: slide-up 0.35s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
+  }
+  .streaming-carousel .streaming-card:nth-child(1) { animation-delay: 0ms; }
+  .streaming-carousel .streaming-card:nth-child(2) { animation-delay: 60ms; }
+  .streaming-carousel .streaming-card:nth-child(3) { animation-delay: 120ms; }
+  .streaming-carousel .streaming-card:nth-child(4) { animation-delay: 180ms; }
+  .streaming-carousel .streaming-card:nth-child(5) { animation-delay: 240ms; }
+  .streaming-carousel .streaming-card:nth-child(6) { animation-delay: 300ms; }
+  .services-carousel .service-card:nth-child(1) { animation-delay: 0ms; }
+  .services-carousel .service-card:nth-child(2) { animation-delay: 60ms; }
+  .services-carousel .service-card:nth-child(3) { animation-delay: 120ms; }
+  .services-carousel .service-card:nth-child(4) { animation-delay: 180ms; }
+  .services-carousel .service-card:nth-child(5) { animation-delay: 240ms; }
+  .services-carousel .service-card:nth-child(6) { animation-delay: 300ms; }
+
+  /* Reveal do conteúdo expansível (accordions Detalhes/Termos)
+     Fade plano (sem translateY) para não criar um vão entre o header e o
+     conteúdo — o painel já nasce colado, só a opacidade anima. */
+  .detalhes-content.open,
+  .termos-content.open {
+    animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+  /* Grade de canais: mesmo fade plano acima, tanto pro reveal da busca+lista
+     de categorias (Ver grade completa) quanto pra cada categoria abrindo
+     individualmente. */
+  .grade-search:not([hidden]),
+  #gradeAccordion:not([hidden]) {
+    animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+  .grade-category.open .grade-category-content {
+    animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  /* Reveal da lista de adicionais e dos itens já selecionados do Action Card
+     (só no container: os itens são recriados via innerHTML a cada render()
+     do Action Card, então animar cada item individualmente pisca a lista
+     inteira a cada clique em "Adicionar"/"Ver mais") */
+  .action-card-addlist:not([hidden]),
+  .action-card-selected-list:not([hidden]) {
+    animation: fade-in 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  /* Reveal do estado expandido do carrinho fixo mobile */
+  .footer-expanded-info:not([hidden]) {
+    animation: fade-in 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  /* Entrada do modal de remoção (padrão MD3 de diálogo: overlay fade + card scale) */
+  .remove-modal-overlay:not([hidden]) {
+    animation: fade-in 0.2s cubic-bezier(0, 0, 0.2, 1);
+  }
+  .remove-modal-overlay:not([hidden]) .remove-modal {
+    animation: scale-in 0.25s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+
+  /* Order Summary: hide mobile on desktop, hide desktop on mobile */
+  .order-summary-mobile{display:block;}
+  .order-summary-desktop{display:none;}
+
+  /* ===== Media Queries ===== */
+  @media (max-width: 1300px){
+    .topbar-inner{padding:0 24px;}
+    .content{padding:32px 24px 0;}
+  }
+
+  /* Mobile: 599px breakpoint (Figma mobile: 360px) */
+  @media (max-width: 599px){
+    .topbar-inner{padding:0 16px;}
+    .content{padding:24px 16px 0;}
+
+    .checkout-container{
+      flex-direction:column;
+      gap:32px;
+      margin-bottom:200px; /* space for sticky footer */
+    }
+    .checkout-right{
+      width:100%;
+    }
+
+    /* Sticky footer mobile */
+    .checkout-footer{
+      display:flex;
+    }
+
+    .agendamento-container{
+      padding:32px 16px;
+    }
+
+    /* Mobile Order Summary */
+    .order-summary{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      padding:32px 16px 16px;
+      width:100%;
+      align-self:stretch;
+      background:#fff;
+      border-radius:24px;
+    }
+
+    .order-summary-title{
+      margin-bottom:32px;
+      align-self:stretch;
+    }
+
+    /* Hide desktop summary on mobile */
+    .order-summary-desktop{display:none;}
+    .order-summary-mobile{display:block;}
+  }
+
+  /* Desktop: show desktop summary, hide mobile */
+  @media (min-width: 1024px){
+    .order-summary-desktop{
+      display:flex;
+      flex-direction:column;
+      gap:32px;
+    }
+    .order-summary-mobile{display:none;}
+    .checkout-footer{display:none;}
+
+    /* Desktop Order Summary reset */
+    .order-summary{
+      width:auto;
+      padding:32px 16px 16px 16px;
+      gap:24px;
+      background:#fff;
+      border-radius:24px;
+    }
+
+    .order-summary-title{
+      margin-bottom:0;
+      align-self:auto;
+    }
+
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar-utility">
+    <div class="topbar-inner">
+      <div class="topbar-location">
+        <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
+        <span>Nome da Rua</span>
+        <i class="mdn-Icon-baixo mdn-Icon--sm mdn-Icon--inverse"></i>
+      </div>
+      <div class="topbar-a11y">
+        <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
+        <i class="mdn-Icon-libras mdn-Icon--sm mdn-Icon--inverse" title="Libras"></i>
+        <i class="mdn-Icon-alto-contraste mdn-Icon--sm mdn-Icon--inverse" title="Contraste"></i>
+        <i class="mdn-Icon-tamanho-diminuir mdn-Icon--sm mdn-Icon--inverse" title="Diminuir fonte"></i>
+        <i class="mdn-Icon-tamanho-aumentar mdn-Icon--sm mdn-Icon--inverse" title="Aumentar fonte"></i>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-brand">
+    <div class="topbar-inner">
+      <a href="vitrine.html" class="brand-logo">
+        <img src="https://www.figma.com/api/mcp/asset/d2f7d440-f89f-4a74-90ea-4a697a03396d.svg" alt="MinhaClaro">
+      </a>
+      <div class="topbar-actions">
+        <i class="mdn-Icon-notificacao mdn-Icon--md mdn-Icon--inverse" title="Notificações"></i>
+        <a href="#" class="topbar-exit">
+          <i class="mdn-Icon-sair mdn-Icon--md mdn-Icon--inverse"></i>
+          Sair
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="content">
+
+  <!-- Breadcrumb: volta para a página anterior do histórico (pode ser a
+       vitrine ou a tela de Detalhes, dependendo de por onde o usuário veio) -->
+  <nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile">
+    <a class="mdn-Breadcrumb-link" href="vitrine.html" onclick="event.preventDefault(); history.back();">
+      <i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md" aria-hidden="true"></i>Voltar
+    </a>
+  </nav>
+
+  <!-- Checkout Layout -->
+  <div class="checkout-container">
+    <!-- Left Column -->
+    <div class="checkout-left">
+
+      <!-- Order Summary Mobile (simples - apenas card) -->
+      <div class="order-summary order-summary-mobile">
+        <h2 class="order-summary-title">Resumo do seu pedido</h2>
+
+        <!-- Action Card -->
+        <div class="action-card" data-action-card>
+          <span class="action-card-tag">Novo plano adicionado</span>
+
+          <div class="action-card-product">
+            <div class="action-card-product-name">
+              <div class="action-card-icon">
+                <i class="mdn-Icon-tv"></i>
+              </div>
+              <p class="action-card-name">Claro tv+ Box</p>
+            </div>
+            <img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal()">
+          </div>
+
+          <div class="action-card-selected-list" data-role="selected-list" hidden></div>
+
+          <div class="action-card-divider"></div>
+
+          <div class="action-card-price">
+            <p class="action-card-price-label">Valor do plano</p>
+            <div class="action-card-price-inner">
+              <span class="price-prefix">R$</span>
+              <span class="price-amount">139,90</span>
+              <span class="price-suffix">/mês</span>
+            </div>
+          </div>
+
+          <div class="action-card-link" data-role="toggle">
+            <span data-role="toggle-text">Incluir adicionais</span>
+            <i class="mdn-Icon-baixo mdn-Icon--md action-card-toggle-icon" data-role="toggle-icon"></i>
+          </div>
+
+          <div class="action-card-addlist" data-role="addlist" hidden>
+            <div class="action-card-addlist-items" data-role="addlist-items"></div>
+            <div class="action-card-vermais" data-role="vermais" hidden><span>Ver mais</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detalhes Container (expandível) -->
+      <div class="detalhes-container">
+        <div class="detalhes-header" onclick="toggleDetalhes(this)">
+          <p class="detalhes-text">Ver detalhes do produto</p>
+          <button type="button" class="detalhes-icon" aria-label="Expandir">
+            <i class="mdn-Icon-baixo mdn-Icon--md"></i>
+          </button>
+        </div>
+        <div class="detalhes-content">
+
+          <div class="detalhes-description">
+            <div class="detalhes-heading">
+              <p class="detalhes-heading-label">Claro tv+ Box</p>
+              <p class="detalhes-heading-title">Descrição do produto</p>
+            </div>
+            <div class="detalhes-body">
+              <p>A Box transforma qualquer TV com entrada HDMI em uma Smart TV completa e pode ser levada para onde você quiser, desde que haja conexão com a internet. Tenha acesso aos principais streamings, TV ao vivo, gravação de programas e controle por voz com Alexa integrada.</p>
+              <p><strong>O que vem na caixa:</strong><br>Aparelho + fonte de alimentação + cabo HDMI 2.0 + controle remoto.</p>
+              <p><strong>Necessário ter:</strong><br>TV com entrada HDMI<br>Conexão de internet (Wi-Fi ou Cabo) de 10Mbps (mínimo recomendado)</p>
+              <p><strong>Autoinstalação:</strong><br>Instale você mesmo!</p>
+            </div>
+
+            <div class="detalhes-features">
+              <div class="detalhes-feature">
+                <div class="detalhes-feature-icon"><i class="mdn-Icon-video-reuniao"></i></div>
+                <div class="detalhes-feature-text">
+                  <p class="detalhes-feature-title">Mais de 120 canais ao vivo</p>
+                  <p class="detalhes-feature-desc">Filmes, séries, notícias, músicas e muito mais: fique por dentro de tudo que passa no mundo!</p>
+                </div>
+              </div>
+              <div class="detalhes-feature">
+                <div class="detalhes-feature-icon"><i class="mdn-Icon-controle-remoto"></i></div>
+                <div class="detalhes-feature-text">
+                  <p class="detalhes-feature-title">Controle remoto por voz</p>
+                  <p class="detalhes-feature-desc">Busque, troque de canal e dê o play com um comando de voz.</p>
+                </div>
+              </div>
+              <div class="detalhes-feature">
+                <div class="detalhes-feature-icon"><i class="mdn-Icon-computador-celular"></i></div>
+                <div class="detalhes-feature-text">
+                  <p class="detalhes-feature-title">Multitelas</p>
+                  <p class="detalhes-feature-desc">No smartphone, no tablet, na TV ou no computador: assista onde o seu coração mandar.</p>
+                </div>
+              </div>
+              <div class="detalhes-feature">
+                <div class="detalhes-feature-icon"><i class="mdn-Icon-atualizar-play"></i></div>
+                <div class="detalhes-feature-text">
+                  <p class="detalhes-feature-title">Replay TV</p>
+                  <p class="detalhes-feature-desc">Volte a programação em até 7 dias</p>
+                </div>
+              </div>
+              <div class="detalhes-feature">
+                <div class="detalhes-feature-icon"><i class="mdn-Icon-gravador"></i></div>
+                <div class="detalhes-feature-text">
+                  <p class="detalhes-feature-title">Gravação e bloqueio</p>
+                  <p class="detalhes-feature-desc">Grave conteúdos ao vivo para assistir depois e bloqueie canais impróprios para a criançada.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grade de canais (mesmo componente de detalhes-box.html) -->
+          <div class="detalhes-grade">
+            <div class="pdp-grade-card">
+              <div class="detalhes-heading">
+                <p class="detalhes-heading-title">Grade de canais</p>
+                <p class="detalhes-plan-subtitle">São mais de 120 canais para curtir o seu conteúdo favorito.</p>
+              </div>
+
+              <!-- Busca (componente real Mondrian: componentes-web-input--search), só aparece com a grade expandida -->
+              <div class="mdn-Input mdn-Input--actionLeft grade-search" hidden>
+                <button type="button" class="mdn-Input-action mdn-Input-action--left" tabindex="-1">
+                  <em aria-hidden="true" class="mdn-Icon-busca mdn-Icon--md"></em>
+                </button>
+                <input type="text" id="gradeSearchInput" class="mdn-Input-field" data-mdn-type="search" autocomplete="off" value="">
+                <label for="gradeSearchInput" class="mdn-Input-label">Busque no plano</label>
+                <button type="button" class="mdn-Input-action" data-mdn-action="clear-field" style="display:none" onclick="clearGradeSearch()">
+                  <em aria-hidden="true" class="mdn-Icon-fechar mdn-Icon--md"></em>
+                </button>
+              </div>
+
+              <!-- Acordeões por categoria, preenchidos via JS a partir de CHANNELS_DATA -->
+              <div class="grade-accordion" id="gradeAccordion" hidden></div>
+              <p class="grade-empty" id="gradeEmpty" hidden>Nenhum canal encontrado.</p>
+
+              <button type="button" class="pdp-grade-row" id="gradeToggleBtn" onclick="toggleGrade()">
+                <span class="pdp-grade-row-text" id="gradeToggleText">Ver grade completa</span>
+                <i class="mdn-Icon-baixo" id="gradeToggleIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="detalhes-plan">
+            <div class="detalhes-plan-inner">
+              <div class="detalhes-heading">
+                <p class="detalhes-heading-title">Incluso neste plano</p>
+                <p class="detalhes-plan-subtitle">O melhor do entretenimento escolhido especialmente para você e sua família.</p>
+              </div>
+              <div class="streaming-carousel" data-role="streaming-carousel">
+                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-disney.png')">
+                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+"></div>
+                  <div class="streaming-card-text">
+                    <p class="streaming-card-title">Disney +</p>
+                    <p class="streaming-card-desc">Plano padrão com anúncios e 2 usuários simultâneos.</p>
+                  </div>
+                </div>
+                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
+                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime"></div>
+                  <div class="streaming-card-text">
+                    <p class="streaming-card-title">Amazon Prime</p>
+                    <p class="streaming-card-desc">Prime Video com anúncios, Amazon Music, Prime Gaming, Prime Reading e Frete Grátis para milhões de produtos.</p>
+                  </div>
+                </div>
+                <div class="streaming-card streaming-card--overlay" style="background-image:url('assets/detalhes/bg-globoplay.png');background-size:100.13% 146.6%;background-position:center bottom;">
+                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay"></div>
+                  <div class="streaming-card-text">
+                    <p class="streaming-card-title">Globoplay</p>
+                    <p class="streaming-card-desc">Plano Premium: Até 5 telas simultâneas.</p>
+                  </div>
+                </div>
+                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-appletv.png')">
+                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV"></div>
+                  <div class="streaming-card-text">
+                    <p class="streaming-card-title">Apple TV</p>
+                    <p class="streaming-card-desc">Todos os conteúdos estarão disponíveis e 5 usuários simultâneos</p>
+                  </div>
+                </div>
+                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
+                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/netflix.svg" alt="Netflix"></div>
+                  <div class="streaming-card-text">
+                    <p class="streaming-card-title">Netflix</p>
+                    <p class="streaming-card-desc">Plano com Anúncios: Até 2 telas simultâneas e qualidade de imagem full HD.</p>
+                  </div>
+                </div>
+                <div class="streaming-card" style="background-image:url('assets/detalhes/bg-hbomax.png')">
+                  <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/hbo-max.svg" alt="HBO Max"></div>
+                  <div class="streaming-card-text">
+                    <p class="streaming-card-title">HBO Max</p>
+                    <p class="streaming-card-desc">Plano básico com anúncios e 2 usuários simultâneos, Full HD + Canal HBO 2.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="detalhes-swiper-nav">
+                <button type="button" class="swiper-arrow" data-role="streaming-prev" aria-label="Anterior">
+                  <i class="mdn-Icon-esquerda"></i>
+                </button>
+                <button type="button" class="swiper-arrow" data-role="streaming-next" aria-label="Próximo">
+                  <i class="mdn-Icon-direita"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="detalhes-services">
+            <div class="detalhes-services-inner">
+              <div class="detalhes-heading">
+                <p class="detalhes-heading-title">Serviços digitais</p>
+                <p class="detalhes-services-subtitle">Benefícios que só cliente Claro tem</p>
+              </div>
+              <div class="services-carousel" data-role="services-carousel">
+                <div class="service-card">
+                  <div class="service-card-header">
+                    <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/claro-video.svg" alt=""></div>
+                    <p class="service-card-name">Claro video</p>
+                  </div>
+                  <p class="service-card-desc">Milhares de filmes, séries, documentários, shows, infantis e muito mais. Os conteúdos estão disponíveis dentro da plataforma Claro tv+ (clarotvmais.com.br).</p>
+                </div>
+                <div class="service-card">
+                  <div class="service-card-header">
+                    <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/mcafee.svg" alt=""></div>
+                    <p class="service-card-name">Proteção Digital (McAfee)</p>
+                  </div>
+                  <p class="service-card-desc">Antivírus disponível para um dispositivo (computador, celular, leitor de livros digitais ou tablet).</p>
+                </div>
+                <div class="service-card">
+                  <div class="service-card-header">
+                    <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/skeelo.svg" alt=""></div>
+                    <p class="service-card-name">Skeelo Audiobooks</p>
+                  </div>
+                  <p class="service-card-desc">Plataforma digital que reúne os livros mais vendidos em forma de áudio com diversas categorias como: ficção, romance, biografia, autoajuda e outros.</p>
+                </div>
+              </div>
+              <div class="detalhes-swiper-nav">
+                <button type="button" class="swiper-arrow" data-role="services-prev" aria-label="Anterior">
+                  <i class="mdn-Icon-esquerda"></i>
+                </button>
+                <button type="button" class="swiper-arrow" data-role="services-next" aria-label="Próximo">
+                  <i class="mdn-Icon-direita"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Alert (Mondrian: componentes-web-alert--danger-light) -->
+      <div class="mdn-Alert mdn-Alert--danger mdn-Alert--light mdn-is-open" id="alertBox" aria-hidden="false" tabindex="0">
+        <div class="mdn-Alert-content">
+          <div class="mdn-Topic mdn-Topic--horizontal mdn-Topic--sm">
+            <div class="mdn-Text mdn-Text--iconSm">
+              <em aria-hidden="true" class="mdn-Text-icon mdn-Icon mdn-Icon-alerta"></em>
+              <p class="mdn-Text mdn-Text--iconSm">Text message...</p>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="mdn-Alert-close" aria-label="fechar" onclick="closeAlert()">
+          <span class="mdn-Icon mdn-Icon-fechar mdn-Icon--md"></span>
+        </button>
+      </div>
+
+      <!-- Container Agendamento -->
+      <div class="agendamento-container">
+        <div>
+          <h3 class="agendamento-title">Entrega do pedido</h3>
+          <p class="agendamento-subtitle">Confira o prazo de entrega do seu aparelho.</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label">
+            <i class="mdn-Icon-casa"></i>
+            Endereço de entrega
+          </p>
+          <p class="agendamento-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label">
+            <i class="mdn-Icon-calendario"></i>
+            Prazo de entrega
+          </p>
+          <p class="agendamento-value">3 dias úteis</p>
+        </div>
+      </div>
+
+      <!-- Termos Container (expandível) -->
+      <div class="termos-container">
+        <div class="termos-header" onclick="toggleTermos(this)">
+          <div class="termos-header-text">
+            <div class="termos-icon-wrapper">
+              <i class="mdn-Icon-documento mdn-Icon--md"></i>
+            </div>
+            <p class="termos-text">Condições da oferta e termo de adesão</p>
+          </div>
+          <button type="button" class="termos-toggle-icon" aria-label="Expandir">
+            <i class="mdn-Icon-baixo mdn-Icon--md"></i>
+          </button>
+        </div>
+        <div class="termos-content">
+          <div class="termos-item">
+            <p class="termos-item-title">Condições de oferta - TV</p>
+            <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
+              <i class="mdn-Icon-olho"></i>
+            </button>
+          </div>
+          <div class="termos-item">
+            <p class="termos-item-title">Termo de Adesão</p>
+            <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão">
+              <i class="mdn-Icon-olho"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column (Desktop Sidebar) -->
+    <div class="checkout-right">
+      <!-- Order Summary Desktop (completo) -->
+      <div class="order-summary order-summary-desktop">
+        <h2 class="order-summary-title">Resumo do seu pedido</h2>
+
+        <!-- Action Card -->
+        <div class="action-card" data-action-card>
+          <span class="action-card-tag">Novo plano adicionado</span>
+
+          <div class="action-card-product">
+            <div class="action-card-product-name">
+              <div class="action-card-icon">
+                <i class="mdn-Icon-tv"></i>
+              </div>
+              <p class="action-card-name">Claro tv+ Box</p>
+            </div>
+            <img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal()">
+          </div>
+
+          <div class="action-card-selected-list" data-role="selected-list" hidden></div>
+
+          <div class="action-card-divider"></div>
+
+          <div class="action-card-price">
+            <p class="action-card-price-label">Valor do plano</p>
+            <div class="action-card-price-inner">
+              <span class="price-prefix">R$</span>
+              <span class="price-amount">139,90</span>
+              <span class="price-suffix">/mês</span>
+            </div>
+          </div>
+
+          <div class="action-card-link" data-role="toggle">
+            <span data-role="toggle-text">Incluir adicionais</span>
+            <i class="mdn-Icon-baixo mdn-Icon--md action-card-toggle-icon" data-role="toggle-icon"></i>
+          </div>
+
+          <div class="action-card-addlist" data-role="addlist" hidden>
+            <div class="action-card-addlist-items" data-role="addlist-items"></div>
+            <div class="action-card-vermais" data-role="vermais" hidden><span>Ver mais</span></div>
+          </div>
+        </div>
+
+        <p style="font-size:14px;color:var(--gray-dark);text-align:center;margin:0;">
+          Os valores dos produtos adicionados ou alterados no seu carrinho, serão atualizados em sua fatura.
+        </p>
+
+        <div class="order-details">
+          <div class="order-detail-row">
+            <span class="order-detail-label">Fidelidade</span>
+            <span class="order-detail-value">12 meses</span>
+          </div>
+          <div class="order-detail-row">
+            <span class="order-detail-label">Taxa de Adesão</span>
+            <span class="order-detail-value">Grátis</span>
+          </div>
+          <div class="order-detail-row">
+            <span class="order-detail-label">Instalação</span>
+            <span class="order-detail-value">Grátis</span>
+          </div>
+        </div>
+
+        <div class="order-divider"></div>
+
+        <div class="order-total">
+          <p class="order-total-label">Total do seu carrinho</p>
+          <div class="order-total-value">
+            <span class="total-prefix">R$</span>
+            <span class="total-amount">139,90</span>
+            <span class="total-suffix">/mês</span>
+          </div>
+          <p class="order-adjusted">ajustado à sua fatura</p>
+        </div>
+
+        <button type="button" class="btn-sale" onclick="window.location.href='conclusao-box.html'">Concluir pedido</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Sticky Footer / Miniatura Carrinho (Mobile) — Default / Expanded -->
+<div class="checkout-footer">
+  <div class="footer-expanded-info" hidden>
+    <p class="footer-disclaimer">Os valores dos produtos adicionados ou alterados no seu carrinho, serão atualizados em sua fatura.</p>
+    <div class="footer-taxas">
+      <div class="footer-taxa-row">
+        <p class="footer-taxa-label">Fidelidade</p>
+        <p class="footer-taxa-value">12 meses</p>
+      </div>
+      <div class="footer-taxa-row">
+        <p class="footer-taxa-label">Taxa de Adesão</p>
+        <p class="footer-taxa-value">Grátis</p>
+      </div>
+      <div class="footer-taxa-row">
+        <p class="footer-taxa-label">Instalação</p>
+        <p class="footer-taxa-value">Grátis</p>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+  </div>
+
+  <div class="footer-total-row">
+    <button type="button" class="checkout-footer-toggle" onclick="toggleFooter()" aria-label="Expandir">
+      <i class="mdn-Icon-cima" id="footerToggleIcon"></i>
+    </button>
+    <div class="footer-total-text">
+      <p class="footer-cart-text">Total do seu carrinho:</p>
+      <div class="footer-price">
+        <span class="footer-price-amount">R$ 139,90</span>
+        <span class="footer-price-suffix">/ mês</span>
+      </div>
+      <p class="footer-adjusted">ajustado à sua fatura</p>
+    </div>
+  </div>
+
+  <button type="button" class="btn-sale" onclick="window.location.href='conclusao-box.html'">Concluir pedido</button>
+</div>
+
+<!-- Modal: confirmação de remoção do produto principal (Claro tv+ Box) -->
+<div class="remove-modal-overlay" id="removeModalOverlay" hidden>
+  <div class="remove-modal" role="dialog" aria-modal="true" aria-labelledby="removeModalTitle">
+    <div class="remove-modal-header">
+      <button type="button" class="remove-modal-close" aria-label="Fechar" onclick="closeRemoveModal()">
+        <i class="mdn-Icon-fechar"></i>
+      </button>
+    </div>
+    <div class="remove-modal-body">
+      <p class="remove-modal-title" id="removeModalTitle">Tem certeza de que quer remover este produto do carrinho?</p>
+    </div>
+    <div class="remove-modal-footer">
+      <button type="button" class="remove-modal-btn remove-modal-btn-primary" onclick="closeRemoveModal()">Manter no carrinho</button>
+      <button type="button" class="remove-modal-btn remove-modal-btn-secondary" onclick="confirmRemoveProduct()">Remover produto</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Funções de recálculo das setas dos carrosséis registradas por
+  // initCarouselNav, chamadas explicitamente aqui embaixo quando o painel
+  // de detalhes abre (em vez de depender só do ResizeObserver): os
+  // carrosséis nascem com clientWidth/scrollWidth zerados por estarem
+  // dentro do Detalhes Container ainda colapsado (display:none).
+  const carouselNavRefreshers = [];
+
+  // Toggle Detalhes do produto (troca o texto e o ícone)
+  function toggleDetalhes(headerEl) {
+    const contentEl = headerEl.nextElementSibling;
+    const isOpen = contentEl.classList.toggle('open');
+    headerEl.classList.toggle('open', isOpen);
+    headerEl.querySelector('.detalhes-text').textContent = isOpen ? 'Ocultar detalhes' : 'Ver detalhes do produto';
+    if (isOpen) {
+      carouselNavRefreshers.forEach(fn => fn());
+    }
+  }
+
+  // Permite arrastar os carrosséis com o mouse (clicar e segurar), já que
+  // overflow-x:auto só responde nativamente a touch/trackpad e scrollbar.
+  function makeDraggable(track) {
+    if (!track) return;
+    let isDown = false;
+    let moved = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    track.addEventListener('mousedown', (e) => {
+      isDown = true;
+      moved = false;
+      startX = e.pageX;
+      startScrollLeft = track.scrollLeft;
+      // Evita que o navegador inicie uma seleção de texto nativa ao
+      // começar o arrasto em cima de um parágrafo (o que sequestraria o gesto).
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      const dx = e.pageX - startX;
+      if (Math.abs(dx) > 3) {
+        moved = true;
+        track.classList.add('dragging');
+      }
+      track.scrollLeft = startScrollLeft - dx;
+    });
+    window.addEventListener('mouseup', () => {
+      isDown = false;
+      track.classList.remove('dragging');
+    });
+    // Evita que o "solto" do arrasto dispare cliques nos cards/botões internos
+    track.addEventListener('click', (e) => {
+      if (moved) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+  }
+
+  // Navegação dos carrosséis (setas de "Serviços digitais")
+  function initCarouselNav(track, prevBtn, nextBtn) {
+    if (!track) return;
+    // Carrosséis full-bleed (ex: .streaming-carousel, com margem negativa)
+    // nascem com um scrollLeft > 0 "de fábrica", sem o usuário ter rolado
+    // nada — e como o carrossel começa escondido dentro do Detalhes
+    // Container (colapsado), isso só é mensurável quando ele ganha tamanho
+    // real (ver nota do ResizeObserver abaixo), não no load. Por isso
+    // capturamos esse valor a primeira vez que houver clientWidth > 0 e
+    // usamos como baseline do "início", em vez de 0 fixo.
+    let baseline = null;
+    function scrollByCard(dir) {
+      const card = track.querySelector(':scope > *');
+      const amount = card ? card.getBoundingClientRect().width + 8 : 260;
+      track.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+    function updateNav() {
+      if (baseline === null && track.clientWidth > 0) {
+        baseline = track.scrollLeft;
+      }
+      const max = track.scrollWidth - track.clientWidth - 1;
+      if (prevBtn) prevBtn.disabled = track.scrollLeft <= (baseline ?? 0);
+      if (nextBtn) nextBtn.disabled = track.scrollLeft >= max;
+    }
+    if (prevBtn) prevBtn.addEventListener('click', () => scrollByCard(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => scrollByCard(1));
+    track.addEventListener('scroll', updateNav);
+    window.addEventListener('resize', updateNav);
+    // O carrossel fica dentro do Detalhes Container, que começa colapsado
+    // (display:none) — nesse momento scrollWidth/clientWidth são 0 e o
+    // cálculo acima marca tudo como "sem mais itens". O ResizeObserver cobre
+    // qualquer outra mudança de tamanho (ex: resize da janela com o painel já
+    // aberto); a abertura em si é recalculada de forma síncrona e imediata
+    // por toggleDetalhes via carouselNavRefreshers, sem depender do timing
+    // do observer.
+    if (window.ResizeObserver) {
+      new ResizeObserver(updateNav).observe(track);
+    }
+    updateNav();
+    carouselNavRefreshers.push(updateNav);
+  }
+
+  document.querySelectorAll('.streaming-carousel, .services-carousel').forEach(makeDraggable);
+  initCarouselNav(
+    document.querySelector('[data-role="streaming-carousel"]'),
+    document.querySelector('[data-role="streaming-prev"]'),
+    document.querySelector('[data-role="streaming-next"]')
+  );
+  initCarouselNav(
+    document.querySelector('[data-role="services-carousel"]'),
+    document.querySelector('[data-role="services-prev"]'),
+    document.querySelector('[data-role="services-next"]')
+  );
+
+  // ===== Grade de canais (acordeão + busca; mesmo componente de detalhes-box.html) =====
+  // Logos reais buscados em mondrian.claro.com.br/channels; os 2 canais sem
+  // logo no catálogo (TBS HD, Like) caem no fallback de iniciais em texto.
+  const CHANNELS_DATA = [
+    { name: 'Canais abertos HD', items: [
+      { label: 'Globo HD', src: 'https://mondrian.claro.com.br/channels/default/globo.svg' },
+      { label: 'Band HD', src: 'https://mondrian.claro.com.br/channels/default/band.svg' },
+      { label: 'REDE TV! HD', src: 'https://mondrian.claro.com.br/channels/default/redetv!.svg' },
+      { label: 'SBT HD', src: 'https://mondrian.claro.com.br/channels/default/sbt.svg' },
+      { label: 'Cultura HD', src: 'https://mondrian.claro.com.br/channels/default/cultura.svg' },
+      { label: 'RECORD HD', src: 'https://mondrian.claro.com.br/channels/default/record-tv.svg' },
+      { label: 'TV Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/tv-brasil.svg' },
+      { label: 'Gazeta HD', src: 'https://mondrian.claro.com.br/channels/default/gazeta.svg' },
+    ]},
+    { name: 'Documentários', items: [
+      { label: 'Animal Planet HD', src: 'https://mondrian.claro.com.br/channels/default/animal-planet.svg' },
+      { label: 'Discovery HD', src: 'https://mondrian.claro.com.br/channels/default/discovery.svg' },
+      { label: 'Discovery Science HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-science.svg' },
+      { label: 'Discovery Theater HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-theater.svg' },
+      { label: 'Discovery Turbo HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-turbo.svg' },
+      { label: 'Discovery World HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-world.svg' },
+      { label: 'Futura HD', src: 'https://mondrian.claro.com.br/channels/default/futura.svg' },
+      { label: 'H2 HD', src: 'https://mondrian.claro.com.br/channels/default/history-2.svg' },
+      { label: 'The History Channel HD', src: 'https://mondrian.claro.com.br/channels/default/history-channel.svg' },
+      { label: 'Discovery ID HD', src: 'https://mondrian.claro.com.br/channels/default/investigacao-discovery.svg' },
+    ]},
+    { name: 'Entretenimento', items: [
+      { label: 'Polishop', src: 'https://mondrian.claro.com.br/channels/default/polishop.svg' },
+      { label: 'Modo Viagem HD', src: 'https://mondrian.claro.com.br/channels/default/modo-viagem.svg' },
+      { label: 'HGTV', src: 'https://mondrian.claro.com.br/channels/default/hgtv.svg' },
+      { label: 'BIS HD', src: 'https://mondrian.claro.com.br/channels/default/bis.svg' },
+      { label: 'MTV HD', src: 'https://mondrian.claro.com.br/channels/default/mtv.svg' },
+      { label: 'Play TV', src: 'https://mondrian.claro.com.br/channels/default/play-tv.svg' },
+      { label: 'Music Box Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/music-boxbrazil.svg' },
+      { label: "MTV's00", src: 'https://mondrian.claro.com.br/channels/default/mtv-00s.svg' },
+      { label: 'MTV Live HD', src: 'https://mondrian.claro.com.br/channels/default/mtv-live-hd.svg' },
+      { label: 'Trace Brazuca HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/trace-brasil.svg' },
+    ]},
+    { name: 'Esportes', items: [
+      { label: 'ESPN HD', src: 'https://mondrian.claro.com.br/channels/default/espn.svg' },
+      { label: 'ESPN 2 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-2.svg' },
+      { label: 'ESPN 3 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-3.svg' },
+      { label: 'ESPN 4 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-4.svg' },
+      { label: 'ESPN 5 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-5.svg' },
+      { label: 'ESPN 6 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-6.svg' },
+      { label: 'Band Sports HD', src: 'https://mondrian.claro.com.br/channels/default/band-sports.svg' },
+      { label: 'SporTV 3 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-3.svg' },
+      { label: 'SporTV 2 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-2.svg' },
+      { label: 'SporTV HD', src: 'https://mondrian.claro.com.br/channels/default/sportv.svg' },
+    ]},
+    { name: 'Filmes', items: [
+      { label: 'Film&Arts HD', src: 'https://mondrian.claro.com.br/channels/default/film-e-arts.svg' },
+      { label: 'Canal Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/canal-brasil.svg' },
+      { label: 'TNT HD', src: 'https://mondrian.claro.com.br/channels/default/tnt.svg' },
+      { label: 'Megapix HD', src: 'https://mondrian.claro.com.br/channels/default/megapix.svg' },
+      { label: 'Space HD', src: 'https://mondrian.claro.com.br/channels/default/space.svg' },
+      { label: 'Cinemax HD', src: 'https://mondrian.claro.com.br/channels/default/cinemax.svg' },
+      { label: 'Studio Universal HD', src: 'https://mondrian.claro.com.br/channels/default/studio-universal.svg' },
+      { label: 'Paramount Network HD', src: 'https://mondrian.claro.com.br/channels/default/paramount-network.svg' },
+      { label: 'TCM', src: 'https://mondrian.claro.com.br/channels/default/tcm.svg' },
+      { label: 'HBO2', src: 'https://mondrian.claro.com.br/channels/default/hbo-2.svg' },
+    ]},
+    { name: 'Infantil', items: [
+      { label: 'Gloobinho HD', src: 'https://mondrian.claro.com.br/channels/default/gloobinho.svg' },
+      { label: 'Discovery Kids HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-kids.svg' },
+      { label: 'Gloob HD', src: 'https://mondrian.claro.com.br/channels/default/gloob.svg' },
+      { label: 'Nickelodeon HD', src: 'https://mondrian.claro.com.br/channels/default/nickelodeon.svg' },
+      { label: 'Cartoon Network HD', src: 'https://mondrian.claro.com.br/channels/default/cartoon-network.svg' },
+      { label: 'NICK Jr HD', src: 'https://mondrian.claro.com.br/channels/default/nick-jr.svg' },
+      { label: 'Cartoonito HD', src: 'https://mondrian.claro.com.br/channels/default/cartoonito.svg' },
+      { label: 'TV Rá Tim Bum HD', src: 'https://mondrian.claro.com.br/channels/default/tv-ra-tim-bum.svg' },
+      { label: 'DumDum HD', src: 'https://mondrian.claro.com.br/channels/default/dum-dum.svg' },
+    ]},
+    { name: 'Notícias', items: [
+      { label: 'GloboNews HD', src: 'https://mondrian.claro.com.br/channels/default/globonews.svg' },
+      { label: 'CNN Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil.svg' },
+      { label: 'Record News', src: 'https://mondrian.claro.com.br/channels/default/recordnews.svg' },
+      { label: 'Band News HD', src: 'https://mondrian.claro.com.br/channels/default/band-news.svg' },
+      { label: 'AgroMais HD', src: 'https://mondrian.claro.com.br/channels/default/agroplus.svg' },
+      { label: 'BBC World News', src: 'https://mondrian.claro.com.br/channels/default/bbc-world-news.svg' },
+      { label: 'JP News HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/jp-news-vertical.svg' },
+      { label: 'Times Exclusivo CNBC', src: 'https://mondrian.claro.com.br/channels/default/times-exclusivo-cnbc.svg' },
+      { label: 'CNN Brasil Money HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil-money.svg' },
+      { label: 'BM&C NEWS', src: 'https://mondrian.claro.com.br/channels/default/bmec-news.svg' },
+      { label: 'Canal UOL', src: 'https://mondrian.claro.com.br/channels/default/canal-uol.svg' },
+    ]},
+    { name: 'Mundo', items: [
+      { label: 'CNN Internacional', src: 'https://mondrian.claro.com.br/channels/default/cnn-internacional.svg' },
+      { label: 'Bloomberg TV', src: 'https://mondrian.claro.com.br/channels/default/bloomberg.svg' },
+      { label: 'RAI International', src: 'https://mondrian.claro.com.br/channels/default/rai-italia.svg' },
+      { label: 'TV5 Monde', src: 'https://mondrian.claro.com.br/channels/default/tv-5-monde.svg' },
+      { label: 'TVE International', src: 'https://mondrian.claro.com.br/channels/default/tve.svg' },
+      { label: 'DW-TV', src: 'https://mondrian.claro.com.br/channels/default/dw.svg' },
+      { label: 'France 24 HD', src: 'https://mondrian.claro.com.br/channels/default/france-24.svg' },
+      { label: 'Euro Channel', src: 'https://mondrian.claro.com.br/channels/default/euro-channel.svg' },
+    ]},
+    { name: 'Séries', items: [
+      { label: 'A&E HD', src: 'https://mondrian.claro.com.br/channels/default/aee.svg' },
+      { label: 'AMC HD', src: 'https://mondrian.claro.com.br/channels/default/amc.svg' },
+      { label: 'AXN HD', src: 'https://mondrian.claro.com.br/channels/default/axn.svg' },
+      { label: 'Comedy Central HD', src: 'https://mondrian.claro.com.br/channels/default/comedy-central.svg' },
+      { label: 'Lifetime HD', src: 'https://mondrian.claro.com.br/channels/default/lifetime.svg' },
+      { label: 'Sony HD', src: 'https://mondrian.claro.com.br/channels/default/sony.svg' },
+      { label: 'TBS HD', src: null },
+      { label: 'TNT Series HD', src: 'https://mondrian.claro.com.br/channels/default/tnt-series.svg' },
+      { label: 'TNT Novelas', src: 'https://mondrian.claro.com.br/channels/default/tnt-novelas.svg' },
+      { label: 'Universal TV HD', src: 'https://mondrian.claro.com.br/channels/default/universal-channel.svg' },
+    ]},
+    { name: 'Variedades', items: [
+      { label: 'Arte 1 HD', src: 'https://mondrian.claro.com.br/channels/default/arte1.svg' },
+      { label: 'Discovery Home Health HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-home-and-health.svg' },
+      { label: 'E! HD', src: 'https://mondrian.claro.com.br/channels/default/e!.svg' },
+      { label: 'Fashion TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fashion-tv.svg' },
+      { label: 'Fish TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fish-tv.svg' },
+      { label: 'Food Network HD', src: 'https://mondrian.claro.com.br/channels/default/food-network.svg' },
+      { label: 'GNT HD', src: 'https://mondrian.claro.com.br/channels/default/gnt.svg' },
+      { label: 'Like', src: null },
+      { label: 'Multishow HD', src: 'https://mondrian.claro.com.br/channels/default/multishow.svg' },
+      { label: 'OFF HD', src: 'https://mondrian.claro.com.br/channels/default/canal-off.svg' },
+    ]},
+  ];
+
+  function normalizeSearch(str) {
+    return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+
+  function renderGradeAccordion() {
+    const container = document.getElementById('gradeAccordion');
+    if (!container) return;
+    container.innerHTML = CHANNELS_DATA.map((cat, catIndex) => `
+      <div class="grade-category" data-category-index="${catIndex}">
+        <button type="button" class="grade-category-header" onclick="toggleGradeCategory(this)">
+          <span class="grade-category-name">${cat.name}</span>
+          <i class="mdn-Icon-baixo grade-category-icon"></i>
+        </button>
+        <div class="grade-category-content">
+          ${cat.items.map((ch, chIndex) => `
+            <div class="grade-channel" data-channel-index="${chIndex}" data-search="${normalizeSearch(ch.label)}">
+              ${ch.src
+                ? `<span class="grade-channel-logo"><img src="${ch.src}" alt="" loading="lazy"></span>`
+                : `<span class="grade-channel-logo grade-channel-logo--fallback">${ch.label.slice(0, 2).toUpperCase()}</span>`
+              }
+              <span class="grade-channel-name">${ch.label}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function toggleGradeCategory(headerEl) {
+    headerEl.closest('.grade-category').classList.toggle('open');
+  }
+
+  function toggleGrade() {
+    const search = document.querySelector('.grade-search');
+    const accordion = document.getElementById('gradeAccordion');
+    const btn = document.getElementById('gradeToggleBtn');
+    const text = document.getElementById('gradeToggleText');
+    const isOpen = btn.classList.toggle('open');
+
+    search.hidden = !isOpen;
+    accordion.hidden = !isOpen;
+    text.textContent = isOpen ? 'Ocultar grade' : 'Ver grade completa';
+
+    if (!isOpen) {
+      // Reset ao colapsar: fecha categorias e limpa a busca
+      document.getElementById('gradeSearchInput').value = '';
+      filterGradeChannels('');
+      accordion.querySelectorAll('.grade-category.open').forEach(c => c.classList.remove('open'));
+    }
+  }
+
+  function filterGradeChannels(rawQuery) {
+    const query = normalizeSearch(rawQuery.trim());
+    const categories = document.querySelectorAll('#gradeAccordion .grade-category');
+    let totalMatches = 0;
+
+    categories.forEach(cat => {
+      let matchesInCategory = 0;
+      cat.querySelectorAll('.grade-channel').forEach(ch => {
+        const matches = !query || ch.dataset.search.includes(query);
+        ch.hidden = !matches;
+        if (matches) matchesInCategory++;
+      });
+      cat.hidden = query && matchesInCategory === 0;
+      cat.classList.toggle('open', !!query && matchesInCategory > 0);
+      totalMatches += matchesInCategory;
+    });
+
+    document.getElementById('gradeEmpty').hidden = !(query && totalMatches === 0);
+
+    const clearBtn = document.querySelector('.grade-search [data-mdn-action="clear-field"]');
+    if (clearBtn) clearBtn.style.display = rawQuery ? 'flex' : 'none';
+  }
+
+  function clearGradeSearch() {
+    const input = document.getElementById('gradeSearchInput');
+    input.value = '';
+    input.focus();
+    filterGradeChannels('');
+  }
+
+  renderGradeAccordion();
+  const gradeSearchInput = document.getElementById('gradeSearchInput');
+  if (gradeSearchInput) {
+    gradeSearchInput.addEventListener('input', (e) => filterGradeChannels(e.target.value));
+  }
+
+  // Toggle Termos (com ícone de seta)
+  function toggleTermos(headerEl) {
+    const contentEl = headerEl.nextElementSibling;
+    contentEl.classList.toggle('open');
+    headerEl.classList.toggle('open');
+  }
+
+  // Fechar alert (Mondrian usa a classe mdn-is-open para controlar a visibilidade)
+  function closeAlert() {
+    const alert = document.getElementById('alertBox');
+    alert.classList.remove('mdn-is-open');
+  }
+
+  // Toggle footer mobile (Default <-> Expanded)
+  function toggleFooter() {
+    const info = document.querySelector('.footer-expanded-info');
+    const icon = document.getElementById('footerToggleIcon');
+    info.hidden = !info.hidden;
+    icon.className = info.hidden ? 'mdn-Icon-cima' : 'mdn-Icon-baixo';
+  }
+
+  // Modal de confirmação: remover o produto principal (Claro tv+ Box) do carrinho
+  function handleRemoveModalKeydown(e) {
+    if (e.key === 'Escape') closeRemoveModal();
+  }
+  function openRemoveModal() {
+    document.getElementById('removeModalOverlay').hidden = false;
+    document.addEventListener('keydown', handleRemoveModalKeydown);
+  }
+  function closeRemoveModal() {
+    document.getElementById('removeModalOverlay').hidden = true;
+    document.removeEventListener('keydown', handleRemoveModalKeydown);
+  }
+  function confirmRemoveProduct() {
+    window.location.href = 'vitrine.html';
+  }
+
+  // ===== Action Card (Order Summary) =====
+  // Catálogo de adicionais do Claro tv+ Box.
+  // Estados do componente: 1) Collapsed-Default 2) Expanded-Default
+  // 3) Expanded-Selected 4) Collapsed-Selected (derivados de expanded + selected.length)
+  const MONDRIAN_BRANDS = 'https://mondrian.claro.com.br/brands/app/32px-alternative/';
+  const ACTION_CARD_CATALOG = [
+    { id: 'telecine',   name: 'Telecine',            price: 'R$ 29,90 / mês', icon: MONDRIAN_BRANDS + 'telecine.svg',                    boxed: false },
+    { id: 'alacarte',   name: 'A la carte',          price: 'R$ 29,90 / mês', icon: MONDRIAN_BRANDS + 'a-la-carte-belas-artes.svg',       boxed: false },
+    { id: 'pontotv',    name: 'Ponto adicional TV',  price: 'R$ 30,00 / mês', icon: 'assets/action-card/pacote-adicional.svg',            boxed: true  },
+    { id: 'dogtv',      name: 'Dog TV',              price: 'R$ 29,90 / mês', icon: MONDRIAN_BRANDS + 'dog-tv.svg',                       boxed: false },
+    { id: 'boxbrazil',  name: 'Box Brazil Play',     price: 'R$ 29,90 / mês', icon: MONDRIAN_BRANDS + 'box-brazil-play.svg',              boxed: false },
+    { id: 'futebol',    name: 'Nosso Futebol',       price: 'R$ 29,90 / mês', icon: MONDRIAN_BRANDS + 'nosso-futebol.svg',                boxed: false },
+    { id: 'ufc',        name: 'UFC',                 price: 'R$ 29,90 / mês', icon: MONDRIAN_BRANDS + 'ufc.svg',                          boxed: false },
+  ];
+  const ACTION_CARD_PAGE_SIZE = 6;
+  const ACTION_CARD_BASE_PRICE = 139.90; // Valor do plano (Claro tv+ Box)
+
+  // "R$ 29,90 / mês" -> 29.9
+  function parsePriceBRL(str) {
+    const match = str.match(/([\d.]+,\d+|\d+)/);
+    if (!match) return 0;
+    return parseFloat(match[1].replace(/\./g, '').replace(',', '.'));
+  }
+  // 169.8 -> "169,80"
+  function formatPriceBRL(value) {
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Reflete a base do plano + adicionais selecionados no total do pedido
+  // (card "Total do seu carrinho" no desktop e no carrinho fixo do mobile).
+  function syncOrderTotal(selectedIds) {
+    const extra = selectedIds.reduce((sum, id) => {
+      const item = ACTION_CARD_CATALOG.find(i => i.id === id);
+      return sum + (item ? parsePriceBRL(item.price) : 0);
+    }, 0);
+    const formatted = formatPriceBRL(ACTION_CARD_BASE_PRICE + extra);
+    document.querySelectorAll('.total-amount').forEach(el => { el.textContent = formatted; });
+    document.querySelectorAll('.footer-price-amount').forEach(el => { el.textContent = 'R$ ' + formatted; });
+  }
+
+  function initActionCard(root) {
+    const els = {
+      selectedList: root.querySelector('[data-role="selected-list"]'),
+      toggle: root.querySelector('[data-role="toggle"]'),
+      toggleText: root.querySelector('[data-role="toggle-text"]'),
+      addlist: root.querySelector('[data-role="addlist"]'),
+      addlistItems: root.querySelector('[data-role="addlist-items"]'),
+      vermais: root.querySelector('[data-role="vermais"]'),
+    };
+
+    const state = { expanded: false, selected: [], visibleCount: ACTION_CARD_PAGE_SIZE };
+
+    function iconEl(item, extraClass) {
+      const wrap = document.createElement('div');
+      wrap.className = extraClass + (item.boxed ? ' boxed' : '');
+      const img = document.createElement('img');
+      img.src = item.icon;
+      img.alt = '';
+      wrap.appendChild(img);
+      return wrap;
+    }
+
+    function renderSelectedItem(item) {
+      const row = document.createElement('div');
+      row.className = 'action-card-selected-item';
+
+      row.appendChild(iconEl(item, 'action-card-selected-icon'));
+
+      const text = document.createElement('div');
+      text.className = 'action-card-selected-text';
+      text.innerHTML = `<p class="action-card-selected-name">${item.name}</p><p class="action-card-selected-price">${item.price}</p>`;
+      row.appendChild(text);
+
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'action-card-selected-delete';
+      del.setAttribute('aria-label', `Remover ${item.name}`);
+      del.innerHTML = '<img src="assets/action-card/lixeira.svg" alt="">';
+      del.addEventListener('click', () => {
+        state.selected = state.selected.filter(id => id !== item.id);
+        render();
+      });
+      row.appendChild(del);
+
+      return row;
+    }
+
+    function renderAddlistItem(item) {
+      const row = document.createElement('div');
+      row.className = 'action-card-addlist-item';
+
+      const left = document.createElement('div');
+      left.className = 'action-card-addlist-item-left';
+      left.appendChild(iconEl(item, 'action-card-addlist-icon'));
+
+      const text = document.createElement('div');
+      text.className = 'action-card-addlist-text';
+      text.innerHTML = `<p class="action-card-addlist-name">${item.name}</p><p class="action-card-addlist-price">${item.price}</p>`;
+      left.appendChild(text);
+      row.appendChild(left);
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-add';
+      btn.textContent = 'Adicionar';
+      btn.addEventListener('click', () => {
+        if (!state.selected.includes(item.id)) state.selected.push(item.id);
+        render();
+      });
+      row.appendChild(btn);
+
+      return row;
+    }
+
+    function render() {
+      // Item(ns) adicional(is) já selecionado(s) — some abaixo do nome do produto
+      els.selectedList.innerHTML = '';
+      state.selected.forEach(id => {
+        const item = ACTION_CARD_CATALOG.find(i => i.id === id);
+        if (item) els.selectedList.appendChild(renderSelectedItem(item));
+      });
+      els.selectedList.hidden = state.selected.length === 0;
+
+      // Toggle "Incluir adicionais" / "Ocultar adicionais"
+      els.toggleText.textContent = state.expanded ? 'Ocultar adicionais' : 'Incluir adicionais';
+      els.toggle.classList.toggle('open', state.expanded);
+
+      // Lista expandida de adicionais (6 em 6, exclui já selecionados)
+      els.addlist.hidden = !state.expanded;
+      if (state.expanded) {
+        const available = ACTION_CARD_CATALOG.filter(i => !state.selected.includes(i.id));
+        const visible = available.slice(0, state.visibleCount);
+        els.addlistItems.innerHTML = '';
+        visible.forEach(item => els.addlistItems.appendChild(renderAddlistItem(item)));
+        els.vermais.hidden = visible.length >= available.length;
+      }
+
+      // Estado atual (referência: collapsed-default | expanded-default | expanded-selected | collapsed-selected)
+      const hasSelected = state.selected.length > 0;
+      root.dataset.state = (state.expanded ? 'expanded' : 'collapsed') + '-' + (hasSelected ? 'selected' : 'default');
+
+      syncOrderTotal(state.selected);
+    }
+
+    els.toggle.addEventListener('click', () => {
+      state.expanded = !state.expanded;
+      render();
+    });
+
+    els.vermais.addEventListener('click', () => {
+      state.visibleCount += ACTION_CARD_PAGE_SIZE;
+      render();
+    });
+
+    render();
+  }
+
+  document.querySelectorAll('[data-action-card]').forEach(initActionCard);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protótipo M6</title>
+<style>
+  :root{
+    --red:#da291c;
+    --red-dark:#b41e13;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --bg-page:#f8f8f8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg-page);
+    color:var(--ink);
+  }
+  header{
+    background:linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color:#fff;
+    padding:48px 24px;
+    text-align:center;
+  }
+  header h1{margin:0 0 8px;font-size:28px;}
+  header p{margin:0;opacity:0.9;font-size:15px;}
+  .container{max-width:720px;margin:0 auto;padding:40px 24px;}
+  .section-label{font-size:12px;font-weight:700;color:var(--gray-dark);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 16px;}
+  .link-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    list-style:none;
+    margin:0 0 40px;
+    padding:0;
+  }
+  .link-list a{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    background:#fff;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    padding:20px 24px;
+    text-decoration:none;
+    color:inherit;
+    font-size:16px;
+    font-weight:500;
+    transition:box-shadow 0.2s, transform 0.15s;
+  }
+  .link-list a:hover{box-shadow:0 8px 24px rgba(0,0,0,0.1);transform:translateY(-2px);}
+  .link-list a .arrow{color:var(--red);font-size:18px;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Protótipo M6</h1>
+  <p>Ponto de partida do projeto</p>
+</header>
+
+<div class="container">
+  <p class="section-label">Links</p>
+  <ul class="link-list">
+    <li><a href="Motion-Design_Documento com exemplos.html">Documentação Motion Design M6 <span class="arrow">→</span></a></li>
+    <li><a href="vitrine.html">Vitrine <span class="arrow">→</span></a></li>
+  </ul>
+</div>
+
+</body>
+</html>

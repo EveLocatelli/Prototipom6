@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conclusão · M6 (Piloto)</title>
+
+<!-- Mondrian via CDN -->
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/tokens/claro-tokens-3.0.0.custom-properties.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/icons/mondrian-icons-latest.css">
+
+<style>
+  :root{
+    --red-dark:#b41e13;
+    --red:#da291c;
+    --yellow:#ffc722;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --bg-page:#f8f8f8;
+  }
+
+  /* Breakpoints responsivos */
+  /* Mobile: 360px (Figma) · Desktop: 1440px (Figma) */
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  body{
+    margin:0;
+    font-family:'Roboto', sans-serif;
+    background:var(--bg-page);
+    color:var(--ink);
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Topbar (mesmo componente de checkout-box.html / vitrine.html) ===== */
+  .topbar-inner{
+    width:100%;
+    max-width:1440px;
+    margin:0 auto;
+    padding:0 80px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar-utility{background:var(--red-dark);height:46px;display:flex;}
+  .topbar-utility .topbar-inner{height:100%;}
+  .topbar-location{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+  .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-a11y{display:flex;align-items:center;gap:16px;}
+  .topbar-a11y i{font-size:16px;line-height:1;}
+
+  .topbar-brand{background:var(--red);height:70px;display:flex;}
+  .topbar-brand .topbar-inner{height:100%;}
+  .brand-logo img{height:38px;display:block;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .topbar-actions i{font-size:24px;line-height:1;}
+  .topbar-exit{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+
+  /* ===== Section wrapper (cada bloco do Figma é uma "body" full-bleed com
+     conteúdo centralizado max-width 1440 + padding lateral 88px) ===== */
+  .section-row{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    padding:24px 88px;
+    box-sizing:border-box;
+  }
+
+  /* ===== Message container ("Pronto, Rodrigo!") ===== */
+  .conclusion-message{
+    width:100%;
+    max-width:1074px;
+    background:#fff;
+    border-radius:24px;
+    padding:32px;
+    display:flex;
+    align-items:center;
+    gap:32px;
+  }
+  .conclusion-illustration{width:399px;flex-shrink:0;}
+  .conclusion-illustration img{width:100%;display:block;}
+  .conclusion-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;color:var(--ink);}
+  .conclusion-title{
+    font-family:'AMX', sans-serif;
+    font-weight:700;
+    font-size:24px;
+    margin:0;
+  }
+  .conclusion-subtext{display:flex;flex-direction:column;gap:8px;}
+  .conclusion-subtext p{margin:0;}
+  .conclusion-subtext p:first-child{font-size:16px;font-weight:700;}
+  .conclusion-subtext p:last-child{font-size:14px;font-weight:400;}
+
+  /* ===== Steps ("Como vai funcionar agora?") ===== */
+  .steps-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:24px;
+    width:100%;
+  }
+  .steps-title{
+    font-size:24px;
+    font-weight:700;
+    text-align:center;
+    max-width:328px;
+    margin:0;
+  }
+  .steps-bullets{
+    display:flex;
+    gap:32px;
+    justify-content:center;
+    width:100%;
+  }
+  .step-bullet{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+    width:244px;
+  }
+  .step-icon{width:24px;height:24px;flex-shrink:0;}
+  .step-icon i{font-size:24px;line-height:1;color:var(--red);}
+  .step-copy{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    text-align:center;
+    width:100%;
+  }
+  .step-ol{
+    font-size:20px;
+    font-weight:700;
+    margin:0;
+    padding-left:0;
+    list-style-type:decimal;
+    list-style-position:inside;
+  }
+  .step-desc{font-size:14px;font-weight:400;margin:0;}
+
+  /* ===== Colunas: Resumo do pedido + Avisos ===== */
+  .conclusion-columns{display:flex;gap:32px;justify-content:center;width:100%;flex-wrap:wrap;}
+  .summary-col{width:438px;}
+  .avisos-col{width:360px;display:flex;flex-direction:column;gap:16px;}
+
+  /* Resumo do pedido (cartão estilo "ticket") */
+  .summary-card{width:100%;display:flex;flex-direction:column;}
+  .summary-card-top{
+    background:#fff;
+    border-radius:10px 10px 0 0;
+    padding:24px 24px 0;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .summary-card-heading{font-size:20px;font-weight:700;margin:0;}
+  .summary-product{display:flex;align-items:center;gap:8px;}
+  .summary-product-icon{
+    width:32px;height:32px;flex-shrink:0;
+    border:1px solid var(--gray-line);
+    border-radius:16px;
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .summary-product-icon i{font-size:18px;line-height:1;}
+  .summary-product-name{font-size:20px;font-weight:700;margin:0;}
+  .summary-price{display:flex;align-items:flex-end;gap:4px;}
+  .summary-price .prefix,
+  .summary-price .suffix{font-size:16px;font-weight:700;}
+  .summary-price .amount{font-size:24px;font-weight:700;font-family:'AMX';}
+  .summary-divider{border-top:1px dashed var(--gray-line);width:100%;}
+  .summary-fees{display:flex;flex-direction:column;gap:4px;font-size:14px;}
+  .summary-fee-row{display:flex;justify-content:space-between;gap:8px;}
+  .summary-fee-label{font-weight:700;margin:0;}
+  .summary-fee-value{font-weight:400;margin:0;text-align:right;}
+  .summary-card-ticket{width:100%;height:33px;display:block;}
+  .summary-card-ticket img{width:100%;height:100%;display:block;}
+  .summary-card-bottom{
+    background:#fff;
+    border-radius:0 0 10px 10px;
+    padding:0 24px 24px;
+  }
+  .summary-total-label{font-size:12px;font-weight:700;margin:0;}
+  .summary-total-value{display:flex;align-items:flex-end;gap:4px;}
+  .summary-total-value .prefix,
+  .summary-total-value .suffix{font-size:16px;font-weight:700;}
+  .summary-total-value .amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .summary-total-note{font-size:12px;font-weight:400;margin:4px 0 0;}
+
+  /* Cartões da coluna "Avisos" (agendamento + informativos) */
+  .agendamento-card,
+  .info-card{
+    width:100%;
+    background:#fff;
+    border-radius:12px;
+    padding:32px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+  }
+  .agendamento-card-title,
+  .info-card-title{
+    font-family:'AMX', sans-serif;
+    font-weight:700;
+    font-size:20px;
+    margin:0;
+  }
+  .agendamento-block{display:flex;flex-direction:column;gap:8px;}
+  .agendamento-block-label{
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+    font-size:16px;
+    font-weight:700;
+    margin:0;
+  }
+  .agendamento-block-label i{font-size:24px;line-height:1;}
+  .agendamento-block-value{font-size:16px;font-weight:400;margin:0;}
+  .agendamento-row{display:flex;gap:8px;font-size:16px;}
+  .agendamento-row-label{font-weight:700;white-space:nowrap;margin:0;}
+  .agendamento-row-value{font-weight:400;margin:0;flex:1;}
+
+  .info-card-copy{display:flex;flex-direction:column;gap:8px;}
+  .info-card-desc{font-size:16px;font-weight:400;margin:0;}
+
+  .btn-primary{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:40px;
+    padding:8px 24px;
+    border-radius:500px;
+    background:var(--red);
+    color:#fff;
+    border:none;
+    font-size:16px;
+    font-weight:500;
+    font-family:inherit;
+    text-decoration:none;
+    cursor:pointer;
+    width:100%;
+    transition:filter 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .btn-primary:hover{filter:brightness(0.95);}
+  .btn-primary:active{transform:scale(0.98);}
+
+  /* ===== Termos Container (expandível — mesmo componente de checkout-box.html) ===== */
+  .termos-container{width:100%;max-width:1074px;border-radius:12px;}
+  .termos-header{
+    display:flex;
+    align-items:center;
+    gap:24px;
+    padding:24px;
+    background:#fff;
+    border-radius:12px;
+    cursor:pointer;
+    user-select:none;
+    transition:box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+  .termos-header:hover{box-shadow:0 8px 16px rgba(0, 0, 0, 0.12);}
+  .termos-header.open{border-radius:12px 12px 0 0;}
+  .termos-header-text{display:flex;flex:1;min-width:0;align-items:center;gap:16px;}
+  .termos-icon-wrapper{
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;color:var(--ink);line-height:1;
+  }
+  .termos-text{flex:1;font-size:16px;font-weight:500;margin:0;}
+  .termos-toggle-icon{
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;color:var(--ink);line-height:1;
+    transition:transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    background:none;border:none;padding:0;cursor:pointer;
+  }
+  .termos-header.open .termos-toggle-icon{transform:rotate(180deg);}
+  .termos-content{display:none;padding:24px;background:#fff;border-radius:0 0 12px 12px;}
+  .termos-content.open{display:flex;flex-direction:column;gap:8px;animation:content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);}
+  .termos-item{
+    display:flex;align-items:center;gap:16px;padding:24px;
+    border:1px solid var(--gray-line);border-radius:12px;background:#fff;
+  }
+  .termos-item-title{flex:1;min-width:0;font-size:16px;font-weight:400;margin:0;}
+  .termos-item-icon{
+    width:32px;height:32px;flex-shrink:0;border:none;border-radius:50%;
+    background:var(--red);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;padding:0;transition:transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .termos-item-icon:active{transform:scale(0.9);}
+  .termos-item-icon i{font-size:16px;line-height:1;color:#fff;}
+
+  /* ===== Mobile-only header adjustments (confirmado no frame Figma
+     "Conclusao Box Mobile": sem ícones de acessibilidade e "Sair" só ícone) ===== */
+  .topbar-exit-label{display:inline;}
+
+  /* ===== MATERIAL DESIGN MOTION ===== */
+  @keyframes fade-in {
+    from { opacity:0; transform:translateY(8px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes slide-up {
+    from { opacity:0; transform:translateY(16px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes content-fade {
+    from { opacity:0; }
+    to { opacity:1; }
+  }
+  .conclusion-message{animation:fade-in 0.5s cubic-bezier(0, 0, 0.2, 1);}
+  .steps-wrap,
+  .summary-col,
+  .agendamento-card,
+  .info-card,
+  .termos-container{
+    opacity:0;
+    animation:slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
+  }
+  .steps-wrap{animation-delay:40ms;}
+  .summary-col{animation-delay:80ms;}
+  .agendamento-card{animation-delay:120ms;}
+  .avisos-col .info-card:nth-of-type(1){animation-delay:160ms;}
+  .avisos-col .info-card:nth-of-type(2){animation-delay:200ms;}
+  .termos-container{animation-delay:240ms;}
+
+  /* ===== Media Queries ===== */
+  @media (max-width:1300px){
+    .topbar-inner{padding:0 24px;}
+    .section-row{padding:24px;}
+  }
+
+  /* Mobile: 599px breakpoint (Figma mobile: 360px) */
+  @media (max-width:599px){
+    .topbar-inner{padding:0 16px;}
+    .section-row{padding:16px;}
+    .section-row:first-of-type{padding-top:24px;}
+
+    /* Header mobile: sem ícones de acessibilidade, "Sair" só com ícone */
+    .topbar-a11y{display:none;}
+    .topbar-exit-label{display:none;}
+
+    .conclusion-message{
+      flex-direction:column;
+      align-items:stretch;
+      padding:32px 16px;
+      border-radius:24px;
+      gap:32px;
+    }
+    .conclusion-illustration{width:100%;}
+
+    .steps-bullets{flex-direction:column;align-items:center;gap:32px;}
+    .step-bullet{width:100%;max-width:328px;}
+
+    .conclusion-columns{flex-direction:column;align-items:stretch;}
+    .summary-col,
+    .avisos-col{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar-utility">
+    <div class="topbar-inner">
+      <div class="topbar-location">
+        <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
+        <span>Nome da Rua</span>
+        <i class="mdn-Icon-seta-baixo-preenchida mdn-Icon--sm mdn-Icon--inverse"></i>
+      </div>
+      <div class="topbar-a11y">
+        <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
+        <i class="mdn-Icon-libras mdn-Icon--sm mdn-Icon--inverse" title="Libras"></i>
+        <i class="mdn-Icon-alto-contraste mdn-Icon--sm mdn-Icon--inverse" title="Contraste"></i>
+        <i class="mdn-Icon-tamanho-diminuir mdn-Icon--sm mdn-Icon--inverse" title="Diminuir fonte"></i>
+        <i class="mdn-Icon-tamanho-aumentar mdn-Icon--sm mdn-Icon--inverse" title="Aumentar fonte"></i>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-brand">
+    <div class="topbar-inner">
+      <a href="vitrine.html" class="brand-logo">
+        <img src="https://www.figma.com/api/mcp/asset/d2f7d440-f89f-4a74-90ea-4a697a03396d.svg" alt="MinhaClaro">
+      </a>
+      <div class="topbar-actions">
+        <i class="mdn-Icon-notificacao mdn-Icon--md mdn-Icon--inverse" title="Notificações"></i>
+        <a href="vitrine.html" class="topbar-exit">
+          <i class="mdn-Icon-sair mdn-Icon--md mdn-Icon--inverse"></i>
+          <span class="topbar-exit-label">Sair</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Message container -->
+  <div class="section-row">
+    <div class="conclusion-message">
+      <div class="conclusion-illustration">
+        <img src="assets/conclusao/img-conclusao-desktop.svg" alt="">
+      </div>
+      <div class="conclusion-text">
+        <p class="conclusion-title">Pronto, Rodrigo!</p>
+        <div class="conclusion-subtext">
+          <p>Seu pedido já está em análise.</p>
+          <p>Fique tranquilo, você irá receber um e-mail e SMS assim que concluirmos essa etapa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Como vai funcionar agora? -->
+  <div class="section-row">
+    <div class="steps-wrap">
+      <p class="steps-title">Como vai funcionar agora?</p>
+      <div class="steps-bullets">
+        <div class="step-bullet">
+          <div class="step-icon"><i class="mdn-Icon-e-mail"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="1"><li>Confirmação</li></ol>
+            <p class="step-desc">Vamos te enviar um <strong>e-mail</strong> e <strong>SMS</strong> confirmando seu agendamento.</p>
+          </div>
+        </div>
+        <div class="step-bullet">
+          <div class="step-icon"><i class="mdn-Icon-calendario"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="2"><li>Entrega</li></ol>
+            <p class="step-desc">Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até x dias úteis</strong>.</p>
+          </div>
+        </div>
+        <div class="step-bullet">
+          <div class="step-icon"><i class="mdn-Icon-documento"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="3"><li>Fatura</li></ol>
+            <p class="step-desc">A fatura será <strong>proporcional</strong>, a contar do <strong>dia em que seu plano for ativado</strong> até a <strong>data de vencimento</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumo do pedido + Avisos -->
+  <div class="section-row">
+    <div class="conclusion-columns">
+
+      <!-- Resumo do pedido -->
+      <div class="summary-col">
+        <div class="summary-card">
+          <div class="summary-card-top">
+            <p class="summary-card-heading">Resumo do pedido</p>
+
+            <div>
+              <div class="summary-product">
+                <div class="summary-product-icon"><i class="mdn-Icon-tv"></i></div>
+                <p class="summary-product-name">Claro tv+ Box</p>
+              </div>
+              <div class="summary-price">
+                <span class="prefix">R$</span>
+                <span class="amount">139,90</span>
+                <span class="suffix">/mês</span>
+              </div>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-fees">
+              <div class="summary-fee-row">
+                <p class="summary-fee-label">Fidelidade</p>
+                <p class="summary-fee-value">12 meses</p>
+              </div>
+              <div class="summary-fee-row">
+                <p class="summary-fee-label">Taxa de Adesão</p>
+                <p class="summary-fee-value">Grátis</p>
+              </div>
+              <div class="summary-fee-row">
+                <p class="summary-fee-label">Instalação</p>
+                <p class="summary-fee-value">Grátis</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card-ticket">
+            <img src="assets/conclusao/ticket-edge-desktop.svg" alt="">
+          </div>
+
+          <div class="summary-card-bottom">
+            <p class="summary-total-label">Total do seu pedido</p>
+            <div class="summary-total-value">
+              <span class="prefix">R$</span>
+              <span class="amount">139,90</span>
+              <span class="suffix">/mês</span>
+            </div>
+            <p class="summary-total-note">ajustado à sua fatura</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avisos -->
+      <div class="avisos-col">
+
+        <!-- Agendamento da instalação -->
+        <div class="agendamento-card">
+          <p class="agendamento-card-title">Agendamento da instalação</p>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço de instalação</p>
+            <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Agendamento da instalação</p>
+            <div class="agendamento-row">
+              <p class="agendamento-row-label">Data:</p>
+              <p class="agendamento-row-value">30/04 - Quarta-feira</p>
+            </div>
+            <div class="agendamento-row">
+              <p class="agendamento-row-label">Período:</p>
+              <p class="agendamento-row-value">Tarde - Das 12:00 até 18:00</p>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary">Adicionar ao meu calendário</button>
+        </div>
+
+        <!-- Ative os seus streamings -->
+        <div class="info-card">
+          <div class="info-card-copy">
+            <p class="info-card-title">Ative os seus streamings</p>
+            <p class="info-card-desc">Saiba como ativar os streamings incluídos no seu plano.</p>
+          </div>
+          <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/ativar-streamings" target="_blank">Saiba mais</a>
+        </div>
+
+        <!-- Autoinstalação Box Claro tv+ -->
+        <div class="info-card">
+          <div class="info-card-copy">
+            <p class="info-card-title">Autoinstalação Box Claro tv+</p>
+            <p class="info-card-desc">É fácil, rápido e não precisa de um técnico Claro. Quando receber a sua Box em casa, siga os passos e pronto!</p>
+          </div>
+          <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/box#instalacao" target="_blank">Saiba mais</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Termos Container (expandível) -->
+  <div class="section-row">
+    <div class="termos-container">
+      <div class="termos-header" onclick="toggleTermos(this)">
+        <div class="termos-header-text">
+          <div class="termos-icon-wrapper"><i class="mdn-Icon-documento mdn-Icon--md"></i></div>
+          <p class="termos-text">Condições da oferta e termo de adesão</p>
+        </div>
+        <button type="button" class="termos-toggle-icon" aria-label="Expandir">
+          <i class="mdn-Icon-baixo mdn-Icon--md"></i>
+        </button>
+      </div>
+      <div class="termos-content">
+        <div class="termos-item">
+          <p class="termos-item-title">Condições de oferta - TV</p>
+          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
+            <i class="mdn-Icon-olho"></i>
+          </button>
+        </div>
+        <div class="termos-item">
+          <p class="termos-item-title">Termo de Adesão</p>
+          <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão">
+            <i class="mdn-Icon-olho"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Componente real Mondrian Footer, variante "Public Simple"
+     (https://mondrian.claro.com.br/snippets/vanilla/index.html?path=/story/componentes-web-footer--public-simple) -->
+<footer class="mdn-Footer mdn-Footer--default mdn-Footer--signature mdn-Footer--simple" role="contentinfo">
+  <div class="mdn-Container">
+    <div class="mdn-Footer-content">
+      <div class="mdn-Footer-disclaimer">
+        <ul class="mdn-Footer-list">
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Política de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Portal de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-librasLink" href="#" title="Libras">
+              <i class="mdn-Icon-libras mdn-Icon--sm" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">
+          <strong>© 2026 Claro. Todos os direitos reservados <span class="mdn-Text-dash">- </span>
+            <br>CNPJ: 40.432.544/0001-47 <span class="mdn-Text-dash">- </span>
+            <br>Rua Henri Dunant, 780 - São Paulo - SP
+          </strong>
+        </p>
+      </div>
+      <div class="mdn-Footer-logo">
+        <img class="mdn-Footer-logo-image" src="https://mondrian.claro.com.br/brands/nosvg/assinatura-claro.png" alt="Claro">
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Toggle Termos (mesmo comportamento de checkout-box.html)
+  function toggleTermos(headerEl) {
+    const contentEl = headerEl.nextElementSibling;
+    contentEl.classList.toggle('open');
+    headerEl.classList.toggle('open');
+  }
+
+  // Troca a ilustração da mensagem de conclusão pela versão mobile abaixo
+  // de 599px (o Figma usa um recorte/proporção diferente por breakpoint).
+  function swapConclusionIllustration() {
+    const img = document.querySelector('.conclusion-illustration img');
+    if (!img) return;
+    img.src = window.matchMedia('(max-width: 599px)').matches
+      ? 'assets/conclusao/img-conclusao-mobile.svg'
+      : 'assets/conclusao/img-conclusao-desktop.svg';
+  }
+  swapConclusionIllustration();
+  window.addEventListener('resize', swapConclusionIllustration);
+
+  // Troca o grafismo de "borda de ticket" do Resumo do pedido pela versão
+  // mobile (largura fixa 328 vs 438 no desktop).
+  function swapTicketEdge() {
+    const img = document.querySelector('.summary-card-ticket img');
+    if (!img) return;
+    img.src = window.matchMedia('(max-width: 599px)').matches
+      ? 'assets/conclusao/ticket-edge-mobile.svg'
+      : 'assets/conclusao/ticket-edge-desktop.svg';
+  }
+  swapTicketEdge();
+  window.addEventListener('resize', swapTicketEdge);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motion Design Applied - Vitrine M6</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --red: #da291c;
+            --red-dark: #b41e13;
+            --gray-dark: #525252;
+            --gray-line: #dbdbdb;
+            --gray-bg: #f8f8f8;
+            --ink: #1f1d1d;
+            --yellow: #ffc722;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gray-bg);
+            color: var(--ink);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 60px;
+            box-shadow: 0 8px 32px rgba(218, 41, 28, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .element-block {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+            border-top: 4px solid var(--red);
+        }
+
+        .element-header {
+            background: var(--gray-bg);
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-line);
+        }
+
+        .element-header h2 {
+            font-size: 18px;
+            color: var(--red-dark);
+            margin-bottom: 8px;
+        }
+
+        .element-header p {
+            font-size: 13px;
+            color: var(--gray-dark);
+            font-family: 'Courier New', monospace;
+            margin-bottom: 8px;
+        }
+
+        .specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .spec {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid var(--yellow);
+            font-size: 12px;
+        }
+
+        .spec-label {
+            color: var(--gray-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .spec-value {
+            color: var(--ink);
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .element-preview {
+            padding: 40px;
+            background: white;
+            border-bottom: 1px solid var(--gray-line);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-x: auto;
+            text-align: left;
+        }
+
+        /* GREETING ANIMATION */
+        @keyframes greeting-h1 {
+            0% { opacity: 0; transform: translateY(16px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(16px); }
+        }
+
+        @keyframes greeting-p {
+            0% { opacity: 0; transform: translateY(8px); }
+            30% { opacity: 1; transform: translateY(0); }
+            70% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(8px); }
+        }
+
+        .greeting-demo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            animation: greeting-h1 4s ease-in-out infinite;
+        }
+
+        .greeting-demo p {
+            font-size: 16px;
+            color: var(--gray-dark);
+            animation: greeting-p 4s ease-in-out infinite;
+            margin-top: 8px;
+        }
+
+        /* CATEGORIES ANIMATION */
+        @keyframes category-scale {
+            0% { opacity: 0; transform: scale(0.8); }
+            15% { opacity: 1; transform: scale(1); }
+            85% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.8); }
+        }
+
+        .category-grid {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .category-item {
+            width: 70px;
+            text-align: center;
+            animation: category-scale 5s ease-in-out infinite;
+        }
+
+        .category-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 999px;
+            border: 2px solid var(--gray-line);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 8px;
+        }
+
+        .category-item:nth-child(1) { animation-delay: 0ms; }
+        .category-item:nth-child(2) { animation-delay: 100ms; }
+        .category-item:nth-child(3) { animation-delay: 200ms; }
+        .category-item:nth-child(4) { animation-delay: 300ms; }
+        .category-item:nth-child(5) { animation-delay: 400ms; }
+        .category-item:nth-child(6) { animation-delay: 500ms; }
+        .category-item:nth-child(7) { animation-delay: 600ms; }
+
+        .category-label {
+            font-size: 12px;
+            color: var(--gray-dark);
+        }
+
+        /* CARDS CAROUSEL ANIMATION */
+        @keyframes card-cascade {
+            0% { opacity: 0; transform: translateY(16px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(16px); }
+        }
+
+        .cards-carousel {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .card-mini {
+            width: 100px;
+            height: 130px;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            animation: card-cascade 4s ease-in-out infinite;
+        }
+
+        .card-mini-img {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, var(--red), #ff6b6b);
+        }
+
+        .card-mini-content {
+            padding: 8px;
+            font-size: 10px;
+            color: var(--gray-dark);
+            text-align: center;
+        }
+
+        .card-mini:nth-child(1) { animation-delay: 0ms; }
+        .card-mini:nth-child(2) { animation-delay: 150ms; }
+        .card-mini:nth-child(3) { animation-delay: 300ms; }
+        .card-mini:nth-child(4) { animation-delay: 450ms; }
+        .card-mini:nth-child(5) { animation-delay: 600ms; }
+        .card-mini:nth-child(6) { animation-delay: 750ms; }
+
+        /* SECTION ICON ANIMATION */
+        @keyframes icon-pulse {
+            0% { transform: scale(1); background: white; border-color: var(--gray-line); }
+            50% { transform: scale(1); background: var(--red); border-color: var(--red); }
+            100% { transform: scale(1); background: white; border-color: var(--gray-line); }
+        }
+
+        .section-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 999px;
+            border: 2px solid var(--gray-line);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: icon-pulse 3s ease-in-out infinite;
+            transition: all 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+        }
+
+        .section-icon i {
+            color: var(--ink);
+            animation: icon-color-change 3s ease-in-out infinite;
+        }
+
+        @keyframes icon-color-change {
+            0% { color: var(--ink); }
+            50% { color: white; }
+            100% { color: var(--ink); }
+        }
+
+        /* ============================================= */
+        /* ===== CHECKOUT BOX — DEMOS (checkout-box.html) ===== */
+        /* ============================================= */
+
+        .screen-divider {
+            background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+            color: white;
+            padding: 28px 40px;
+            border-radius: 12px;
+            margin: 60px 0 40px;
+            box-shadow: 0 8px 32px rgba(218, 41, 28, 0.2);
+        }
+        .screen-divider h2 { font-size: 24px; margin-bottom: 6px; }
+        .screen-divider p { font-size: 14px; opacity: 0.9; }
+
+        /* 1. Entrada com stagger (blocos da tela) */
+        @keyframes co-block-cascade {
+            0% { opacity: 0; transform: translateY(16px); }
+            10% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(16px); }
+        }
+        .co-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+        .co-stack-block {
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+            animation: co-block-cascade 4s ease-in-out infinite;
+        }
+        .co-stack-block:nth-child(1) { animation-delay: 0ms; }
+        .co-stack-block:nth-child(2) { animation-delay: 150ms; }
+        .co-stack-block:nth-child(3) { animation-delay: 300ms; }
+        .co-stack-block:nth-child(4) { animation-delay: 450ms; }
+
+        /* 2. Hover — sombra sutil no header do acordeão */
+        @keyframes co-header-hover {
+            0%, 20% { box-shadow: none; }
+            50%, 70% { box-shadow: 0 8px 16px rgba(0,0,0,0.12); }
+            100% { box-shadow: none; }
+        }
+        .co-header-demo {
+            width: 100%;
+            max-width: 320px;
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            animation: co-header-hover 2.5s ease-in-out infinite;
+        }
+
+        /* 3. Acordeão — ícone gira + conteúdo revela */
+        @keyframes co-chevron-rotate {
+            0%, 25% { transform: rotate(0deg); }
+            45%, 75% { transform: rotate(180deg); }
+            95%, 100% { transform: rotate(0deg); }
+        }
+        @keyframes co-content-reveal {
+            0%, 25% { opacity: 0; transform: translateY(8px); }
+            45%, 75% { opacity: 1; transform: translateY(0); }
+            95%, 100% { opacity: 0; transform: translateY(8px); }
+        }
+        /* Fade plano (sem translateY) — usado no conteúdo do acordeão para não
+           criar um vão visível entre o header e o painel que está abrindo */
+        @keyframes co-content-fade {
+            0%, 25% { opacity: 0; }
+            45%, 75% { opacity: 1; }
+            95%, 100% { opacity: 0; }
+        }
+        .co-accordion-demo { width: 100%; max-width: 320px; }
+        .co-accordion-header {
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+        }
+        .co-accordion-header span:last-child {
+            font-size: 16px;
+            animation: co-chevron-rotate 4s ease-in-out infinite;
+            display: inline-block;
+        }
+        .co-accordion-content {
+            background: var(--gray-bg);
+            border-radius: 0 0 12px 12px;
+            padding: 14px 20px;
+            font-size: 12px;
+            color: var(--gray-dark);
+            animation: co-content-fade 4s ease-in-out infinite;
+        }
+
+        /* 4. Botões — feedback de toque (press) */
+        @keyframes co-btn-press {
+            0%, 15% { transform: scale(1); filter: brightness(1); }
+            30%, 45% { transform: scale(0.95); filter: brightness(0.95); }
+            60%, 100% { transform: scale(1); filter: brightness(1); }
+        }
+        .co-btn-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
+        .co-btn-demo {
+            background: var(--yellow);
+            border: none;
+            border-radius: 500px;
+            padding: 14px 28px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            cursor: pointer;
+            animation: co-btn-press 2s ease-in-out infinite;
+        }
+        .co-btn-demo.small { padding: 8px 14px; font-size: 12px; animation-delay: 200ms; }
+        .co-arrow-demo {
+            width: 44px; height: 44px; border-radius: 12px; background: var(--red);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px; cursor: pointer;
+            animation: co-btn-press 2s ease-in-out infinite;
+            animation-delay: 400ms;
+        }
+
+        /* 5. Lista de adicionais / itens selecionados (Action Card) */
+        @keyframes co-list-reveal {
+            0%, 15% { opacity: 0; transform: translateY(8px); }
+            35%, 80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(8px); }
+        }
+        .co-list-demo {
+            background: var(--gray-bg);
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: co-list-reveal 4s ease-in-out infinite;
+        }
+        .co-list-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-line);
+        }
+        .co-list-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .co-list-icon {
+            width: 28px; height: 28px; border-radius: 14px; background: white;
+            border: 1px solid var(--gray-line); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 13px;
+        }
+        .co-list-text { flex: 1; color: var(--ink); }
+        .co-list-pill {
+            background: var(--yellow); border-radius: 500px; padding: 4px 10px;
+            font-size: 11px; font-weight: 500; color: var(--ink);
+        }
+
+        /* 7. Carrinho fixo mobile (expandir/recolher) */
+        .co-footer-demo {
+            background: var(--ink);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            padding: 16px 20px;
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .co-footer-row { display: flex; align-items: center; justify-content: space-between; }
+        .co-footer-row .co-footer-icon {
+            font-size: 16px;
+            animation: co-chevron-rotate 4s ease-in-out infinite;
+            display: inline-block;
+        }
+        .co-footer-expanded {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 12px;
+            font-size: 12px;
+            opacity: 0.9;
+            animation: co-content-reveal 4s ease-in-out infinite;
+        }
+
+        /* 8. Modal de remoção (fade do overlay + scale do card) */
+        @keyframes co-modal-overlay {
+            0%, 15% { opacity: 0; }
+            30%, 85% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        @keyframes co-modal-scale {
+            0%, 15% { opacity: 0; transform: scale(0.95); }
+            30%, 85% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.95); }
+        }
+        .co-modal-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            height: 200px;
+            background: var(--gray-bg);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .co-modal-overlay-demo {
+            position: absolute;
+            inset: 0;
+            background: rgba(31,29,29,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: co-modal-overlay 3.5s ease-in-out infinite;
+        }
+        .co-modal-card-demo {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            width: 80%;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            animation: co-modal-scale 3.5s ease-in-out infinite;
+        }
+        .co-modal-card-demo p { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+        .co-modal-card-demo .co-modal-btn {
+            display: block; width: 100%; border-radius: 500px; padding: 8px; font-size: 11px;
+            font-weight: 500; margin-bottom: 6px; border: 1px solid var(--red);
+        }
+        .co-modal-card-demo .co-modal-btn.primary { background: var(--red); color: white; }
+        .co-modal-card-demo .co-modal-btn.secondary { background: white; color: var(--red); }
+
+        /* ============================================= */
+        /* ===== CONCLUSÃO — DEMOS (conclusao-box.html) ===== */
+        /* ============================================= */
+
+        /* 1. Card "Pronto, Rodrigo!" (fade-in) */
+        @keyframes cn-message-fade {
+            0% { opacity: 0; }
+            15% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .cn-message-demo {
+            width: 100%;
+            max-width: 320px;
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            animation: cn-message-fade 3s ease-in-out infinite;
+        }
+        .cn-message-demo .cn-check {
+            width: 48px; height: 48px; border-radius: 999px; background: var(--red);
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            font-size: 22px; margin: 0 auto 12px;
+        }
+        .cn-message-demo h3 { font-size: 16px; margin-bottom: 6px; }
+        .cn-message-demo p { font-size: 12px; color: var(--gray-dark); }
+
+        /* 2. Stagger dos blocos seguintes (steps, resumo, avisos, termos) */
+        @keyframes cn-block-cascade {
+            0% { opacity: 0; transform: translateY(16px); }
+            10% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(16px); }
+        }
+        .cn-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+        .cn-stack-block {
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+            animation: cn-block-cascade 4s ease-in-out infinite;
+        }
+        .cn-stack-block:nth-child(1) { animation-delay: 0ms; }
+        .cn-stack-block:nth-child(2) { animation-delay: 40ms; }
+        .cn-stack-block:nth-child(3) { animation-delay: 80ms; }
+        .cn-stack-block:nth-child(4) { animation-delay: 120ms; }
+        .cn-stack-block:nth-child(5) { animation-delay: 160ms; }
+
+        /* 5. Botão primário — feedback de toque */
+        @keyframes cn-btn-press {
+            0%, 15% { transform: scale(1); filter: brightness(1); }
+            30%, 45% { transform: scale(0.98); filter: brightness(0.95); }
+            60%, 100% { transform: scale(1); filter: brightness(1); }
+        }
+        .cn-btn-demo {
+            background: var(--red);
+            border: none;
+            border-radius: 500px;
+            padding: 10px 28px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            cursor: pointer;
+            animation: cn-btn-press 2s ease-in-out infinite;
+        }
+
+        /* ============================================= */
+        /* ===== DETALHES DO PRODUTO — DEMOS (detalhes-box.html) ===== */
+        /* ============================================= */
+
+        /* 1. Entrada da tela (stagger) */
+        @keyframes d-block-cascade {
+            0% { opacity: 0; transform: translateY(16px); }
+            10% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(16px); }
+        }
+        .d-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+        .d-stack-block {
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+            animation: d-block-cascade 4s ease-in-out infinite;
+        }
+        .d-stack-block:nth-child(1) { animation-delay: 0ms; }
+        .d-stack-block:nth-child(2) { animation-delay: 60ms; }
+        .d-stack-block:nth-child(3) { animation-delay: 60ms; }
+
+        /* 2. Hover — sombra sutil no header do acordeão (Termos) */
+        @keyframes d-header-hover {
+            0%, 20% { box-shadow: none; }
+            50%, 70% { box-shadow: 0 8px 16px rgba(0,0,0,0.12); }
+            100% { box-shadow: none; }
+        }
+        .d-header-demo {
+            width: 100%;
+            max-width: 320px;
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            animation: d-header-hover 2.5s ease-in-out infinite;
+        }
+
+        /* 3. Acordeão de Termos — ícone gira + conteúdo revela (reaproveitado no item 4) */
+        @keyframes d-chevron-rotate {
+            0%, 25% { transform: rotate(0deg); }
+            45%, 75% { transform: rotate(180deg); }
+            95%, 100% { transform: rotate(0deg); }
+        }
+        @keyframes d-content-fade {
+            0%, 25% { opacity: 0; }
+            45%, 75% { opacity: 1; }
+            95%, 100% { opacity: 0; }
+        }
+        .d-accordion-demo { width: 100%; max-width: 320px; }
+        .d-accordion-header {
+            background: white;
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+        }
+        .d-accordion-header span:last-child {
+            font-size: 16px;
+            animation: d-chevron-rotate 4s ease-in-out infinite;
+            display: inline-block;
+        }
+        .d-accordion-content {
+            background: var(--gray-bg);
+            border-radius: 0 0 12px 12px;
+            padding: 14px 20px;
+            font-size: 12px;
+            color: var(--gray-dark);
+            animation: d-content-fade 4s ease-in-out infinite;
+        }
+
+        /* 4. Grade de canais — busca + acordeão de categorias */
+        @keyframes d-grade-fade {
+            0%, 10% { opacity: 0; }
+            25%, 90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .d-grade-demo { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 10px; }
+        .d-grade-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid var(--ink);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--gray-dark);
+            animation: d-grade-fade 4s ease-in-out infinite;
+        }
+        .d-grade-accordion {
+            border: 1px solid var(--gray-line);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: d-grade-fade 4s ease-in-out infinite;
+        }
+        .d-grade-cat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+            border-bottom: 1px solid var(--gray-line);
+        }
+        .d-grade-cat-header span:last-child {
+            display: inline-block;
+            animation: d-chevron-rotate 4s ease-in-out infinite;
+        }
+        .d-grade-cat-content {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            gap: 14px;
+            animation: d-content-fade 4s ease-in-out infinite;
+        }
+        .d-grade-channel { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--gray-dark); }
+        .d-grade-channel-logo { width: 22px; height: 22px; border-radius: 6px; background: var(--gray-bg); border: 1px solid var(--gray-line); flex-shrink: 0; }
+
+        /* 5. Botões — feedback de toque */
+        @keyframes d-btn-press {
+            0%, 15% { transform: scale(1); filter: brightness(1); }
+            30%, 45% { transform: scale(0.95); filter: brightness(0.95); }
+            60%, 100% { transform: scale(1); filter: brightness(1); }
+        }
+        .d-btn-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
+        .d-btn-demo {
+            background: var(--yellow);
+            border: none;
+            border-radius: 500px;
+            padding: 14px 28px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            cursor: pointer;
+            animation: d-btn-press 2s ease-in-out infinite;
+        }
+        .d-arrow-demo {
+            width: 44px; height: 44px; border-radius: 12px; background: var(--red);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px; cursor: pointer;
+            animation: d-btn-press 2s ease-in-out infinite;
+            animation-delay: 300ms;
+        }
+        .d-eye-demo {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--red);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 14px; cursor: pointer;
+            animation: d-btn-press 2s ease-in-out infinite;
+            animation-delay: 600ms;
+        }
+
+        /* Nota de "correção" nos cards de efeito */
+        .note-box {
+            background: #fff8e1;
+            border-left: 3px solid var(--yellow);
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 12px;
+            color: var(--ink);
+            margin-top: 12px;
+        }
+        .note-box strong { color: var(--red-dark); }
+
+        /* Índice rápido */
+        .index-box {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 24px 28px;
+            margin-bottom: 40px;
+        }
+        .index-box h3 { font-size: 14px; color: var(--gray-dark); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+        .index-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 4px 24px; }
+        .index-cols a {
+            display: block;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--gray-bg);
+        }
+        .index-cols a:hover { color: var(--red); }
+        .index-cols .index-group-title { font-size: 11px; font-weight: bold; text-transform: uppercase; color: var(--red-dark); margin-top: 10px; }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-dark);
+            border-top: 1px solid var(--gray-line);
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Motion Design Applied</h1>
+            <p>Animações implementadas em vitrine.html, checkout-box.html, conclusao-box.html e detalhes-box.html — Veja os exemplos em ação (repetem continuamente como GIFs)</p>
+        </div>
+
+        <div class="index-box">
+            <h3>Índice rápido</h3>
+            <div class="index-cols">
+                <div>
+                    <div class="index-group-title">🛍️ Vitrine</div>
+                    <a href="#v-greeting">1. Greeting (Saudação)</a>
+                    <a href="#v-categories">2. Categories Menu</a>
+                    <a href="#v-cards">3. Cards Carousel</a>
+                    <a href="#v-icons">4. Section Icons</a>
+                </div>
+                <div>
+                    <div class="index-group-title">🛒 Checkout Box</div>
+                    <a href="#c-stagger">1. Entrada dos blocos da tela</a>
+                    <a href="#c-hover">2. Hover no header do acordeão</a>
+                    <a href="#c-accordion">3. Acordeão (Detalhes / Termos)</a>
+                    <a href="#c-buttons">4. Botões — feedback de toque</a>
+                    <a href="#c-addlist">5. Lista de adicionais / selecionados</a>
+                    <a href="#c-carousel">6. Carrossel de streaming/serviços</a>
+                    <a href="#c-footer">7. Carrinho fixo (mobile)</a>
+                    <a href="#c-modal">8. Modal de remoção</a>
+                </div>
+                <div>
+                    <div class="index-group-title">✅ Conclusão do Pedido</div>
+                    <a href="#cn-message">1. Card "Pronto, Rodrigo!"</a>
+                    <a href="#cn-stagger">2. Entrada dos blocos seguintes</a>
+                    <a href="#cn-hover">3. Hover no header do acordeão</a>
+                    <a href="#cn-accordion">4. Acordeão de termos</a>
+                    <a href="#cn-buttons">5. Botões — feedback de toque</a>
+                </div>
+                <div>
+                    <div class="index-group-title">📺 Detalhes do Produto</div>
+                    <a href="#d-stagger">1. Entrada da tela</a>
+                    <a href="#d-hover">2. Hover no header do acordeão</a>
+                    <a href="#d-accordion">3. Acordeão de Termos</a>
+                    <a href="#d-grade">4. Grade de canais (busca + categorias)</a>
+                    <a href="#d-buttons">5. Botões — feedback de toque</a>
+                    <a href="#d-carousel">6. Carrossel de streaming/serviços</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. GREETING -->
+        <div class="element-block" id="v-greeting">
+            <div class="element-header">
+                <h2>1️⃣ Greeting (Saudação)</h2>
+                <p>.greeting → h1 (slide-up 500ms) + p (fade-in 500ms + 100ms delay)</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação h1</div>
+                        <div class="spec-value">slide-up 500ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Animação p</div>
+                        <div class="spec-value">fade-in 500ms + 100ms delay</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">Entrada sequencial impactante</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="greeting-demo">
+                    <h1>Olá, Rodrigo!</h1>
+                    <p>Veja o que separamos para você hoje.</p>
+                </div>
+            </div>
+            <div class="code-block">
+.greeting h1 { animation: slide-up 0.5s cubic-bezier(0.05, 0.7, 0.1, 1); }
+.greeting p { animation: fade-in 0.5s cubic-bezier(0, 0, 0.2, 1); animation-delay: 0.1s; }
+            </div>
+        </div>
+
+        <!-- 2. CATEGORIES -->
+        <div class="element-block" id="v-categories">
+            <div class="element-header">
+                <h2>2️⃣ Categories Menu</h2>
+                <p>.category-item + .category-circle — scale-in 300ms + stagger 40ms</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">scale-in 300ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Stagger</div>
+                        <div class="spec-value">40ms entre cada círculo</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">Cascata visual elegante (7 categorias)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="category-grid">
+                    <div class="category-item">
+                        <div class="category-circle">🎁</div>
+                        <div class="category-label">Melhores ofertas</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">📶</div>
+                        <div class="category-label">Internet</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">📺</div>
+                        <div class="category-label">TV</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">📱</div>
+                        <div class="category-label">Celular</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">☎️</div>
+                        <div class="category-label">Telefone</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">📦</div>
+                        <div class="category-label">Aparelhos</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">🎧</div>
+                        <div class="category-label">Acessórios</div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.category-item { animation: scale-in 0.3s cubic-bezier(0.05, 0.7, 0.1, 1); }
+.category-item:nth-child(1) { animation-delay: 0ms; }
+.category-item:nth-child(2) { animation-delay: 40ms; }
+/* ... até 7 itens com stagger de 40ms */
+            </div>
+        </div>
+
+        <!-- 3. CARDS CAROUSEL -->
+        <div class="element-block" id="v-cards">
+            <div class="element-header">
+                <h2>3️⃣ Cards Carousel</h2>
+                <p>.swiper-slide .card — slide-up 400ms + stagger 60ms (18 cards)</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">slide-up 400ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Stagger</div>
+                        <div class="spec-value">60ms entre cada card</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">Cascata visual de 18 cards (~360ms total)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="cards-carousel">
+                    <div class="card-mini">
+                        <div class="card-mini-img"></div>
+                        <div class="card-mini-content">Card 1</div>
+                    </div>
+                    <div class="card-mini">
+                        <div class="card-mini-img"></div>
+                        <div class="card-mini-content">Card 2</div>
+                    </div>
+                    <div class="card-mini">
+                        <div class="card-mini-img"></div>
+                        <div class="card-mini-content">Card 3</div>
+                    </div>
+                    <div class="card-mini">
+                        <div class="card-mini-img"></div>
+                        <div class="card-mini-content">Card 4</div>
+                    </div>
+                    <div class="card-mini">
+                        <div class="card-mini-img"></div>
+                        <div class="card-mini-content">Card 5</div>
+                    </div>
+                    <div class="card-mini">
+                        <div class="card-mini-img"></div>
+                        <div class="card-mini-content">Card 6</div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.card { opacity: 0; animation: slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1); }
+.swiper-slide:nth-child(1) .card { animation-delay: 0ms; }
+.swiper-slide:nth-child(2) .card { animation-delay: 60ms; }
+/* ... até 18 cards com stagger de 60ms */
+            </div>
+        </div>
+
+        <!-- 4. SECTION ICONS -->
+        <div class="element-block" id="v-icons">
+            <div class="element-header">
+                <h2>4️⃣ Section Icons</h2>
+                <p>.section-icon — background muda de white → red ao ativar seção</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">background: white → red (200ms)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Estado</div>
+                        <div class="spec-value">Ativo (red) / Inativo (white)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Objetivo</div>
+                        <div class="spec-value">Visual feedback de navegação ativa</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="section-icon">🎁</div>
+            </div>
+            <div class="code-block">
+.section-icon { 
+  transition: background 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s; 
+}
+.section-icon.active { 
+  background: var(--red); 
+  border-color: var(--red); 
+}
+.section-icon.active i { color: #fff; }
+            </div>
+        </div>
+        <div class="screen-divider">
+            <h2>🛒 Checkout Box</h2>
+            <p>Animações implementadas em checkout-box.html — mesmo sistema de motion do Material Design 3 usado na vitrine</p>
+        </div>
+
+        <!-- C1. STAGGER DE ENTRADA -->
+        <div class="element-block" id="c-stagger">
+            <div class="element-header">
+                <h2>1️⃣ Entrada dos blocos da tela</h2>
+                <p>.order-summary, .detalhes-container, .agendamento-container, .termos-container — slide-up 400ms + stagger 60ms</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">slide-up 400ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Stagger</div>
+                        <div class="spec-value">60ms entre cada bloco</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Ao carregar a tela de checkout</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-stack">
+                    <div class="co-stack-block">📋 Resumo do pedido</div>
+                    <div class="co-stack-block">📺 Ver detalhes do produto</div>
+                    <div class="co-stack-block">📅 Entrega do pedido</div>
+                    <div class="co-stack-block">📄 Condições da oferta</div>
+                </div>
+            </div>
+            <div class="code-block">
+.detalhes-container { opacity: 0; animation: slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards; }
+.order-summary-mobile { animation-delay: 0ms; }
+.detalhes-container { animation-delay: 60ms; }
+.agendamento-container { animation-delay: 120ms; }
+.termos-container { animation-delay: 180ms; }
+            </div>
+        </div>
+
+        <!-- C2. HOVER HEADER -->
+        <div class="element-block" id="c-hover">
+            <div class="element-header">
+                <h2>2️⃣ Hover no header do acordeão</h2>
+                <p>.detalhes-header:hover / .termos-header:hover — sombra sutil (sem mudar o fundo)</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">box-shadow 0 8px 16px rgba(0,0,0,0.12)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Duração</div>
+                        <div class="spec-value">200ms standard</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">"Ver detalhes do produto" e "Condições da oferta"</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-header-demo">
+                    <span>Ver detalhes do produto</span>
+                    <span>⌄</span>
+                </div>
+            </div>
+            <div class="code-block">
+.detalhes-header { transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1); }
+.detalhes-header:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12); }
+            </div>
+            <div class="note-box" style="margin: 0 20px 20px;">
+                <strong>Importante:</strong> a primeira versão usava mudança de <code>background</code> no hover e ficou estranha — foi trocada por sombra, no mesmo padrão do hover dos cards da vitrine.
+            </div>
+        </div>
+
+        <!-- C3. ACCORDION -->
+        <div class="element-block" id="c-accordion">
+            <div class="element-header">
+                <h2>3️⃣ Acordeão — abrir/fechar (Detalhes / Termos)</h2>
+                <p>Ícone gira 180° + conteúdo aparece com fade plano (sem deslocamento vertical) ao expandir</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Ícone</div>
+                        <div class="spec-value">rotate 180° em 200ms standard</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Conteúdo</div>
+                        <div class="spec-value">fade-in 300ms decelerated (só opacidade)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">.detalhes-content.open / .termos-content.open</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-accordion-demo">
+                    <div class="co-accordion-header">
+                        <span>Ver detalhes do produto</span>
+                        <span>⌄</span>
+                    </div>
+                    <div class="co-accordion-content">
+                        A Box transforma qualquer TV com entrada HDMI em uma Smart TV completa...
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.detalhes-icon { transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1); }
+.detalhes-header.open .detalhes-icon { transform: rotate(180deg); }
+
+@keyframes content-fade { from { opacity: 0; } to { opacity: 1; } }
+.detalhes-content.open { animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1); }
+            </div>
+            <div class="note-box" style="margin: 0 20px 20px;">
+                <strong>Ajuste (v2):</strong> a primeira versão usava o mesmo <code>fade-in</code> com <code>translateY(8px)</code> dos outros reveals. Como o painel troca de <code>display:none</code> para <code>flex</code> instantaneamente (não dá pra animar <code>display</code>), o espaço já era reservado de uma vez, mas o conteúdo nascia 8px mais baixo — isso criava uma "divisão"/vão visível entre o header e o conteúdo por um instante, ficando pouco fluido. Trocamos por um fade só de opacidade (<code>content-fade</code>, sem <code>transform</code>), que faz o conteúdo nascer já na posição final, colado no header.
+            </div>
+        </div>
+
+        <!-- C4. BUTTONS PRESS -->
+        <div class="element-block" id="c-buttons">
+            <div class="element-header">
+                <h2>4️⃣ Botões — feedback de toque (press)</h2>
+                <p>Botões e ícones clicáveis encolhem levemente ao clicar/tocar</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">scale(0.95–0.98) no :active</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Duração</div>
+                        <div class="spec-value">150ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Concluir pedido, Adicionar, setas do carrossel, lixeiras, fechar modal</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-btn-row">
+                    <button class="co-btn-demo">Concluir pedido</button>
+                    <button class="co-btn-demo small">Adicionar</button>
+                    <div class="co-arrow-demo">→</div>
+                </div>
+            </div>
+            <div class="code-block">
+.btn-sale { transition: filter 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1); }
+.btn-sale:active { transform: scale(0.98); }
+.swiper-arrow:active:not(:disabled) { transform: scale(0.95); }
+            </div>
+        </div>
+
+        <!-- C5. ADDLIST REVEAL -->
+        <div class="element-block" id="c-addlist">
+            <div class="element-header">
+                <h2>5️⃣ Lista de adicionais / itens selecionados</h2>
+                <p>.action-card-addlist / .action-card-selected-list — o painel aparece com fade ao abrir "Incluir adicionais"</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">fade-in 300ms decelerated</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Aplica em</div>
+                        <div class="spec-value">Só no container, uma vez</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Action Card, ao clicar "Incluir adicionais"</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-list-demo">
+                    <div class="co-list-row">
+                        <div class="co-list-icon">📺</div>
+                        <div class="co-list-text">Telecine<br>R$ 29,90 / mês</div>
+                        <div class="co-list-pill">Adicionar</div>
+                    </div>
+                    <div class="co-list-row">
+                        <div class="co-list-icon">🎬</div>
+                        <div class="co-list-text">A la carte<br>R$ 29,90 / mês</div>
+                        <div class="co-list-pill">Adicionar</div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.action-card-addlist:not([hidden]),
+.action-card-selected-list:not([hidden]) {
+  animation: fade-in 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+            </div>
+            <div class="note-box" style="margin: 0 20px 20px;">
+                <strong>Cuidado ao mexer:</strong> os itens (linhas) da lista <u>não</u> têm animação individual de propósito. O <code>render()</code> do Action Card recria a lista inteira via <code>innerHTML</code> a cada clique — se cada linha tiver sua própria animação de entrada, a lista inteira "pisca" a cada "Adicionar"/"Remover". Só o container anima, uma vez, quando abre.
+            </div>
+        </div>
+
+        <!-- C6. STREAMING/SERVICES CAROUSEL -->
+        <div class="element-block" id="c-carousel">
+            <div class="element-header">
+                <h2>6️⃣ Carrossel de streaming / serviços digitais</h2>
+                <p>.streaming-card / .service-card — mesmo efeito de cascata dos Cards Carousel da vitrine</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">slide-up 350ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Stagger</div>
+                        <div class="spec-value">60ms entre cada card</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Dentro de "Ver detalhes do produto", ao expandir</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="cards-carousel">
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">Disney+</div></div>
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">Netflix</div></div>
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">HBO Max</div></div>
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">Apple TV</div></div>
+                </div>
+            </div>
+            <div class="code-block">
+.streaming-card, .service-card { opacity: 0; animation: slide-up 0.35s cubic-bezier(0.05, 0.7, 0.1, 1) forwards; }
+.streaming-carousel .streaming-card:nth-child(1) { animation-delay: 0ms; }
+.streaming-carousel .streaming-card:nth-child(2) { animation-delay: 60ms; }
+/* ... stagger de 60ms por card */
+            </div>
+        </div>
+
+        <!-- C7. FOOTER MOBILE -->
+        <div class="element-block" id="c-footer">
+            <div class="element-header">
+                <h2>7️⃣ Carrinho fixo (mobile)</h2>
+                <p>.checkout-footer — informações extras aparecem com fade ao expandir</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">fade-in 300ms decelerated</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Ícone</div>
+                        <div class="spec-value">gira ao trocar de estado</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Barra fixa no rodapé (só mobile)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-footer-demo">
+                    <div class="co-footer-row">
+                        <div>
+                            <div style="font-size:12px;opacity:.85;">Total do carrinho</div>
+                            <div style="font-size:18px;font-weight:700;">R$ 139,90 <span style="font-size:12px;font-weight:400;">/mês</span></div>
+                        </div>
+                        <span class="co-footer-icon">⌃</span>
+                    </div>
+                    <div class="co-footer-expanded">
+                        Fidelidade: 12 meses · Taxa de Adesão: Grátis · Instalação: Grátis
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.footer-expanded-info:not([hidden]) { animation: fade-in 0.3s cubic-bezier(0, 0, 0.2, 1); }
+.checkout-footer-toggle:active { transform: scale(0.9); }
+            </div>
+        </div>
+
+        <!-- C8. MODAL -->
+        <div class="element-block" id="c-modal">
+            <div class="element-header">
+                <h2>8️⃣ Modal de remoção do produto</h2>
+                <p>Padrão MD3 de diálogo: overlay com fade + card com scale-in</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Overlay</div>
+                        <div class="spec-value">fade-in 200ms decelerated</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Card</div>
+                        <div class="spec-value">scale-in (0.95→1) 250ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Ao clicar na lixeira do produto principal</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-modal-wrap">
+                    <div class="co-modal-overlay-demo">
+                        <div class="co-modal-card-demo">
+                            <p>Remover este produto do carrinho?</p>
+                            <div class="co-modal-btn primary">Manter no carrinho</div>
+                            <div class="co-modal-btn secondary">Remover produto</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.remove-modal-overlay:not([hidden]) { animation: fade-in 0.2s cubic-bezier(0, 0, 0.2, 1); }
+.remove-modal-overlay:not([hidden]) .remove-modal { animation: scale-in 0.25s cubic-bezier(0.05, 0.7, 0.1, 1); }
+            </div>
+        </div>
+
+        <div class="screen-divider">
+            <h2>✅ Conclusão do Pedido</h2>
+            <p>Animações implementadas em conclusao-box.html — mesmo sistema de motion do Material Design 3, reaproveitando os padrões de hover e acordeão já usados no Checkout Box</p>
+        </div>
+
+        <!-- CN1. MESSAGE CARD -->
+        <div class="element-block" id="cn-message">
+            <div class="element-header">
+                <h2>1️⃣ Card "Pronto, Rodrigo!"</h2>
+                <p>.conclusion-message — fade-in 500ms ao carregar a tela</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">fade-in 500ms decelerated</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Duração</div>
+                        <div class="spec-value">500ms, sem delay</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Card de mensagem no topo da tela</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="cn-message-demo">
+                    <div class="cn-check">✓</div>
+                    <h3>Pronto, Rodrigo!</h3>
+                    <p>Seu pedido já está em análise.</p>
+                </div>
+            </div>
+            <div class="code-block">
+.conclusion-message { animation: fade-in 0.5s cubic-bezier(0, 0, 0.2, 1); }
+            </div>
+        </div>
+
+        <!-- CN2. STAGGER DOS BLOCOS SEGUINTES -->
+        <div class="element-block" id="cn-stagger">
+            <div class="element-header">
+                <h2>2️⃣ Entrada dos blocos seguintes</h2>
+                <p>.steps-wrap, .summary-col, .agendamento-card, .info-card, .termos-container — slide-up 400ms + stagger 40ms</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">slide-up 400ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Stagger</div>
+                        <div class="spec-value">40ms entre cada bloco</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Etapas → Resumo → Agendamento → Avisos → Termos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="cn-stack">
+                    <div class="cn-stack-block">📦 Como vai funcionar agora?</div>
+                    <div class="cn-stack-block">🧾 Resumo do pedido</div>
+                    <div class="cn-stack-block">📅 Agendamento da instalação</div>
+                    <div class="cn-stack-block">📺 Ative os seus streamings</div>
+                    <div class="cn-stack-block">📄 Condições da oferta</div>
+                </div>
+            </div>
+            <div class="code-block">
+.steps-wrap, .summary-col, .agendamento-card, .info-card, .termos-container {
+  opacity: 0;
+  animation: slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
+}
+.steps-wrap { animation-delay: 40ms; }
+.summary-col { animation-delay: 80ms; }
+.agendamento-card { animation-delay: 120ms; }
+.avisos-col .info-card:nth-of-type(1) { animation-delay: 160ms; }
+.avisos-col .info-card:nth-of-type(2) { animation-delay: 200ms; }
+.termos-container { animation-delay: 240ms; }
+            </div>
+        </div>
+
+        <!-- CN3. HOVER HEADER -->
+        <div class="element-block" id="cn-hover">
+            <div class="element-header">
+                <h2>3️⃣ Hover no header do acordeão</h2>
+                <p>.termos-header:hover — mesma sombra sutil já usada no Checkout Box (padrão reaproveitado, não recriado)</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">box-shadow 0 8px 16px rgba(0,0,0,0.12)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Duração</div>
+                        <div class="spec-value">200ms standard</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">"Condições da oferta e termo de adesão"</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-header-demo">
+                    <span>Condições da oferta e termo de adesão</span>
+                    <span>⌄</span>
+                </div>
+            </div>
+            <div class="code-block">
+.termos-header { transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1); }
+.termos-header:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12); }
+            </div>
+        </div>
+
+        <!-- CN4. ACCORDION -->
+        <div class="element-block" id="cn-accordion">
+            <div class="element-header">
+                <h2>4️⃣ Acordeão de termos — abrir/fechar</h2>
+                <p>Mesmo padrão do Checkout Box: ícone gira 180° + conteúdo aparece com fade plano (sem deslocamento vertical)</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Ícone</div>
+                        <div class="spec-value">rotate 180° em 200ms standard</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Conteúdo</div>
+                        <div class="spec-value">fade-in 300ms decelerated (só opacidade)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">.termos-content.open</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="co-accordion-demo">
+                    <div class="co-accordion-header">
+                        <span>Condições da oferta e termo de adesão</span>
+                        <span>⌄</span>
+                    </div>
+                    <div class="co-accordion-content">
+                        Condições de oferta - TV · Termo de Adesão
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.termos-toggle-icon { transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1); }
+.termos-header.open .termos-toggle-icon { transform: rotate(180deg); }
+.termos-content.open { animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1); }
+            </div>
+            <div class="note-box" style="margin: 0 20px 20px;">
+                <strong>Reaproveitado do Checkout Box:</strong> mesmo componente de accordion (<code>.termos-container</code>) e mesma lógica de fade plano — ver nota na seção 3️⃣ do Checkout Box sobre por que não usamos <code>translateY</code> aqui.
+            </div>
+        </div>
+
+        <!-- CN5. BUTTONS PRESS -->
+        <div class="element-block" id="cn-buttons">
+            <div class="element-header">
+                <h2>5️⃣ Botões — feedback de toque (press)</h2>
+                <p>.btn-primary — escurece e encolhe levemente ao clicar/tocar</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Hover</div>
+                        <div class="spec-value">filter: brightness(0.95) em 200ms</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Press</div>
+                        <div class="spec-value">scale(0.98) em 150ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Adicionar ao calendário, Saiba mais (x2)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <button class="cn-btn-demo">Adicionar ao meu calendário</button>
+            </div>
+            <div class="code-block">
+.btn-primary { transition: filter 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1); }
+.btn-primary:hover { filter: brightness(0.95); }
+.btn-primary:active { transform: scale(0.98); }
+            </div>
+        </div>
+
+        <div class="screen-divider">
+            <h2>📺 Detalhes do Produto (PDP)</h2>
+            <p>Animações implementadas em detalhes-box.html — mesmo sistema de motion do Material Design 3 usado nas outras telas</p>
+        </div>
+
+        <!-- D1. STAGGER DE ENTRADA -->
+        <div class="element-block" id="d-stagger">
+            <div class="element-header">
+                <h2>1️⃣ Entrada da tela</h2>
+                <p>Só .pdp-benefits anima ao carregar — o título do produto e a descrição nascem direto no estado final, sem efeito de entrada</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Card principal / título</div>
+                        <div class="spec-value">sem animação (removida — ver nota)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Benefícios</div>
+                        <div class="spec-value">content-fade 400ms decelerated + 60ms delay</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Ao carregar a tela de detalhes do produto (PDP)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="d-stack">
+                    <div class="d-stack-block">📺 Claro tv+ Box — card principal (estático)</div>
+                    <div class="d-stack-block">💰 Sidebar — título + preço + CTA (estático)</div>
+                    <div class="d-stack-block">🎁 Benefícios em destaque (anima)</div>
+                </div>
+            </div>
+            <div class="code-block">
+.pdp-benefits { opacity: 0; animation: content-fade 0.4s cubic-bezier(0, 0, 0.2, 1) forwards; animation-delay: 60ms; }
+/* .pdp-card e .pdp-sidebar não têm mais animation — ver nota abaixo */
+            </div>
+            <div class="note-box" style="margin: 0 20px 20px;">
+                <strong>Ajuste (v2) — removido o fade-in de .pdp-card e o slide-up de .pdp-sidebar:</strong> a v1 tinha .pdp-card (fade-in) envolvendo a descrição e .pdp-sidebar (slide-up) envolvendo o título do produto — só que <code>.pdp-benefits</code> já vive <em>dentro</em> dos dois (flutuante dentro do card no mobile, dentro da sidebar no desktop) e sempre teve sua própria animação (content-fade). Duas animações de opacidade sobrepostas, com easings diferentes, rodando ao mesmo tempo no mesmo trecho de tela — resultava num flicker estranho bem visível no título e na descrição. A correção foi remover a animação dos dois containers "de fora" e deixar só a animação própria de <code>.pdp-benefits</code>, que segue funcionando normalmente.
+            </div>
+        </div>
+
+        <!-- D2. HOVER HEADER -->
+        <div class="element-block" id="d-hover">
+            <div class="element-header">
+                <h2>2️⃣ Hover no header do acordeão (Termos)</h2>
+                <p>.termos-header:hover — sombra sutil, mesmo padrão do Checkout Box (ver #c-hover)</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">box-shadow 0 8px 16px rgba(0,0,0,0.12)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Duração</div>
+                        <div class="spec-value">200ms standard</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">"Condições da oferta e termo de adesão"</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="d-header-demo">
+                    <span>Condições da oferta e termo de adesão</span>
+                    <span>⌄</span>
+                </div>
+            </div>
+            <div class="code-block">
+.termos-header { transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1); }
+@media (hover: hover) {
+  .termos-header:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12); }
+}
+            </div>
+            <div class="note-box" style="margin: 0 20px 20px;">
+                <strong>@media (hover: hover):</strong> em telas touch não existe mouse pra "sair" do elemento depois do tap, então um <code>:hover</code> comum pode ficar grudado — a sombra vira uma linha/mancha cinza permanente sob o header. Envolver a regra em <code>@media (hover: hover)</code> garante que ela só se aplica em dispositivos com hover de verdade (mouse), nunca em touch. Mesma correção aplicada no header "Ver detalhes do produto" do Checkout Box e no botão "Ver grade completa" (item 4 abaixo), nas duas telas.
+            </div>
+        </div>
+
+        <!-- D3. ACCORDION TERMOS -->
+        <div class="element-block" id="d-accordion">
+            <div class="element-header">
+                <h2>3️⃣ Acordeão de Termos — abrir/fechar</h2>
+                <p>Ícone gira 180° + conteúdo aparece com fade plano (sem deslocamento vertical) ao expandir</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Ícone</div>
+                        <div class="spec-value">rotate 180° em 200ms standard</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Conteúdo</div>
+                        <div class="spec-value">fade-in 300ms decelerated (só opacidade)</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">.termos-content.open</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="d-accordion-demo">
+                    <div class="d-accordion-header">
+                        <span>Condições da oferta e termo de adesão</span>
+                        <span>⌄</span>
+                    </div>
+                    <div class="d-accordion-content">
+                        Condições de oferta - TV · Termo de Adesão
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.termos-toggle-icon { transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1); }
+.termos-header.open .termos-toggle-icon { transform: rotate(180deg); }
+.termos-content.open { animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1); }
+            </div>
+        </div>
+
+        <!-- D4. GRADE DE CANAIS -->
+        <div class="element-block" id="d-grade">
+            <div class="element-header">
+                <h2>4️⃣ Grade de canais — busca + acordeão de categorias</h2>
+                <p>.grade-search / #gradeAccordion / .grade-category-content — reveal com fade plano; ícone da categoria gira ao abrir</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Busca + lista</div>
+                        <div class="spec-value">fade-in 300ms decelerated, ao clicar "Ver grade completa"</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Categoria</div>
+                        <div class="spec-value">ícone rotate 180° + conteúdo fade 300ms, por categoria</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Seção "Grade de canais" — em detalhes-box.html e checkout-box.html</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="d-grade-demo">
+                    <div class="d-grade-search">🔍 Busque no plano</div>
+                    <div class="d-grade-accordion">
+                        <div class="d-grade-cat-header">
+                            <span>Canais abertos HD</span>
+                            <span>⌄</span>
+                        </div>
+                        <div class="d-grade-cat-content">
+                            <div class="d-grade-channel"><div class="d-grade-channel-logo"></div>Globo HD</div>
+                            <div class="d-grade-channel"><div class="d-grade-channel-logo"></div>SBT HD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+.grade-search:not([hidden]),
+#gradeAccordion:not([hidden]) { animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1); }
+.grade-category-icon { transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1); }
+.grade-category.open .grade-category-icon { transform: rotate(180deg); }
+.grade-category.open .grade-category-content { animation: content-fade 0.3s cubic-bezier(0, 0, 0.2, 1); }
+            </div>
+            <div class="note-box" style="margin: 0 20px 20px;">
+                <strong>Componente novo, mesmo padrão do acordeão de Termos:</strong> a Grade de Canais foi implementada do zero (busca real com o componente Mondrian de Input Search, 10 categorias com ~96 canais reais) mas reaproveita o mesmo fade plano do acordeão de Termos pra abrir/fechar — nenhum padrão de motion novo, só um componente novo em cima do sistema já existente.
+            </div>
+        </div>
+
+        <!-- D5. BUTTONS PRESS -->
+        <div class="element-block" id="d-buttons">
+            <div class="element-header">
+                <h2>5️⃣ Botões — feedback de toque (press)</h2>
+                <p>Botões e ícones clicáveis encolhem levemente ao clicar/tocar</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Efeito</div>
+                        <div class="spec-value">scale(0.90–0.98) no :active</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Duração</div>
+                        <div class="spec-value">150ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Adicionar ao carrinho, setas do carrossel, ícones "olho" dos Termos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="d-btn-row">
+                    <button class="d-btn-demo">Adicionar ao carrinho</button>
+                    <div class="d-arrow-demo">→</div>
+                    <div class="d-eye-demo">👁</div>
+                </div>
+            </div>
+            <div class="code-block">
+.btn-sale { transition: filter 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1); }
+.btn-sale:active { transform: scale(0.98); }
+.swiper-arrow:active:not(:disabled) { transform: scale(0.95); }
+.termos-item-icon:active { transform: scale(0.9); }
+            </div>
+        </div>
+
+        <!-- D6. CARROSSEL -->
+        <div class="element-block" id="d-carousel">
+            <div class="element-header">
+                <h2>6️⃣ Carrossel de streaming / serviços digitais</h2>
+                <p>.streaming-card / .service-card — mesma cascata dos Cards Carousel da vitrine e do Checkout Box</p>
+                <div class="specs">
+                    <div class="spec">
+                        <div class="spec-label">Animação</div>
+                        <div class="spec-value">slide-up 350ms emphasized</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Stagger</div>
+                        <div class="spec-value">60ms entre cada card</div>
+                    </div>
+                    <div class="spec">
+                        <div class="spec-label">Onde</div>
+                        <div class="spec-value">Seções "Incluso neste plano" e "Serviços digitais", ao carregar</div>
+                    </div>
+                </div>
+            </div>
+            <div class="element-preview">
+                <div class="cards-carousel">
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">Disney+</div></div>
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">Amazon Prime</div></div>
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">Globoplay</div></div>
+                    <div class="card-mini"><div class="card-mini-img"></div><div class="card-mini-content">HBO Max</div></div>
+                </div>
+            </div>
+            <div class="code-block">
+.streaming-card, .service-card { opacity: 0; animation: slide-up 0.35s cubic-bezier(0.05, 0.7, 0.1, 1) forwards; }
+.streaming-carousel .streaming-card:nth-child(1) { animation-delay: 0ms; }
+.streaming-carousel .streaming-card:nth-child(2) { animation-delay: 60ms; }
+/* ... stagger de 60ms por card, igual ao Checkout Box */
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p><strong>Motion Design Applied</strong> — 4 animações na vitrine.html + 8 animações na checkout-box.html + 5 animações na conclusao-box.html + 6 animações na detalhes-box.html</p>
+        <p style="margin-top: 10px; font-size: 12px;">Todos os exemplos repetem continuamente (como GIF) para visualização clara do comportamento esperado. Nenhum efeito foi aplicado em cima de componentes nativos do Mondrian (.mdn-Alert, .mdn-Breadcrumb, .mdn-Icon, .mdn-Topic, .mdn-Text) — só nos containers customizados ao redor deles.</p>
+    </footer>
+</body>
+</html>
