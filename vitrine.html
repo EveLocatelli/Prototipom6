@@ -193,6 +193,14 @@
   .swiper .swiper-pagination-bullets,
   .swiper-pagination-bullet{display:none!important;}
 
+  /* ===== Componente real Mondrian BrandGroup (overlaid, "6 streamings inclusos") =====
+     O Mondrian não define nenhuma largura/altura pro <img class="mdn-BrandGroup-image
+     mdn-Brand-image"> — só o <li class="mdn-BrandGroup-item"> tem 24x24 fixo. Os SVGs da
+     pasta /brands/app/32px-alternative/ têm tamanho intrínseco de 32px, então sem esse
+     override a imagem estoura a caixinha de 24px e quebra o layout da linha. */
+  .mdn-BrandGroup--overlaid .mdn-BrandGroup-image{width:24px;height:24px;overflow:hidden;}
+  .mdn-BrandGroup--overlaid .mdn-BrandGroup-image.mdn-Brand-image{width:100%;height:100%;object-fit:contain;}
+
   .card{
     width:296px;
     height:100%;
@@ -845,20 +853,55 @@
             <div class="card-middle">
               <div class="card-simple-item">
                 <span class="label">Mais de 120 canais ao vivo</span>
-                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+                <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
               </div>
               <div class="card-simple-item">
                 <span class="label">6 streamings inclusos</span>
-                <div class="brands">
-                  <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
-                </div>
+                <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Disney+"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+" title="Disney+" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Disney+</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Globoplay"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay" title="Globoplay" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Globoplay</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Apple TV"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV" title="Apple TV" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Apple TV</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais streamings: Netflix, HBO Max" aria-expanded="false">+</button>
+                  </li>
+                </ul>
               </div>
               <div class="card-simple-item">
                 <span class="label">Leve para onde quiser</span>
-                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+                <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
               </div>
             </div>
             <div class="card-bottom">
@@ -924,20 +967,55 @@
             <div class="card-middle">
               <div class="card-simple-item">
                 <span class="label">Mais de 120 canais ao vivo</span>
-                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+                <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
               </div>
               <div class="card-simple-item">
                 <span class="label">6 streamings inclusos</span>
-                <div class="brands">
-                  <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
-                </div>
+                <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Disney+"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+" title="Disney+" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Disney+</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Globoplay"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay" title="Globoplay" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Globoplay</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Apple TV"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV" title="Apple TV" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Apple TV</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais streamings: Netflix, HBO Max" aria-expanded="false">+</button>
+                  </li>
+                </ul>
               </div>
               <div class="card-simple-item">
                 <span class="label">Leve para onde quiser</span>
-                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+                <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
               </div>
             </div>
             <div class="card-bottom">
@@ -972,20 +1050,55 @@
             <div class="card-middle">
               <div class="card-simple-item">
                 <span class="label">Mais de 120 canais ao vivo</span>
-                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+                <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
               </div>
               <div class="card-simple-item">
                 <span class="label">6 streamings inclusos</span>
-                <div class="brands">
-                  <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
-                  <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
-                </div>
+                <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Disney+"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+" title="Disney+" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Disney+</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Globoplay"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay" title="Globoplay" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Globoplay</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-focus" aria-label="Apple TV"></button>
+                    <figure class="mdn-BrandGroup-image">
+                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV" title="Apple TV" />
+                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Apple TV</p>
+                      </figcaption>
+                    </figure>
+                  </li>
+                  <li class="mdn-BrandGroup-item">
+                    <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais streamings: Netflix, HBO Max" aria-expanded="false">+</button>
+                  </li>
+                </ul>
               </div>
               <div class="card-simple-item">
                 <span class="label">Leve para onde quiser</span>
-                <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+                <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
               </div>
             </div>
             <div class="card-bottom">
@@ -1075,20 +1188,55 @@
         <div class="card-middle">
           <div class="card-simple-item">
             <span class="label">Mais de 120 canais ao vivo</span>
-            <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+            <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
           </div>
           <div class="card-simple-item">
             <span class="label">6 streamings inclusos</span>
-            <div class="brands">
-              <img src="https://www.figma.com/api/mcp/asset/0f5cac05-7aa6-4947-9824-e7802400e219.svg" alt="">
-              <img src="https://www.figma.com/api/mcp/asset/36921e04-0d07-4e68-b5b4-0d3edc7b033f.svg" alt="">
-              <img src="https://www.figma.com/api/mcp/asset/e4fd076c-5486-4916-b79a-c73cada11d2f.svg" alt="">
-              <img src="https://www.figma.com/api/mcp/asset/c81b5b11-3c83-49f5-855a-9952a6b1dbe3.svg" alt="">
-            </div>
+            <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
+              <li class="mdn-BrandGroup-item">
+                <button class="mdn-BrandGroup-item-focus" aria-label="Disney+"></button>
+                <figure class="mdn-BrandGroup-image">
+                  <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+" title="Disney+" />
+                  <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                    <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Disney+</p>
+                  </figcaption>
+                </figure>
+              </li>
+              <li class="mdn-BrandGroup-item">
+                <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
+                <figure class="mdn-BrandGroup-image">
+                  <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
+                  <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                    <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
+                  </figcaption>
+                </figure>
+              </li>
+              <li class="mdn-BrandGroup-item">
+                <button class="mdn-BrandGroup-item-focus" aria-label="Globoplay"></button>
+                <figure class="mdn-BrandGroup-image">
+                  <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay" title="Globoplay" />
+                  <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                    <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Globoplay</p>
+                  </figcaption>
+                </figure>
+              </li>
+              <li class="mdn-BrandGroup-item">
+                <button class="mdn-BrandGroup-item-focus" aria-label="Apple TV"></button>
+                <figure class="mdn-BrandGroup-image">
+                  <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV" title="Apple TV" />
+                  <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                    <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Apple TV</p>
+                  </figcaption>
+                </figure>
+              </li>
+              <li class="mdn-BrandGroup-item">
+                <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais streamings: Netflix, HBO Max" aria-expanded="false">+</button>
+              </li>
+            </ul>
           </div>
           <div class="card-simple-item">
             <span class="label">Leve para onde quiser</span>
-            <i class="mdn-Icon-informacao mdn-Icon--sm"></i>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
           </div>
         </div>
         <div class="card-bottom">
