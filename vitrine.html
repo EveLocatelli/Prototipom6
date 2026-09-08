@@ -113,8 +113,15 @@
     box-sizing:border-box;
   }
   .categories h2{font-size:16px;font-weight:400;color:var(--gray-dark);margin:0 0 24px;}
-  .category-grid{display:flex;gap:16px;flex-wrap:wrap;}
-  .category-item{width:70px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
+  /* Nunca quebra em duas linhas: quando não cabe mais na largura disponível,
+     vira carrossel horizontal (scroll) em vez de wrap, em qualquer tamanho de tela. */
+  .category-grid{
+    display:flex;gap:16px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;
+    scrollbar-width:none; /* Firefox */
+    -ms-overflow-style:none; /* Edge legado */
+  }
+  .category-grid::-webkit-scrollbar{display:none;} /* Chrome, Safari */
+  .category-item{width:70px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
   .category-circle{
     width:64px;height:64px;border-radius:999px;border:2px solid var(--gray-line);
     background:#fff;display:flex;align-items:center;justify-content:center;
@@ -283,8 +290,15 @@
   /* ===== Marcas relacionadas ===== */
   .brands-block{margin-top:24px;}
   .brands-block p.brands-lead{font-size:16px;color:var(--gray-dark);margin:0 0 8px;}
-  .brands-grid{display:flex;gap:8px;flex-wrap:wrap;}
-  .brand-chip{display:flex;flex-direction:column;align-items:center;gap:8px;width:70px;background:none;border:none;cursor:pointer;}
+  /* Mesmo tratamento do .category-grid: carrossel horizontal em vez de
+     quebrar em duas linhas quando não cabe mais na tela. */
+  .brands-grid{
+    display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .brands-grid::-webkit-scrollbar{display:none;}
+  .brand-chip{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px;width:70px;background:none;border:none;cursor:pointer;}
   .brand-chip .brand-circle{
     width:64px;height:64px;border-radius:999px;border:2px solid var(--gray-line);
     background:#fff;display:flex;align-items:center;justify-content:center;padding:10px;box-sizing:border-box;
@@ -593,16 +607,12 @@
     .section-title h2{font-size:20px;}
 
     /* Menu "Navegue por categorias": no mobile os círculos/ícones encolhem
-       pra 42px/20px (confirmado pela Eve), acompanhando o .section-icon acima. */
+       pra 42px/20px (confirmado pela Eve), acompanhando o .section-icon acima.
+       O comportamento de carrossel (nowrap + overflow-x) já é a regra base,
+       aqui só o gap fica menor pra caber mais item na tela pequena. */
     .categories{padding:12px 0;margin-bottom:40px;}
     .categories-inner{padding:0 16px;}
-    .category-grid{
-      flex-wrap:nowrap;overflow-x:auto;gap:12px;padding-bottom:4px;
-      scrollbar-width:none; /* Firefox */
-      -ms-overflow-style:none; /* Edge legado */
-    }
-    .category-grid::-webkit-scrollbar{display:none;} /* Chrome, Safari */
-    .category-item{flex-shrink:0;}
+    .category-grid{gap:12px;}
     .category-circle{width:42px;height:42px;}
     .category-circle i{font-size:20px;}
 
