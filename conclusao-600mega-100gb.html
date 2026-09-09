@@ -158,6 +158,9 @@
     gap:24px;
   }
   .summary-card-heading{font-size:20px;font-weight:700;margin:0;}
+  .summary-products{display:flex;flex-direction:column;gap:16px;}
+  .summary-product-block{display:flex;flex-direction:column;gap:8px;}
+  .summary-product-block + .summary-product-block{padding-top:16px;border-top:1px solid var(--gray-line);}
   .summary-product{display:flex;align-items:center;gap:8px;}
   .summary-product-icon{
     width:32px;height:32px;flex-shrink:0;
@@ -428,8 +431,8 @@
         <div class="step-bullet">
           <div class="step-icon"><i class="mdn-Icon-calendario"></i></div>
           <div class="step-copy">
-            <ol class="step-ol" start="2"><li>Entrega</li></ol>
-            <p class="step-desc">Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.</p>
+            <ol class="step-ol" start="2"><li>Instalação</li></ol>
+            <p class="step-desc">O técnico chegará à sua casa no <strong>dia agendado para fazer a instalação</strong>. Você poderá <strong>acompanhar tudo pelo app</strong>.</p>
           </div>
         </div>
         <div class="step-bullet">
@@ -437,6 +440,13 @@
           <div class="step-copy">
             <ol class="step-ol" start="3"><li>Fatura</li></ol>
             <p class="step-desc">A fatura será <strong>proporcional</strong>, a contar do <strong>dia em que seu plano for ativado</strong> até a <strong>data de vencimento</strong>.</p>
+          </div>
+        </div>
+        <div class="step-bullet">
+          <div class="step-icon"><i class="mdn-Icon-chip"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="4"><li>Ativação da linha móvel</li></ol>
+            <p class="step-desc"><strong>Após a entrega do seu chip ou envio do seu eSim, sua linha precisará ser ativada</strong>. Ligue de qualquer telefone para o número 10621. Selecione a opção 4. Informe os 4 últimos dígitos do seu novo chip.</p>
           </div>
         </div>
       </div>
@@ -453,15 +463,28 @@
           <div class="summary-card-top">
             <p class="summary-card-heading">Resumo do pedido</p>
 
-            <div>
-              <div class="summary-product">
-                <div class="summary-product-icon"><i class="mdn-Icon-tv"></i></div>
-                <p class="summary-product-name">Claro tv+ Box</p>
+            <div class="summary-products">
+              <div class="summary-product-block">
+                <div class="summary-product">
+                  <div class="summary-product-icon"><i class="mdn-Icon-wifi"></i></div>
+                  <p class="summary-product-name">600 Mega</p>
+                </div>
+                <div class="summary-price">
+                  <span class="prefix">R$</span>
+                  <span class="amount">99,90</span>
+                  <span class="suffix">/mês</span>
+                </div>
               </div>
-              <div class="summary-price">
-                <span class="prefix">R$</span>
-                <span class="amount">139,90</span>
-                <span class="suffix">/mês</span>
+              <div class="summary-product-block">
+                <div class="summary-product">
+                  <div class="summary-product-icon"><i class="mdn-Icon-celular-5g"></i></div>
+                  <p class="summary-product-name">Pós 100GB</p>
+                </div>
+                <div class="summary-price">
+                  <span class="prefix">R$</span>
+                  <span class="amount">59,90</span>
+                  <span class="suffix">/mês</span>
+                </div>
               </div>
             </div>
 
@@ -491,7 +514,7 @@
             <p class="summary-total-label">Total do seu pedido</p>
             <div class="summary-total-value">
               <span class="prefix">R$</span>
-              <span class="amount">139,90</span>
+              <span class="amount">159,80</span>
               <span class="suffix">/mês</span>
             </div>
             <p class="summary-total-note">ajustado à sua fatura</p>
@@ -502,22 +525,28 @@
       <!-- Avisos -->
       <div class="avisos-col">
 
-        <!-- Ativação no sistema (Box não requer instalação, só ativação) -->
+        <!-- Agendamento da instalação -->
         <div class="agendamento-card">
-          <div class="info-card-copy">
-            <p class="agendamento-card-title">Ativação no sistema</p>
-            <p class="info-card-desc">Este pedido não requer instalação. A ativação será feita no prazo abaixo:</p>
-          </div>
+          <p class="agendamento-card-title">Agendamento da instalação</p>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-documento"></i>Contrato de ativação</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço de instalação</p>
             <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
           </div>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo para atualização</p>
-            <p class="agendamento-block-value">3 dias úteis</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Agendamento da instalação</p>
+            <div class="agendamento-row">
+              <p class="agendamento-row-label">Data:</p>
+              <p class="agendamento-row-value" data-role="agendamento-date">30/04 - Quarta-feira</p>
+            </div>
+            <div class="agendamento-row">
+              <p class="agendamento-row-label">Período:</p>
+              <p class="agendamento-row-value" data-role="agendamento-period">Tarde - Das 12:00 até 18:00</p>
+            </div>
           </div>
+
+          <button type="button" class="btn-primary">Adicionar ao meu calendário</button>
         </div>
 
         <!-- Ative os seus streamings -->
@@ -527,15 +556,6 @@
             <p class="info-card-desc">Saiba como ativar os streamings incluídos no seu plano.</p>
           </div>
           <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/ativar-streamings" target="_blank">Saiba mais</a>
-        </div>
-
-        <!-- Autoinstalação Box Claro tv+ -->
-        <div class="info-card">
-          <div class="info-card-copy">
-            <p class="info-card-title">Autoinstalação Box Claro tv+</p>
-            <p class="info-card-desc">É fácil, rápido e não precisa de um técnico Claro. Quando receber a sua Box em casa, siga os passos e pronto!</p>
-          </div>
-          <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/box#instalacao" target="_blank">Saiba mais</a>
         </div>
 
       </div>
@@ -556,8 +576,14 @@
       </div>
       <div class="termos-content">
         <div class="termos-item">
-          <p class="termos-item-title">Condições de oferta - TV</p>
-          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
+          <p class="termos-item-title">Condições de oferta - Banda Larga</p>
+          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - Banda Larga">
+            <i class="mdn-Icon-olho"></i>
+          </button>
+        </div>
+        <div class="termos-item">
+          <p class="termos-item-title">Condições de oferta - Plano de Celular</p>
+          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - Plano de Celular">
             <i class="mdn-Icon-olho"></i>
           </button>
         </div>
@@ -637,6 +663,40 @@
   }
   swapTicketEdge();
   window.addEventListener('resize', swapTicketEdge);
+
+  // Herda a data/período escolhidos no Agendamento da instalação do
+  // checkout (salvos em localStorage antes do redirect pelo botão
+  // "Concluir pedido" em checkout-600mega-100gb.html). Se não houver nada
+  // salvo (ex.: acesso direto a esta página), mantém o texto estático
+  // acima como fallback de demonstração.
+  function renderAgendamentoFromStorage() {
+    const WEEKDAYS_FULL = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    const PERIODS = {
+      manha: { label: 'Manhã', summaryRange: 'Das 08:00 até 12:00' },
+      tarde: { label: 'Tarde', summaryRange: 'Das 12:00 até 18:00' },
+    };
+    let saved;
+    try {
+      saved = JSON.parse(localStorage.getItem('agendamentoConfirmado'));
+    } catch (e) {
+      saved = null;
+    }
+    if (!saved || !saved.date || !saved.period || !PERIODS[saved.period]) return;
+
+    const date = new Date(saved.date);
+    if (isNaN(date.getTime())) return;
+
+    const dateEl = document.querySelector('[data-role="agendamento-date"]');
+    const periodEl = document.querySelector('[data-role="agendamento-period"]');
+    if (dateEl) {
+      dateEl.textContent = String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0') + ' - ' + WEEKDAYS_FULL[date.getDay()];
+    }
+    if (periodEl) {
+      const p = PERIODS[saved.period];
+      periodEl.textContent = p.label + ' - ' + p.summaryRange;
+    }
+  }
+  renderAgendamentoFromStorage();
 </script>
 
 </body>

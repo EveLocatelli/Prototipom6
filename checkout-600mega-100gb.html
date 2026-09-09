@@ -2223,7 +2223,7 @@
           <p class="order-adjusted">ajustado à sua fatura</p>
         </div>
 
-        <button type="button" class="btn-sale" onclick="window.location.href='conclusao-box.html'">Concluir pedido</button>
+        <button type="button" class="btn-sale" onclick="concluirPedido()">Concluir pedido</button>
       </div>
     </div>
   </div>
@@ -2265,7 +2265,7 @@
     </div>
   </div>
 
-  <button type="button" class="btn-sale" onclick="window.location.href='conclusao-box.html'">Concluir pedido</button>
+  <button type="button" class="btn-sale" onclick="concluirPedido()">Concluir pedido</button>
 </div>
 
 <!-- Modal: confirmação de remoção do produto principal (Claro tv+ Box) -->
@@ -2536,6 +2536,17 @@
     document.querySelector('[data-role="agendamento-periods"]').hidden = true;
     document.querySelector('[data-role="agendamento-calendar-row"]').hidden = true;
     document.querySelector('[data-role="agendamento-cancel-btn"]').hidden = true;
+  }
+
+  // Salva a data/período confirmados no Agendamento da instalação para a
+  // tela de conclusão herdar (lido de lá via localStorage), e só então
+  // navega — chamado pelo botão "Concluir pedido".
+  function concluirPedido() {
+    const { period, date } = agendamentoState.confirmed;
+    try {
+      localStorage.setItem('agendamentoConfirmado', JSON.stringify({ period, date: date.toISOString() }));
+    } catch (e) {}
+    window.location.href = 'conclusao-600mega-100gb.html';
   }
 
   renderAgendamentoSummary();
