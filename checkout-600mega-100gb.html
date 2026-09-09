@@ -1551,8 +1551,12 @@
     animation: scale-in 0.25s cubic-bezier(0.05, 0.7, 0.1, 1);
   }
 
-  /* Order Summary: hide mobile on desktop, hide desktop on mobile */
-  .order-summary-mobile{display:block;}
+  /* Order Summary: hide mobile on desktop, hide desktop on mobile.
+     display:flex (não block) porque .order-summary já define flex-direction
+     e gap — com display:block aqui (mesma especificidade, mas depois no
+     CSS) o gap entre os 2 Action Cards desaparecia, deixando os cards
+     colados um no outro. */
+  .order-summary-mobile{display:flex;}
   .order-summary-desktop{display:none;}
 
   /* ===== Media Queries ===== */
@@ -1603,7 +1607,7 @@
 
     /* Hide desktop summary on mobile */
     .order-summary-desktop{display:none;}
-    .order-summary-mobile{display:block;}
+    .order-summary-mobile{display:flex;}
   }
 
   /* Desktop: show desktop summary, hide mobile */
