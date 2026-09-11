@@ -1848,7 +1848,7 @@
           <p class="order-adjusted">ajustado à sua fatura</p>
         </div>
 
-        <button type="button" class="btn-sale" onclick="window.location.href='conclusao-box.html'">Concluir pedido</button>
+        <button type="button" class="btn-sale" onclick="finalizarPedido('conclusao.html')">Concluir pedido</button>
       </div>
     </div>
   </div>
@@ -1890,7 +1890,7 @@
     </div>
   </div>
 
-  <button type="button" class="btn-sale" onclick="window.location.href='conclusao-box.html'">Concluir pedido</button>
+  <button type="button" class="btn-sale" onclick="finalizarPedido('conclusao.html')">Concluir pedido</button>
 </div>
 
 <!-- Modal: confirmação de remoção do produto principal (Claro tv+ Box) -->
@@ -2284,6 +2284,17 @@
   const ACTION_CARD_PAGE_SIZE = 6;
   const ACTION_CARD_BASE_PRICE = 139.90; // Valor do plano (Claro tv+ Box)
 
+  // Metadados do produto desta página de checkout — únicos dados que mudam
+  // de fato entre checkout-box.html e as variantes (Cabo/Soundbox): tudo
+  // isso é lido por finalizarPedido() e gravado para a conclusao.html ler,
+  // em vez de existir uma tela de conclusão fixa por produto.
+  const PRODUCT_META = {
+    productName: 'Claro tv+ Box',
+    shortName: 'Box',
+    icon: 'mdn-Icon-tv',
+    installType: 'auto', // 'auto' = autoinstalável · 'tecnico' = visita de Técnico Claro
+  };
+
   // "R$ 29,90 / mês" -> 29.9
   function parsePriceBRL(str) {
     const match = str.match(/([\d.]+,\d+|\d+)/);
@@ -2297,14 +2308,49 @@
 
   // Reflete a base do plano + adicionais selecionados no total do pedido
   // (card "Total do seu carrinho" no desktop e no carrinho fixo do mobile).
+  // Também guarda esse total em currentOrderTotal, para finalizarPedido()
+  // conseguir ler o valor final sem depender do state (fechado dentro do
+  // closure de initActionCard) de qual dos dois Action Cards (mobile/desktop)
+  // o usuário mexeu por último.
+  let currentOrderTotal = ACTION_CARD_BASE_PRICE;
+  let currentOrderAddons = [];
   function syncOrderTotal(selectedIds) {
-    const extra = selectedIds.reduce((sum, id) => {
-      const item = ACTION_CARD_CATALOG.find(i => i.id === id);
-      return sum + (item ? parsePriceBRL(item.price) : 0);
-    }, 0);
-    const formatted = formatPriceBRL(ACTION_CARD_BASE_PRICE + extra);
+    const selectedItems = selectedIds
+      .map(id => ACTION_CARD_CATALOG.find(i => i.id === id))
+      .filter(Boolean);
+    const extra = selectedItems.reduce((sum, item) => sum + parsePriceBRL(item.price), 0);
+    currentOrderTotal = ACTION_CARD_BASE_PRICE + extra;
+    // Guardado à parte do total para a conclusao.html poder listar cada
+    // adicional (nome + preço), não só refletir a soma no valor final.
+    currentOrderAddons = selectedItems.map(item => ({ name: item.name, price: parsePriceBRL(item.price) }));
+    const formatted = formatPriceBRL(currentOrderTotal);
     document.querySelectorAll('.total-amount').forEach(el => { el.textContent = formatted; });
     document.querySelectorAll('.footer-price-amount').forEach(el => { el.textContent = 'R$ ' + formatted; });
+  }
+
+  // Grava o pedido (produto + preço base + adicionais + total) para a
+  // conclusao.html ler e se auto-preencher — é isso que permite uma única
+  // tela de conclusão servir Box, Box Cabo, Soundbox e Soundbox Cabo, já
+  // refletindo qualquer adicional que o usuário tenha incluído aqui.
+  function finalizarPedido(destino) {
+    // Produtos é uma lista (ver conclusao.html) para o mesmo resumo do
+    // pedido funcionar tanto com 1 produto (TV) quanto com bundles de
+    // vários produtos (ex.: checkout-600mega-100gb.html).
+    const order = {
+      products: [{ name: PRODUCT_META.productName, icon: PRODUCT_META.icon, price: ACTION_CARD_BASE_PRICE }],
+      shortName: PRODUCT_META.shortName,
+      installType: PRODUCT_META.installType,
+      hasMobilePlan: false,
+      total: currentOrderTotal,
+      addons: currentOrderAddons,
+    };
+    try {
+      sessionStorage.setItem('claroCheckoutOrder', JSON.stringify(order));
+    } catch (e) {
+      // sessionStorage indisponível (ex.: modo privado restrito): segue o
+      // fluxo mesmo assim, a conclusao.html cai no pedido padrão.
+    }
+    window.location.href = destino;
   }
 
   function initActionCard(root) {

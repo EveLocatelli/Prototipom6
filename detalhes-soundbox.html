@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detalhes Soundbox · M6 (Piloto)</title>
+
+<!-- Mondrian via CDN -->
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/tokens/claro-tokens-3.0.0.custom-properties.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/icons/mondrian-icons-latest.css">
+
+<style>
+  :root{
+    --red-darkest:#83170f;
+    --red-dark:#b41e13;
+    --red:#da291c;
+    --yellow:#ffc722;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --bg-page:#f8f8f8;
+    --red-lightest:#ffe3e3;
+    --shadow-1:0 4px 8px rgba(31,29,29,0.16);
+  }
+
+  /* Breakpoints responsivos */
+  /* Mobile: 360px (Figma) | Desktop: 1440px (Figma) */
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  body{
+    margin:0;
+    font-family:'Roboto', sans-serif;
+    background:var(--bg-page);
+    color:var(--ink);
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Topbar (igual checkout-box.html / vitrine.html) ===== */
+  .topbar-inner{
+    width:100%;
+    max-width:1440px;
+    margin:0 auto;
+    padding:0 80px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar-utility{background:var(--red-dark);height:46px;display:flex;}
+  .topbar-utility .topbar-inner{height:100%;}
+  .topbar-location{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+  .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-a11y{display:flex;align-items:center;gap:16px;}
+  .topbar-a11y i{font-size:16px;line-height:1;}
+  .topbar-brand{background:var(--red);height:70px;display:flex;}
+  .topbar-brand .topbar-inner{height:100%;}
+  .brand-logo img{height:38px;display:block;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .topbar-actions i{font-size:24px;line-height:1;}
+  .topbar-exit{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+
+  /* ===== Breadcrumb ===== */
+  .mdn-Breadcrumb{margin:0;}
+  .pdp-breadcrumb-desktop{
+    max-width:1440px;
+    margin:0 auto;
+    padding:24px 80px 0;
+  }
+  .pdp-breadcrumb-light .mdn-Breadcrumb-link{color:#fff;}
+  .pdp-breadcrumb-light .mdn-Breadcrumb-icon{color:#fff;}
+
+  /* ===== Hero (mobile) ===== */
+  .pdp-hero{
+    background:var(--red-darkest);
+    padding:24px 16px 96px;
+  }
+  .pdp-hero-inner{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .pdp-hero-title{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    text-align:center;
+    color:#fff;
+  }
+  .pdp-hero-icon{
+    width:38px;
+    height:38px;
+    border-radius:19px;
+    background:#fff;
+    border:1px solid var(--gray-line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .pdp-hero-icon i{font-size:24px;line-height:1;color:var(--red);}
+  .pdp-hero-eyebrow{font-size:12px;font-weight:400;margin:0;}
+  .pdp-hero-name{font-size:32px;font-weight:700;font-family:'AMX', sans-serif;margin:0;}
+  .pdp-hero-tagline{font-size:14px;font-weight:700;margin:0;}
+
+  /* ===== Product title (desktop, dentro da sidebar) ===== */
+  .pdp-title-desktop{color:var(--ink);}
+  .pdp-title-desktop .pdp-hero-eyebrow{font-size:12px;font-weight:400;margin:0;}
+  .pdp-title-desktop .pdp-hero-name{font-size:48px;font-weight:700;font-family:'AMX', sans-serif;margin:0;}
+  .pdp-title-desktop .pdp-hero-tagline{font-size:16px;font-weight:700;margin:0;}
+
+  /* ===== Layout (duas colunas no desktop, uma no mobile) ===== */
+  .pdp-layout{
+    max-width:1440px;
+    margin:0 auto;
+    padding:24px 80px 48px;
+    display:flex;
+    gap:48px;
+    align-items:flex-start;
+  }
+  .pdp-main{flex:1;min-width:0;position:relative;}
+  .pdp-aside{width:480px;flex-shrink:0;}
+
+  /* ===== Card principal (alterna seções brancas/cinzas) =====
+     padding-top reserva espaço para o card flutuante de benefícios no mobile
+     (.pdp-benefits--mobile, top:-70px) não cobrir a primeira seção; sem
+     efeito no desktop, onde o card de benefícios fica dentro da sidebar
+     (ver reset em @media min-width:1024px). */
+  .pdp-card{
+    background:#fff;
+    border-radius:32px 32px 0 0;
+    padding-top:80px;
+    display:flex;
+    flex-direction:column;
+  }
+  .pdp-section{padding:34px 16px;background:#fff;}
+  .pdp-section--alt{background:var(--bg-page);}
+
+  /* ===== Descrição do produto + características (igual checkout-box.html) ===== */
+  .detalhes-description{background:transparent;padding:0;display:flex;flex-direction:column;gap:32px;}
+  .detalhes-heading{display:flex;flex-direction:column;gap:8px;}
+  .detalhes-heading-label{font-size:12px;font-weight:400;color:var(--gray-dark);margin:0;}
+  .detalhes-heading-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .detalhes-body{font-size:16px;font-weight:400;color:var(--gray-dark);line-height:1.3;}
+  .detalhes-body p{margin:0 0 16px;}
+  .detalhes-body p:last-child{margin-bottom:0;}
+  .detalhes-body strong{font-weight:700;}
+  .detalhes-features{display:flex;flex-direction:column;gap:8px;}
+  .detalhes-feature{display:flex;align-items:center;gap:16px;}
+  .detalhes-feature-icon{
+    width:48px;height:48px;flex-shrink:0;background:var(--red-lightest);
+    border-radius:8px;display:flex;align-items:center;justify-content:center;
+  }
+  .detalhes-feature-icon i{font-size:32px;line-height:1;color:var(--red);}
+  .detalhes-feature-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+  .detalhes-feature-title{font-size:16px;font-weight:700;color:var(--ink);margin:0;}
+  .detalhes-feature-desc{font-size:14px;font-weight:400;color:var(--gray-dark);margin:0;}
+
+  /* ===== Alert (Mondrian nativo, sem CSS custom) ===== */
+
+  /* ===== Grade de canais ===== */
+  .pdp-grade-card{
+    background:#fff;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+  }
+  .pdp-grade-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:0;
+    height:24px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    width:100%;
+    transition:opacity 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  @media (hover:hover){
+    .pdp-grade-row:hover{opacity:0.72;}
+  }
+  .pdp-grade-row-text{font-size:16px;font-weight:500;color:var(--ink);}
+  .pdp-grade-row i{font-size:24px;line-height:1;color:var(--ink);transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .pdp-grade-row.open i{transform:rotate(180deg);}
+
+  /* ===== Busca da grade (usa .mdn-Input Mondrian real, só sobrescreve o necessário) =====
+     A classe Mondrian .mdn-Input-action--left só posiciona/dimensiona o botão
+     (position:absolute + size); a centralização do ícone dentro dele depende
+     de regras que só existem para os ícones do action à direita (via seletor
+     ~), então o ícone da esquerda fica desalinhado sem isso. */
+  .grade-search.mdn-Input--actionLeft{min-width:0;}
+  .grade-search .mdn-Input-action--left,
+  .grade-search [data-mdn-action="clear-field"]{display:flex;align-items:center;justify-content:center;}
+
+  /* ===== Acordeão de categorias da grade ===== */
+  .grade-accordion{
+    display:flex;flex-direction:column;width:100%;
+    border:1px solid var(--gray-line);border-radius:12px;overflow:hidden;
+  }
+  .grade-category + .grade-category{border-top:1px solid var(--gray-line);}
+  .grade-category-header{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    width:100%;padding:24px;background:#fff;border:none;cursor:pointer;text-align:left;
+  }
+  .grade-category-name{font-size:16px;font-weight:500;color:var(--ink);}
+  .grade-category-icon{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .grade-category.open .grade-category-icon{transform:rotate(180deg);}
+  .grade-category-content{
+    display:none;grid-template-columns:repeat(2,1fr);gap:16px 8px;
+    padding:0 16px 16px;background:#fff;
+  }
+  .grade-category.open .grade-category-content{display:grid;}
+  @media (min-width:700px){
+    .grade-category-content{grid-template-columns:repeat(auto-fill, minmax(180px,1fr));}
+  }
+  .grade-channel{display:flex;align-items:center;gap:12px;min-width:0;}
+  .grade-channel[hidden]{display:none;}
+  .grade-channel-logo{
+    width:40px;height:40px;flex-shrink:0;border-radius:8px;border:1px solid var(--gray-line);
+    background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .grade-channel-logo img{width:100%;height:100%;object-fit:contain;padding:6px;}
+  .grade-channel-logo--fallback{background:var(--red-lightest);color:var(--red);font-size:12px;font-weight:700;}
+  .grade-channel-name{font-size:14px;font-weight:400;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .grade-empty{font-size:16px;color:var(--gray-dark);margin:0;text-align:center;padding:24px 0;}
+
+  /* ===== "Incluso neste plano" - carrossel de streamings (igual checkout-box.html) ===== */
+  .detalhes-plan-inner{display:flex;flex-direction:column;gap:16px;width:100%;min-width:0;}
+  .detalhes-plan-subtitle{font-size:16px;font-weight:400;color:var(--ink);margin:0;}
+  .streaming-carousel{
+    display:flex;gap:8px;min-width:0;overflow-x:auto;scroll-snap-type:x proximity;
+    scrollbar-width:none;margin:0 -16px;padding:0 16px;cursor:grab;user-select:none;
+    /* Sem isso, scroll-snap-align:start no primeiro card ignora o padding e
+       alinha a borda do card com a borda do viewport, comendo o respiro
+       esquerdo que devia bater com o título "Incluso neste plano". */
+    scroll-padding-left:16px;
+  }
+  .streaming-carousel.dragging,.services-carousel.dragging{cursor:grabbing;scroll-snap-type:none;}
+  .streaming-carousel.dragging *,.services-carousel.dragging *{pointer-events:none;}
+  .streaming-carousel::-webkit-scrollbar{display:none;}
+  .streaming-card{
+    position:relative;flex:0 0 auto;width:260px;height:340px;border-radius:16px;overflow:hidden;
+    border:1px solid rgba(0,0,0,0.16);background-size:cover;background-position:center;
+    display:flex;flex-direction:column;justify-content:space-between;padding:24px;scroll-snap-align:start;
+  }
+  .streaming-card--overlay::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, #000 82%, #000 100%);
+    pointer-events:none;
+  }
+  .streaming-card-logo{width:64px;height:64px;flex-shrink:0;position:relative;z-index:1;}
+  .streaming-card-logo img{width:100%;height:100%;display:block;}
+  .streaming-card-text{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1;}
+  .streaming-card-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:#fff;margin:0;}
+  .streaming-card-desc{font-size:16px;font-weight:400;color:#fff;margin:0;}
+
+  /* ===== "Serviços digitais" - carrossel de cards (igual checkout-box.html) ===== */
+  .detalhes-services-inner{display:flex;flex-direction:column;gap:16px;min-width:0;width:100%;}
+  .detalhes-services-subtitle{font-size:16px;font-weight:400;color:var(--gray-dark);margin:0;}
+  .services-carousel{
+    display:flex;gap:8px;min-width:0;overflow-x:auto;scroll-snap-type:x proximity;
+    scrollbar-width:none;cursor:grab;user-select:none;
+  }
+  .services-carousel::-webkit-scrollbar{display:none;}
+  .service-card{
+    flex:0 0 auto;width:260px;min-height:250px;background:#fff;border:1px solid var(--gray-line);
+    border-radius:12px;padding:16px;display:flex;flex-direction:column;scroll-snap-align:start;
+  }
+  .service-card-header{display:flex;align-items:center;gap:8px;}
+  .service-card-icon{width:32px;height:32px;flex-shrink:0;}
+  .service-card-icon img{width:100%;height:100%;display:block;}
+  .service-card-name{font-size:16px;font-weight:500;color:var(--ink);margin:0;white-space:nowrap;}
+  .service-card-desc{padding-left:40px;font-size:16px;font-weight:400;color:var(--ink);margin:8px 0 0;}
+  .detalhes-swiper-nav{display:flex;gap:16px;align-self:center;}
+  .swiper-arrow{
+    width:48px;height:48px;flex-shrink:0;border:none;border-radius:12px;background:var(--red);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:opacity 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .swiper-arrow i{font-size:20px;color:#fff;line-height:1;}
+  .swiper-arrow:disabled{opacity:0.32;cursor:default;}
+  .swiper-arrow:active:not(:disabled){transform:scale(0.95);}
+
+  /* ===== Termos (igual checkout-box.html, + sombra fixa) =====
+     A sombra fica no container (não só no header) para continuar envolvendo
+     o bloco inteiro quando o conteúdo expande — aqui o Termos senta direto
+     num fundo branco (.pdp-section), então precisa de destaque próprio mesmo
+     colapsado, diferente do checkout-box.html onde o fundo já é cinza. */
+  .termos-container{border-radius:12px;box-shadow:var(--shadow-1);}
+  .termos-header{
+    display:flex;align-items:center;gap:24px;padding:24px;background:#fff;border-radius:12px;
+    cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  /* @media (hover:hover) evita que o box-shadow fique "grudado" em telas
+     touch: sem mouse pra sair do elemento, :hover normal nunca desliga
+     depois do tap, e a sombra vira uma linha cinza perene sob o header. */
+  @media (hover:hover){
+    .termos-header:hover{box-shadow:0 8px 16px rgba(0,0,0,0.12);}
+  }
+  .termos-header.open{border-radius:12px 12px 0 0;}
+  .termos-header-text{display:flex;flex:1;min-width:0;align-items:center;gap:16px;}
+  .termos-icon-wrapper{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink);line-height:1;}
+  .termos-text{flex:1;font-size:16px;font-weight:500;color:var(--ink);margin:0;}
+  .termos-toggle-icon{
+    width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    color:var(--ink);line-height:1;transition:transform 0.2s cubic-bezier(0.2,0,0,1);
+    background:none;border:none;padding:0;cursor:pointer;
+  }
+  .termos-header.open .termos-toggle-icon{transform:rotate(180deg);}
+  .termos-content{display:none;padding:24px;background:#fff;border-radius:0 0 12px 12px;}
+  .termos-content.open{display:flex;flex-direction:column;gap:8px;}
+  .termos-item{display:flex;align-items:center;gap:16px;padding:24px;border:1px solid var(--gray-line);border-radius:12px;background:#fff;}
+  .termos-item-title{flex:1;min-width:0;font-size:16px;font-weight:400;color:var(--ink);margin:0;}
+  .termos-item-icon{
+    width:32px;height:32px;flex-shrink:0;border:none;border-radius:50%;background:var(--red);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+    transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .termos-item-icon:active{transform:scale(0.9);}
+  .termos-item-icon i{font-size:16px;line-height:1;color:#fff;}
+
+  /* ===== Container destaque benefícios (flutuante no mobile, in-flow no desktop) ===== */
+  .pdp-benefits{
+    background:#fff;
+    border:1px solid var(--gray-line);
+    border-radius:12px;
+    box-shadow:var(--shadow-1);
+    padding:24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .pdp-benefit-item{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;flex-shrink:0;}
+  .pdp-benefit-item i{font-size:24px;line-height:1;color:var(--red-dark);}
+  .pdp-benefit-item p{font-size:12px;font-weight:500;color:var(--gray-dark);margin:0;line-height:1.3;white-space:nowrap;}
+  .pdp-benefit-divider{width:1px;align-self:stretch;background:var(--gray-line);flex-shrink:0;}
+
+  .pdp-benefits--mobile{
+    position:absolute;
+    top:-70px;
+    left:50%;
+    transform:translateX(-50%);
+    width:328px;
+  }
+
+  /* ===== Preço + CTA (reaproveita padrão visual do action-card-price / btn-sale) ===== */
+  .pdp-price{display:flex;flex-direction:column;align-items:flex-start;max-width:200px;}
+  .pdp-price-label{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
+  .pdp-price-value{display:flex;align-items:center;white-space:nowrap;color:var(--ink);}
+  .pdp-price-value-inner{display:flex;align-items:flex-end;gap:4px;}
+  .pdp-price-prefix{font-size:16px;font-weight:700;}
+  .pdp-price-amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .pdp-price-suffix{font-size:16px;font-weight:700;}
+  .btn-sale{
+    background:var(--yellow);border:none;border-radius:500px;padding:16px 32px;height:48px;
+    font-size:16px;font-weight:500;color:var(--ink);cursor:pointer;width:100%;
+    transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .btn-sale:hover{filter:brightness(0.95);}
+  .btn-sale:active{transform:scale(0.98);}
+
+  /* ===== Sidebar (desktop, sticky) ===== */
+  .pdp-sidebar{
+    background:#fff;
+    border-radius:24px;
+    box-shadow:var(--shadow-1);
+    padding:48px;
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+    position:sticky;
+    top:24px;
+  }
+
+  /* ===== CTA fixa (mobile) ===== */
+  .pdp-mobile-cta{
+    display:none;
+    position:fixed;
+    bottom:0;left:0;right:0;
+    background:#fff;
+    border-top:1px solid var(--gray-line);
+    border-radius:12px 12px 0 0;
+    padding:12px 16px;
+    gap:16px;
+    flex-direction:column;
+    z-index:100;
+  }
+
+  /* ===== Motion (mesma linguagem de checkout-box.html) ===== */
+  @keyframes slide-up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes content-fade{from{opacity:0;}to{opacity:1;}}
+  /* .pdp-card e .pdp-sidebar não animam mais: ambos envolvem o título do
+     produto e/ou .pdp-benefits (que já tem sua própria animação — ver
+     abaixo), e duas animações de opacidade sobrepostas com easings
+     diferentes rodando ao mesmo tempo no mesmo trecho de tela piscavam de
+     forma estranha. O título e a descrição agora nascem direto no estado
+     final, sem efeito de entrada. */
+  /* .pdp-benefits--mobile usa transform:translateX(-50%) para centralizar;
+     uma animação com translateY sobrescreveria esse transform (CSS anima a
+     propriedade inteira, não soma com o valor estático), por isso aqui só a
+     opacidade anima, nunca transform. */
+  .pdp-benefits{opacity:0;animation:content-fade 0.4s cubic-bezier(0,0,0.2,1) forwards;animation-delay:60ms;}
+  .streaming-card,.service-card{opacity:0;animation:slide-up 0.35s cubic-bezier(0.05,0.7,0.1,1) forwards;}
+  .streaming-carousel .streaming-card:nth-child(1){animation-delay:0ms;}
+  .streaming-carousel .streaming-card:nth-child(2){animation-delay:60ms;}
+  .streaming-carousel .streaming-card:nth-child(3){animation-delay:120ms;}
+  .streaming-carousel .streaming-card:nth-child(4){animation-delay:180ms;}
+  .streaming-carousel .streaming-card:nth-child(5){animation-delay:240ms;}
+  .streaming-carousel .streaming-card:nth-child(6){animation-delay:300ms;}
+  .services-carousel .service-card:nth-child(1){animation-delay:0ms;}
+  .services-carousel .service-card:nth-child(2){animation-delay:60ms;}
+  .services-carousel .service-card:nth-child(3){animation-delay:120ms;}
+  .services-carousel .service-card:nth-child(4){animation-delay:180ms;}
+  .termos-content.open{animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
+  /* Grade de canais: mesmo fade plano do acordeão de Termos, tanto pro
+     reveal da busca+lista de categorias (Ver grade completa) quanto pra
+     cada categoria abrindo individualmente. */
+  .grade-search:not([hidden]),
+  #gradeAccordion:not([hidden]){animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
+  .grade-category.open .grade-category-content{animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
+
+  /* ===== Media Queries ===== */
+  .pdp-aside,.pdp-breadcrumb-desktop,.pdp-title-desktop,.pdp-benefits--desktop{display:none;}
+
+  @media (max-width:1300px){
+    .topbar-inner{padding:0 24px;}
+    .pdp-layout{padding:24px 24px 48px;}
+    .pdp-breadcrumb-desktop{padding:24px 24px 0;}
+  }
+
+  @media (max-width:1023px){
+    .pdp-mobile-cta{display:flex;}
+    .mdn-Footer{padding-bottom:140px;}
+  }
+
+  /* Mobile: até 599px (Figma mobile: 360px) */
+  @media (max-width:599px){
+    .topbar-inner{padding:0 16px;}
+    .pdp-layout{padding:24px 16px 32px;}
+  }
+
+  /* Desktop: a partir de 1024px */
+  @media (min-width:1024px){
+    .pdp-hero,.pdp-breadcrumb-light{display:none;}
+    .pdp-aside{display:block;}
+    .pdp-breadcrumb-desktop{display:block;}
+    .pdp-title-desktop{display:block;}
+    .pdp-benefits--desktop{display:flex;}
+    .pdp-benefits--mobile{display:none;}
+
+    .pdp-card{
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:var(--shadow-1);
+      padding-top:0;
+      width:100%;
+    }
+    .pdp-section{padding:32px 48px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar-utility">
+    <div class="topbar-inner">
+      <div class="topbar-location">
+        <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
+        <span>Nome da Rua</span>
+        <i class="mdn-Icon-seta-baixo-preenchida mdn-Icon--sm mdn-Icon--inverse"></i>
+      </div>
+      <div class="topbar-a11y">
+        <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
+        <i class="mdn-Icon-libras mdn-Icon--sm mdn-Icon--inverse" title="Libras"></i>
+        <i class="mdn-Icon-alto-contraste mdn-Icon--sm mdn-Icon--inverse" title="Contraste"></i>
+        <i class="mdn-Icon-tamanho-diminuir mdn-Icon--sm mdn-Icon--inverse" title="Diminuir fonte"></i>
+        <i class="mdn-Icon-tamanho-aumentar mdn-Icon--sm mdn-Icon--inverse" title="Aumentar fonte"></i>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-brand">
+    <div class="topbar-inner">
+      <a href="vitrine.html" class="brand-logo">
+        <img src="https://mondrian.claro.com.br/brands/horizontal/inverse/minha-claro.svg" alt="MinhaClaro">
+      </a>
+      <div class="topbar-actions">
+        <i class="mdn-Icon-notificacao mdn-Icon--md mdn-Icon--inverse" title="Notificações"></i>
+        <a href="#" class="topbar-exit">
+          <i class="mdn-Icon-sair mdn-Icon--md mdn-Icon--inverse"></i>
+          Sair
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Breadcrumb desktop (texto escuro, acima do layout de duas colunas):
+     volta para a página anterior do histórico (vitrine ou vitrine > detalhes,
+     dependendo de onde o usuário veio) -->
+<nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile pdp-breadcrumb-desktop">
+  <a class="mdn-Breadcrumb-link" href="vitrine.html">
+    <i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md" aria-hidden="true"></i>Voltar
+  </a>
+</nav>
+
+<!-- Hero mobile (fundo vermelho escuro + breadcrumb claro + título do produto) -->
+<div class="pdp-hero">
+  <div class="pdp-hero-inner">
+    <nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile pdp-breadcrumb-light">
+      <a class="mdn-Breadcrumb-link" href="vitrine.html">
+        <i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md mdn-Icon--inverse" aria-hidden="true"></i>Voltar
+      </a>
+    </nav>
+    <div class="pdp-hero-title">
+      <div class="pdp-hero-icon"><i class="mdn-Icon-tv"></i></div>
+      <p class="pdp-hero-eyebrow">TV</p>
+      <p class="pdp-hero-name">Claro tv+ Soundbox</p>
+      <p class="pdp-hero-tagline">6 streamings em 1 assinatura</p>
+    </div>
+  </div>
+</div>
+
+<main class="pdp-layout">
+
+  <!-- Coluna principal -->
+  <div class="pdp-main">
+    <div class="pdp-card">
+
+      <!-- Card de benefícios flutuante (mobile) -->
+      <div class="pdp-benefits pdp-benefits--mobile">
+        <div class="pdp-benefit-item">
+          <i class="mdn-Icon-volume-max"></i>
+          <p>Som Dolby<br>Atmos</p>
+        </div>
+        <div class="pdp-benefit-divider"></div>
+        <div class="pdp-benefit-item">
+          <i class="mdn-Icon-4k"></i>
+          <p>Imagem 4K HDR<br>ultrarrealista</p>
+        </div>
+        <div class="pdp-benefit-divider"></div>
+        <div class="pdp-benefit-item">
+          <i class="mdn-Icon-filme-rolo-play"></i>
+          <p>6 streamings<br>inclusos</p>
+        </div>
+      </div>
+
+      <!-- Descrição do produto + características + Alert -->
+      <div class="pdp-section">
+        <div class="detalhes-description">
+          <div class="detalhes-heading">
+            <p class="detalhes-heading-label">Claro tv+ Soundbox</p>
+            <p class="detalhes-heading-title">Descrição do produto</p>
+          </div>
+          <div class="detalhes-body">
+            <p>Com o Claro tv+ Soundbox você transforma sua TV em uma smart tv, com imagem 4K HDR ultrarrealista e som Dolby Atmos da Bang &amp; Olufsen, para você viver cada cena com máxima qualidade e imersão.</p>
+            <p>Leve o seu Soundbox Claro tv+ para qualquer lugar com conexão wi-fi. É necessário estar conectado à internet Wi-Fi para acessar os canais e streamings disponíveis no equipamento.</p>
+          </div>
+          <div class="detalhes-features">
+            <div class="detalhes-feature">
+              <div class="detalhes-feature-icon"><i class="mdn-Icon-video-reuniao"></i></div>
+              <div class="detalhes-feature-text">
+                <p class="detalhes-feature-title">Mais de 120 canais ao vivo</p>
+                <p class="detalhes-feature-desc">Filmes, séries, notícias, músicas e muito mais: fique por dentro de tudo que passa no mundo!</p>
+              </div>
+            </div>
+            <div class="detalhes-feature">
+              <div class="detalhes-feature-icon"><i class="mdn-Icon-volume-max"></i></div>
+              <div class="detalhes-feature-text">
+                <p class="detalhes-feature-title">Melhor som</p>
+                <p class="detalhes-feature-desc">Som Dolby Atmos da Bang &amp; Olufsen</p>
+              </div>
+            </div>
+            <div class="detalhes-feature">
+              <div class="detalhes-feature-icon"><i class="mdn-Icon-4k"></i></div>
+              <div class="detalhes-feature-text">
+                <p class="detalhes-feature-title">Melhor imagem</p>
+                <p class="detalhes-feature-desc">A melhor qualidade de imagem 4K Ultra HD com HDR para você curtir seus filmes, séries, esportes e programas de TV.</p>
+              </div>
+            </div>
+            <div class="detalhes-feature">
+              <div class="detalhes-feature-icon"><i class="mdn-Icon-atualizar-play"></i></div>
+              <div class="detalhes-feature-text">
+                <p class="detalhes-feature-title">Replay TV</p>
+                <p class="detalhes-feature-desc">Volte a programação em até 7 dias</p>
+              </div>
+            </div>
+            <div class="detalhes-feature">
+              <div class="detalhes-feature-icon"><i class="mdn-Icon-gravador"></i></div>
+              <div class="detalhes-feature-text">
+                <p class="detalhes-feature-title">Gravação e bloqueio</p>
+                <p class="detalhes-feature-desc">Grave conteúdos ao vivo para assistir depois e bloqueie canais impróprios para a criançada.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert (Mondrian: componentes-web-alert--danger-light) -->
+          <div class="mdn-Alert mdn-Alert--danger mdn-Alert--light" id="alertBox" aria-hidden="true" tabindex="-1" hidden>
+            <div class="mdn-Alert-content">
+              <div class="mdn-Topic mdn-Topic--horizontal mdn-Topic--sm">
+                <div class="mdn-Text mdn-Text--iconSm">
+                  <em aria-hidden="true" class="mdn-Text-icon mdn-Icon mdn-Icon-alerta"></em>
+                  <p class="mdn-Text mdn-Text--iconSm">Text message...</p>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="mdn-Alert-close" aria-label="fechar" onclick="closeAlert()">
+              <span class="mdn-Icon mdn-Icon-fechar mdn-Icon--md"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade de canais -->
+      <div class="pdp-section pdp-section--alt">
+        <div class="pdp-grade-card">
+          <div class="detalhes-heading">
+            <p class="detalhes-heading-title">Grade de canais</p>
+            <p class="detalhes-plan-subtitle">São mais de 120 canais para curtir o seu conteúdo favorito.</p>
+          </div>
+
+          <!-- Busca (componente real Mondrian: componentes-web-input--search), só aparece com a grade expandida -->
+          <div class="mdn-Input mdn-Input--actionLeft grade-search" hidden>
+            <button type="button" class="mdn-Input-action mdn-Input-action--left" tabindex="-1">
+              <em aria-hidden="true" class="mdn-Icon-busca mdn-Icon--md"></em>
+            </button>
+            <input type="text" id="gradeSearchInput" class="mdn-Input-field" data-mdn-type="search" autocomplete="off" value="">
+            <label for="gradeSearchInput" class="mdn-Input-label">Busque no plano</label>
+            <button type="button" class="mdn-Input-action" data-mdn-action="clear-field" style="display:none" onclick="clearGradeSearch()">
+              <em aria-hidden="true" class="mdn-Icon-fechar mdn-Icon--md"></em>
+            </button>
+          </div>
+
+          <!-- Acordeões por categoria, preenchidos via JS a partir de CHANNELS_DATA -->
+          <div class="grade-accordion" id="gradeAccordion" hidden></div>
+          <p class="grade-empty" id="gradeEmpty" hidden>Nenhum canal encontrado.</p>
+
+          <button type="button" class="pdp-grade-row" id="gradeToggleBtn" onclick="toggleGrade()">
+            <span class="pdp-grade-row-text" id="gradeToggleText">Ver grade completa</span>
+            <i class="mdn-Icon-baixo" id="gradeToggleIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Incluso neste plano -->
+      <div class="pdp-section">
+        <div class="detalhes-plan-inner">
+          <div class="detalhes-heading">
+            <p class="detalhes-heading-title">Incluso neste plano</p>
+            <p class="detalhes-plan-subtitle">O melhor do entretenimento escolhido especialmente para você e sua família.</p>
+          </div>
+          <div class="streaming-carousel" data-role="streaming-carousel">
+            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-disney.png')">
+              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+"></div>
+              <div class="streaming-card-text">
+                <p class="streaming-card-title">Disney +</p>
+                <p class="streaming-card-desc">Plano padrão com anúncios e 2 usuários simultâneos.</p>
+              </div>
+            </div>
+            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
+              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime"></div>
+              <div class="streaming-card-text">
+                <p class="streaming-card-title">Amazon Prime</p>
+                <p class="streaming-card-desc">Prime Video com anúncios, Amazon Music, Prime Gaming, Prime Reading e Frete Grátis para milhões de produtos.</p>
+              </div>
+            </div>
+            <div class="streaming-card streaming-card--overlay" style="background-image:url('assets/detalhes/bg-globoplay.png');background-size:100.13% 146.6%;background-position:center bottom;">
+              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay"></div>
+              <div class="streaming-card-text">
+                <p class="streaming-card-title">Globoplay</p>
+                <p class="streaming-card-desc">Plano Premium: Até 5 telas simultâneas.</p>
+              </div>
+            </div>
+            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-appletv.png')">
+              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV"></div>
+              <div class="streaming-card-text">
+                <p class="streaming-card-title">Apple TV</p>
+                <p class="streaming-card-desc">Todos os conteúdos estarão disponíveis e 5 usuários simultâneos</p>
+              </div>
+            </div>
+            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
+              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/netflix.svg" alt="Netflix"></div>
+              <div class="streaming-card-text">
+                <p class="streaming-card-title">Netflix</p>
+                <p class="streaming-card-desc">Plano com Anúncios: Até 2 telas simultâneas e qualidade de imagem full HD.</p>
+              </div>
+            </div>
+            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-hbomax.png')">
+              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/hbo-max.svg" alt="HBO Max"></div>
+              <div class="streaming-card-text">
+                <p class="streaming-card-title">HBO Max</p>
+                <p class="streaming-card-desc">Plano básico com anúncios e 2 usuários simultâneos, Full HD + Canal HBO 2.</p>
+              </div>
+            </div>
+          </div>
+          <div class="detalhes-swiper-nav">
+            <button type="button" class="swiper-arrow" data-role="streaming-prev" aria-label="Anterior">
+              <i class="mdn-Icon-esquerda"></i>
+            </button>
+            <button type="button" class="swiper-arrow" data-role="streaming-next" aria-label="Próximo">
+              <i class="mdn-Icon-direita"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Serviços digitais -->
+      <div class="pdp-section pdp-section--alt">
+        <div class="detalhes-services-inner">
+          <div class="detalhes-heading">
+            <p class="detalhes-heading-title">Serviços digitais</p>
+            <p class="detalhes-services-subtitle">Benefícios que só cliente Claro tem</p>
+          </div>
+          <div class="services-carousel" data-role="services-carousel">
+            <div class="service-card">
+              <div class="service-card-header">
+                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/claro-video.svg" alt=""></div>
+                <p class="service-card-name">Claro video</p>
+              </div>
+              <p class="service-card-desc">Milhares de filmes, séries, documentários, shows, infantis e muito mais. Os conteúdos estão disponíveis dentro da plataforma Claro tv+ (clarotvmais.com.br).</p>
+            </div>
+            <div class="service-card">
+              <div class="service-card-header">
+                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/mcafee.svg" alt=""></div>
+                <p class="service-card-name">Proteção Digital (McAfee)</p>
+              </div>
+              <p class="service-card-desc">Antivírus disponível para um dispositivo (computador, celular, leitor de livros digitais ou tablet).</p>
+            </div>
+            <div class="service-card">
+              <div class="service-card-header">
+                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/skeelo.svg" alt=""></div>
+                <p class="service-card-name">Skeelo Audiobooks</p>
+              </div>
+              <p class="service-card-desc">Plataforma digital que reúne os livros mais vendidos em forma de áudio com diversas categorias como: ficção, romance, biografia, autoajuda e outros.</p>
+            </div>
+            <div class="service-card">
+              <div class="service-card-header">
+                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/claro-banca.svg" alt=""></div>
+                <p class="service-card-name">Claro Banca</p>
+              </div>
+              <p class="service-card-desc">O Claro banca é um serviço fácil de usar que contém as principais revistas e jornais do país para você ler onde e quando quiser. Cliente Banda Larga possui exclusividade nos conteúdos: Folha de São Paulo, Isto É e Isto É Dinheiro.</p>
+            </div>
+          </div>
+          <div class="detalhes-swiper-nav">
+            <button type="button" class="swiper-arrow" data-role="services-prev" aria-label="Anterior">
+              <i class="mdn-Icon-esquerda"></i>
+            </button>
+            <button type="button" class="swiper-arrow" data-role="services-next" aria-label="Próximo">
+              <i class="mdn-Icon-direita"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Termos -->
+      <div class="pdp-section">
+        <div class="termos-container">
+          <div class="termos-header" onclick="toggleTermos(this)">
+            <div class="termos-header-text">
+              <div class="termos-icon-wrapper"><i class="mdn-Icon-documento mdn-Icon--md"></i></div>
+              <p class="termos-text">Condições da oferta e termo de adesão</p>
+            </div>
+            <button type="button" class="termos-toggle-icon" aria-label="Expandir">
+              <i class="mdn-Icon-baixo mdn-Icon--md"></i>
+            </button>
+          </div>
+          <div class="termos-content">
+            <div class="termos-item">
+              <p class="termos-item-title">Condições de oferta - TV</p>
+              <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
+                <i class="mdn-Icon-olho"></i>
+              </button>
+            </div>
+            <div class="termos-item">
+              <p class="termos-item-title">Termo de Adesão</p>
+              <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão">
+                <i class="mdn-Icon-olho"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sidebar (desktop, sticky) -->
+  <aside class="pdp-aside">
+    <div class="pdp-sidebar">
+      <div class="pdp-title-desktop">
+        <p class="pdp-hero-eyebrow">TV</p>
+        <p class="pdp-hero-name">Claro tv+ Soundbox</p>
+        <p class="pdp-hero-tagline">6 streamings em 1 assinatura</p>
+      </div>
+
+      <div class="pdp-benefits pdp-benefits--desktop">
+        <div class="pdp-benefit-item">
+          <i class="mdn-Icon-volume-max"></i>
+          <p>Som Dolby<br>Atmos</p>
+        </div>
+        <div class="pdp-benefit-divider"></div>
+        <div class="pdp-benefit-item">
+          <i class="mdn-Icon-4k"></i>
+          <p>Imagem 4K HDR<br>ultrarrealista</p>
+        </div>
+        <div class="pdp-benefit-divider"></div>
+        <div class="pdp-benefit-item">
+          <i class="mdn-Icon-filme-rolo-play"></i>
+          <p>6 streamings<br>inclusos</p>
+        </div>
+      </div>
+
+      <div class="pdp-price">
+        <p class="pdp-price-label">Valor do produto</p>
+        <div class="pdp-price-value">
+          <div class="pdp-price-value-inner">
+            <span class="pdp-price-prefix">R$</span>
+            <span class="pdp-price-amount">269,90</span>
+          </div>
+          <span class="pdp-price-suffix">/mês</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-sale" onclick="window.location.href='checkout-soundbox.html'">Adicionar ao carrinho</button>
+    </div>
+  </aside>
+
+</main>
+
+<!-- CTA fixa (mobile) -->
+<div class="pdp-mobile-cta">
+  <div class="pdp-price">
+    <p class="pdp-price-label">Valor do produto</p>
+    <div class="pdp-price-value">
+      <div class="pdp-price-value-inner">
+        <span class="pdp-price-prefix">R$</span>
+        <span class="pdp-price-amount">269,90</span>
+      </div>
+      <span class="pdp-price-suffix">/mês</span>
+    </div>
+  </div>
+  <button type="button" class="btn-sale" onclick="window.location.href='checkout-soundbox.html'">Adicionar ao carrinho</button>
+</div>
+
+<!-- Componente real Mondrian Footer, variante "Public Simple" -->
+<footer class="mdn-Footer mdn-Footer--default mdn-Footer--signature mdn-Footer--simple" role="contentinfo">
+  <div class="mdn-Container">
+    <div class="mdn-Footer-content">
+      <div class="mdn-Footer-disclaimer">
+        <ul class="mdn-Footer-list">
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Política de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Portal de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-librasLink" href="#" title="Libras">
+              <i class="mdn-Icon-libras mdn-Icon--sm" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">
+          <strong>© 2026 Claro. Todos os direitos reservados <span class="mdn-Text-dash">- </span>
+            <br>CNPJ: 40.432.544/0001-47 <span class="mdn-Text-dash">- </span>
+            <br>Rua Henri Dunant, 780 - São Paulo - SP
+          </strong>
+        </p>
+      </div>
+      <div class="mdn-Footer-logo">
+        <img class="mdn-Footer-logo-image" src="https://mondrian.claro.com.br/brands/nosvg/assinatura-claro.png" alt="Claro">
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.js"></script>
+<script>
+  // Permite arrastar os carrosséis com o mouse (clicar e segurar), já que
+  // overflow-x:auto só responde nativamente a touch/trackpad e scrollbar.
+  function makeDraggable(track) {
+    if (!track) return;
+    let isDown = false;
+    let moved = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    track.addEventListener('mousedown', (e) => {
+      isDown = true;
+      moved = false;
+      startX = e.pageX;
+      startScrollLeft = track.scrollLeft;
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      const dx = e.pageX - startX;
+      if (Math.abs(dx) > 3) {
+        moved = true;
+        track.classList.add('dragging');
+      }
+      track.scrollLeft = startScrollLeft - dx;
+    });
+    window.addEventListener('mouseup', () => {
+      isDown = false;
+      track.classList.remove('dragging');
+    });
+    track.addEventListener('click', (e) => {
+      if (moved) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+  }
+
+  // Navegação dos carrosséis (setas de "Serviços digitais")
+  function initCarouselNav(track, prevBtn, nextBtn) {
+    if (!track) return;
+    // Carrosséis full-bleed (ex: .streaming-carousel, com margem negativa)
+    // nascem com um scrollLeft > 0 "de fábrica", sem o usuário ter rolado
+    // nada — e se o carrossel começa escondido (dentro de um acordeão
+    // fechado), isso só é mensurável quando ele ganha tamanho real, não no
+    // load. Por isso capturamos esse valor a primeira vez que houver
+    // clientWidth > 0 e usamos como baseline do "início", em vez de 0 fixo.
+    let baseline = null;
+    function scrollByCard(dir) {
+      const card = track.querySelector(':scope > *');
+      const amount = card ? card.getBoundingClientRect().width + 8 : 260;
+      track.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+    function updateNav() {
+      if (baseline === null && track.clientWidth > 0) {
+        baseline = track.scrollLeft;
+      }
+      const max = track.scrollWidth - track.clientWidth - 1;
+      if (prevBtn) prevBtn.disabled = track.scrollLeft <= (baseline ?? 0);
+      if (nextBtn) nextBtn.disabled = track.scrollLeft >= max;
+    }
+    if (prevBtn) prevBtn.addEventListener('click', () => scrollByCard(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => scrollByCard(1));
+    track.addEventListener('scroll', updateNav);
+    window.addEventListener('resize', updateNav);
+    if (window.ResizeObserver) {
+      new ResizeObserver(updateNav).observe(track);
+    }
+    updateNav();
+  }
+
+  document.querySelectorAll('.streaming-carousel, .services-carousel').forEach(makeDraggable);
+  initCarouselNav(
+    document.querySelector('[data-role="streaming-carousel"]'),
+    document.querySelector('[data-role="streaming-prev"]'),
+    document.querySelector('[data-role="streaming-next"]')
+  );
+  initCarouselNav(
+    document.querySelector('[data-role="services-carousel"]'),
+    document.querySelector('[data-role="services-prev"]'),
+    document.querySelector('[data-role="services-next"]')
+  );
+
+  // Toggle Termos (com ícone de seta)
+  function toggleTermos(headerEl) {
+    const contentEl = headerEl.nextElementSibling;
+    contentEl.classList.toggle('open');
+    headerEl.classList.toggle('open');
+  }
+
+  // Fechar alert (Mondrian usa a classe mdn-is-open para controlar a visibilidade)
+  function closeAlert() {
+    const alert = document.getElementById('alertBox');
+    alert.classList.remove('mdn-is-open');
+  }
+
+  // ===== Grade de canais (acordeão + busca) =====
+  // Logos reais buscados em mondrian.claro.com.br/channels; os 2 canais sem
+  // logo no catálogo (TBS HD, Like) caem no fallback de iniciais em texto.
+  const CHANNELS_DATA = [
+    { name: 'Canais abertos HD', items: [
+      { label: 'Globo HD', src: 'https://mondrian.claro.com.br/channels/default/globo.svg' },
+      { label: 'Band HD', src: 'https://mondrian.claro.com.br/channels/default/band.svg' },
+      { label: 'REDE TV! HD', src: 'https://mondrian.claro.com.br/channels/default/redetv!.svg' },
+      { label: 'SBT HD', src: 'https://mondrian.claro.com.br/channels/default/sbt.svg' },
+      { label: 'Cultura HD', src: 'https://mondrian.claro.com.br/channels/default/cultura.svg' },
+      { label: 'RECORD HD', src: 'https://mondrian.claro.com.br/channels/default/record-tv.svg' },
+      { label: 'TV Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/tv-brasil.svg' },
+      { label: 'Gazeta HD', src: 'https://mondrian.claro.com.br/channels/default/gazeta.svg' },
+    ]},
+    { name: 'Documentários', items: [
+      { label: 'Animal Planet HD', src: 'https://mondrian.claro.com.br/channels/default/animal-planet.svg' },
+      { label: 'Discovery HD', src: 'https://mondrian.claro.com.br/channels/default/discovery.svg' },
+      { label: 'Discovery Science HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-science.svg' },
+      { label: 'Discovery Theater HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-theater.svg' },
+      { label: 'Discovery Turbo HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-turbo.svg' },
+      { label: 'Discovery World HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-world.svg' },
+      { label: 'Futura HD', src: 'https://mondrian.claro.com.br/channels/default/futura.svg' },
+      { label: 'H2 HD', src: 'https://mondrian.claro.com.br/channels/default/history-2.svg' },
+      { label: 'The History Channel HD', src: 'https://mondrian.claro.com.br/channels/default/history-channel.svg' },
+      { label: 'Discovery ID HD', src: 'https://mondrian.claro.com.br/channels/default/investigacao-discovery.svg' },
+    ]},
+    { name: 'Entretenimento', items: [
+      { label: 'Polishop', src: 'https://mondrian.claro.com.br/channels/default/polishop.svg' },
+      { label: 'Modo Viagem HD', src: 'https://mondrian.claro.com.br/channels/default/modo-viagem.svg' },
+      { label: 'HGTV', src: 'https://mondrian.claro.com.br/channels/default/hgtv.svg' },
+      { label: 'BIS HD', src: 'https://mondrian.claro.com.br/channels/default/bis.svg' },
+      { label: 'MTV HD', src: 'https://mondrian.claro.com.br/channels/default/mtv.svg' },
+      { label: 'Play TV', src: 'https://mondrian.claro.com.br/channels/default/play-tv.svg' },
+      { label: 'Music Box Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/music-boxbrazil.svg' },
+      { label: "MTV's00", src: 'https://mondrian.claro.com.br/channels/default/mtv-00s.svg' },
+      { label: 'MTV Live HD', src: 'https://mondrian.claro.com.br/channels/default/mtv-live-hd.svg' },
+      { label: 'Trace Brazuca HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/trace-brasil.svg' },
+    ]},
+    { name: 'Esportes', items: [
+      { label: 'ESPN HD', src: 'https://mondrian.claro.com.br/channels/default/espn.svg' },
+      { label: 'ESPN 2 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-2.svg' },
+      { label: 'ESPN 3 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-3.svg' },
+      { label: 'ESPN 4 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-4.svg' },
+      { label: 'ESPN 5 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-5.svg' },
+      { label: 'ESPN 6 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-6.svg' },
+      { label: 'Band Sports HD', src: 'https://mondrian.claro.com.br/channels/default/band-sports.svg' },
+      { label: 'SporTV 3 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-3.svg' },
+      { label: 'SporTV 2 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-2.svg' },
+      { label: 'SporTV HD', src: 'https://mondrian.claro.com.br/channels/default/sportv.svg' },
+    ]},
+    { name: 'Filmes', items: [
+      { label: 'Film&Arts HD', src: 'https://mondrian.claro.com.br/channels/default/film-e-arts.svg' },
+      { label: 'Canal Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/canal-brasil.svg' },
+      { label: 'TNT HD', src: 'https://mondrian.claro.com.br/channels/default/tnt.svg' },
+      { label: 'Megapix HD', src: 'https://mondrian.claro.com.br/channels/default/megapix.svg' },
+      { label: 'Space HD', src: 'https://mondrian.claro.com.br/channels/default/space.svg' },
+      { label: 'Cinemax HD', src: 'https://mondrian.claro.com.br/channels/default/cinemax.svg' },
+      { label: 'Studio Universal HD', src: 'https://mondrian.claro.com.br/channels/default/studio-universal.svg' },
+      { label: 'Paramount Network HD', src: 'https://mondrian.claro.com.br/channels/default/paramount-network.svg' },
+      { label: 'TCM', src: 'https://mondrian.claro.com.br/channels/default/tcm.svg' },
+      { label: 'HBO2', src: 'https://mondrian.claro.com.br/channels/default/hbo-2.svg' },
+    ]},
+    { name: 'Infantil', items: [
+      { label: 'Gloobinho HD', src: 'https://mondrian.claro.com.br/channels/default/gloobinho.svg' },
+      { label: 'Discovery Kids HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-kids.svg' },
+      { label: 'Gloob HD', src: 'https://mondrian.claro.com.br/channels/default/gloob.svg' },
+      { label: 'Nickelodeon HD', src: 'https://mondrian.claro.com.br/channels/default/nickelodeon.svg' },
+      { label: 'Cartoon Network HD', src: 'https://mondrian.claro.com.br/channels/default/cartoon-network.svg' },
+      { label: 'NICK Jr HD', src: 'https://mondrian.claro.com.br/channels/default/nick-jr.svg' },
+      { label: 'Cartoonito HD', src: 'https://mondrian.claro.com.br/channels/default/cartoonito.svg' },
+      { label: 'TV Rá Tim Bum HD', src: 'https://mondrian.claro.com.br/channels/default/tv-ra-tim-bum.svg' },
+      { label: 'DumDum HD', src: 'https://mondrian.claro.com.br/channels/default/dum-dum.svg' },
+    ]},
+    { name: 'Notícias', items: [
+      { label: 'GloboNews HD', src: 'https://mondrian.claro.com.br/channels/default/globonews.svg' },
+      { label: 'CNN Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil.svg' },
+      { label: 'Record News', src: 'https://mondrian.claro.com.br/channels/default/recordnews.svg' },
+      { label: 'Band News HD', src: 'https://mondrian.claro.com.br/channels/default/band-news.svg' },
+      { label: 'AgroMais HD', src: 'https://mondrian.claro.com.br/channels/default/agroplus.svg' },
+      { label: 'BBC World News', src: 'https://mondrian.claro.com.br/channels/default/bbc-world-news.svg' },
+      { label: 'JP News HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/jp-news-vertical.svg' },
+      { label: 'Times Exclusivo CNBC', src: 'https://mondrian.claro.com.br/channels/default/times-exclusivo-cnbc.svg' },
+      { label: 'CNN Brasil Money HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil-money.svg' },
+      { label: 'BM&C NEWS', src: 'https://mondrian.claro.com.br/channels/default/bmec-news.svg' },
+      { label: 'Canal UOL', src: 'https://mondrian.claro.com.br/channels/default/canal-uol.svg' },
+    ]},
+    { name: 'Mundo', items: [
+      { label: 'CNN Internacional', src: 'https://mondrian.claro.com.br/channels/default/cnn-internacional.svg' },
+      { label: 'Bloomberg TV', src: 'https://mondrian.claro.com.br/channels/default/bloomberg.svg' },
+      { label: 'RAI International', src: 'https://mondrian.claro.com.br/channels/default/rai-italia.svg' },
+      { label: 'TV5 Monde', src: 'https://mondrian.claro.com.br/channels/default/tv-5-monde.svg' },
+      { label: 'TVE International', src: 'https://mondrian.claro.com.br/channels/default/tve.svg' },
+      { label: 'DW-TV', src: 'https://mondrian.claro.com.br/channels/default/dw.svg' },
+      { label: 'France 24 HD', src: 'https://mondrian.claro.com.br/channels/default/france-24.svg' },
+      { label: 'Euro Channel', src: 'https://mondrian.claro.com.br/channels/default/euro-channel.svg' },
+    ]},
+    { name: 'Séries', items: [
+      { label: 'A&E HD', src: 'https://mondrian.claro.com.br/channels/default/aee.svg' },
+      { label: 'AMC HD', src: 'https://mondrian.claro.com.br/channels/default/amc.svg' },
+      { label: 'AXN HD', src: 'https://mondrian.claro.com.br/channels/default/axn.svg' },
+      { label: 'Comedy Central HD', src: 'https://mondrian.claro.com.br/channels/default/comedy-central.svg' },
+      { label: 'Lifetime HD', src: 'https://mondrian.claro.com.br/channels/default/lifetime.svg' },
+      { label: 'Sony HD', src: 'https://mondrian.claro.com.br/channels/default/sony.svg' },
+      { label: 'TBS HD', src: null },
+      { label: 'TNT Series HD', src: 'https://mondrian.claro.com.br/channels/default/tnt-series.svg' },
+      { label: 'TNT Novelas', src: 'https://mondrian.claro.com.br/channels/default/tnt-novelas.svg' },
+      { label: 'Universal TV HD', src: 'https://mondrian.claro.com.br/channels/default/universal-channel.svg' },
+    ]},
+    { name: 'Variedades', items: [
+      { label: 'Arte 1 HD', src: 'https://mondrian.claro.com.br/channels/default/arte1.svg' },
+      { label: 'Discovery Home Health HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-home-and-health.svg' },
+      { label: 'E! HD', src: 'https://mondrian.claro.com.br/channels/default/e!.svg' },
+      { label: 'Fashion TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fashion-tv.svg' },
+      { label: 'Fish TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fish-tv.svg' },
+      { label: 'Food Network HD', src: 'https://mondrian.claro.com.br/channels/default/food-network.svg' },
+      { label: 'GNT HD', src: 'https://mondrian.claro.com.br/channels/default/gnt.svg' },
+      { label: 'Like', src: null },
+      { label: 'Multishow HD', src: 'https://mondrian.claro.com.br/channels/default/multishow.svg' },
+      { label: 'OFF HD', src: 'https://mondrian.claro.com.br/channels/default/canal-off.svg' },
+    ]},
+  ];
+
+  function normalizeSearch(str) {
+    return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+
+  function renderGradeAccordion() {
+    const container = document.getElementById('gradeAccordion');
+    if (!container) return;
+    container.innerHTML = CHANNELS_DATA.map((cat, catIndex) => `
+      <div class="grade-category" data-category-index="${catIndex}">
+        <button type="button" class="grade-category-header" onclick="toggleGradeCategory(this)">
+          <span class="grade-category-name">${cat.name}</span>
+          <i class="mdn-Icon-baixo grade-category-icon"></i>
+        </button>
+        <div class="grade-category-content">
+          ${cat.items.map((ch, chIndex) => `
+            <div class="grade-channel" data-channel-index="${chIndex}" data-search="${normalizeSearch(ch.label)}">
+              ${ch.src
+                ? `<span class="grade-channel-logo"><img src="${ch.src}" alt="" loading="lazy"></span>`
+                : `<span class="grade-channel-logo grade-channel-logo--fallback">${ch.label.slice(0, 2).toUpperCase()}</span>`
+              }
+              <span class="grade-channel-name">${ch.label}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function toggleGradeCategory(headerEl) {
+    headerEl.closest('.grade-category').classList.toggle('open');
+  }
+
+  function toggleGrade() {
+    const search = document.querySelector('.grade-search');
+    const accordion = document.getElementById('gradeAccordion');
+    const btn = document.getElementById('gradeToggleBtn');
+    const text = document.getElementById('gradeToggleText');
+    const isOpen = btn.classList.toggle('open');
+
+    search.hidden = !isOpen;
+    accordion.hidden = !isOpen;
+    text.textContent = isOpen ? 'Ocultar grade' : 'Ver grade completa';
+
+    if (!isOpen) {
+      // Reset ao colapsar: fecha categorias e limpa a busca
+      document.getElementById('gradeSearchInput').value = '';
+      filterGradeChannels('');
+      accordion.querySelectorAll('.grade-category.open').forEach(c => c.classList.remove('open'));
+    }
+  }
+
+  function filterGradeChannels(rawQuery) {
+    const query = normalizeSearch(rawQuery.trim());
+    const categories = document.querySelectorAll('#gradeAccordion .grade-category');
+    let totalMatches = 0;
+
+    categories.forEach(cat => {
+      let matchesInCategory = 0;
+      cat.querySelectorAll('.grade-channel').forEach(ch => {
+        const matches = !query || ch.dataset.search.includes(query);
+        ch.hidden = !matches;
+        if (matches) matchesInCategory++;
+      });
+      cat.hidden = query && matchesInCategory === 0;
+      cat.classList.toggle('open', !!query && matchesInCategory > 0);
+      totalMatches += matchesInCategory;
+    });
+
+    document.getElementById('gradeEmpty').hidden = !(query && totalMatches === 0);
+
+    const clearBtn = document.querySelector('.grade-search [data-mdn-action="clear-field"]');
+    if (clearBtn) clearBtn.style.display = rawQuery ? 'flex' : 'none';
+  }
+
+  function clearGradeSearch() {
+    const input = document.getElementById('gradeSearchInput');
+    input.value = '';
+    input.focus();
+    filterGradeChannels('');
+  }
+
+  renderGradeAccordion();
+  const gradeSearchInput = document.getElementById('gradeSearchInput');
+  if (gradeSearchInput) {
+    gradeSearchInput.addEventListener('input', (e) => filterGradeChannels(e.target.value));
+  }
+</script>
+
+</body>
+</html>

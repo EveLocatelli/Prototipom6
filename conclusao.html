@@ -158,6 +158,8 @@
     gap:24px;
   }
   .summary-card-heading{font-size:20px;font-weight:700;margin:0;}
+  /* Um .summary-product-block por produto do pedido — só 1 nos produtos de
+     TV, 2+ em checkouts com bundle (ex.: Internet + Celular). */
   .summary-products{display:flex;flex-direction:column;gap:16px;}
   .summary-product-block{display:flex;flex-direction:column;gap:8px;}
   .summary-product-block + .summary-product-block{padding-top:16px;border-top:1px solid var(--gray-line);}
@@ -176,6 +178,13 @@
   .summary-price .suffix{font-size:16px;font-weight:700;}
   .summary-price .amount{font-size:24px;font-weight:700;font-family:'AMX';}
   .summary-divider{border-top:1px dashed var(--gray-line);width:100%;}
+  /* Adicionais selecionados no checkout — mesma info que o Action Card
+     mostrava lá, só que sem botão de remover (aqui o pedido já foi feito). */
+  .summary-addons{display:flex;flex-direction:column;gap:8px;}
+  .summary-addons[hidden]{display:none;}
+  .summary-addon-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .summary-addon-name{font-size:14px;font-weight:500;margin:0;color:var(--ink);}
+  .summary-addon-price{font-size:14px;font-weight:400;margin:0;color:var(--gray-dark);text-align:right;white-space:nowrap;}
   .summary-fees{display:flex;flex-direction:column;gap:4px;font-size:14px;}
   .summary-fee-row{display:flex;justify-content:space-between;gap:8px;}
   .summary-fee-label{font-weight:700;margin:0;}
@@ -223,6 +232,9 @@
   }
   .agendamento-block-label i{font-size:24px;line-height:1;}
   .agendamento-block-value{font-size:16px;font-weight:400;margin:0;}
+  .agendamento-row{display:flex;gap:8px;font-size:16px;}
+  .agendamento-row-label{font-weight:700;white-space:nowrap;margin:0;}
+  .agendamento-row-value{font-weight:400;margin:0;flex:1;}
   .agendamento-row{display:flex;gap:8px;font-size:16px;}
   .agendamento-row-label{font-weight:700;white-space:nowrap;margin:0;}
   .agendamento-row-value{font-weight:400;margin:0;flex:1;}
@@ -431,8 +443,8 @@
         <div class="step-bullet">
           <div class="step-icon"><i class="mdn-Icon-calendario"></i></div>
           <div class="step-copy">
-            <ol class="step-ol" start="2"><li>Instalação</li></ol>
-            <p class="step-desc">O técnico chegará à sua casa no <strong>dia agendado para fazer a instalação</strong>. Você poderá <strong>acompanhar tudo pelo app</strong>.</p>
+            <ol class="step-ol" start="2"><li id="step2Title">Entrega</li></ol>
+            <p class="step-desc" id="step2Desc">Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.</p>
           </div>
         </div>
         <div class="step-bullet">
@@ -442,7 +454,8 @@
             <p class="step-desc">A fatura será <strong>proporcional</strong>, a contar do <strong>dia em que seu plano for ativado</strong> até a <strong>data de vencimento</strong>.</p>
           </div>
         </div>
-        <div class="step-bullet">
+        <!-- Só aparece quando o pedido inclui um plano móvel (order.hasMobilePlan) — toggle em renderOrder() -->
+        <div class="step-bullet" id="step4MobileActivation" hidden>
           <div class="step-icon"><i class="mdn-Icon-chip"></i></div>
           <div class="step-copy">
             <ol class="step-ol" start="4"><li>Ativação da linha móvel</li></ol>
@@ -463,30 +476,12 @@
           <div class="summary-card-top">
             <p class="summary-card-heading">Resumo do pedido</p>
 
-            <div class="summary-products">
-              <div class="summary-product-block">
-                <div class="summary-product">
-                  <div class="summary-product-icon"><i class="mdn-Icon-wifi"></i></div>
-                  <p class="summary-product-name">600 Mega</p>
-                </div>
-                <div class="summary-price">
-                  <span class="prefix">R$</span>
-                  <span class="amount">99,90</span>
-                  <span class="suffix">/mês</span>
-                </div>
-              </div>
-              <div class="summary-product-block">
-                <div class="summary-product">
-                  <div class="summary-product-icon"><i class="mdn-Icon-celular-5g"></i></div>
-                  <p class="summary-product-name">Pós 100GB</p>
-                </div>
-                <div class="summary-price">
-                  <span class="prefix">R$</span>
-                  <span class="amount">59,90</span>
-                  <span class="suffix">/mês</span>
-                </div>
-              </div>
-            </div>
+            <!-- Produtos do pedido — um .summary-product-block por item,
+                 preenchido por renderOrder() a partir de order.products -->
+            <div class="summary-products" id="summaryProducts"></div>
+
+            <!-- Adicionais incluídos no checkout — preenchido por renderOrder(), oculto quando não há nenhum -->
+            <div class="summary-addons" id="summaryAddons" hidden></div>
 
             <div class="summary-divider"></div>
 
@@ -514,7 +509,7 @@
             <p class="summary-total-label">Total do seu pedido</p>
             <div class="summary-total-value">
               <span class="prefix">R$</span>
-              <span class="amount">159,80</span>
+              <span class="amount" id="summaryTotalPrice">139,90</span>
               <span class="suffix">/mês</span>
             </div>
             <p class="summary-total-note">ajustado à sua fatura</p>
@@ -525,8 +520,30 @@
       <!-- Avisos -->
       <div class="avisos-col">
 
-        <!-- Agendamento da instalação -->
-        <div class="agendamento-card">
+        <!-- Entrega do pedido — produtos autoinstaláveis (Box/Soundbox): só
+             entrega, sem visita técnica. Alternado com o card de agendamento
+             abaixo via renderOrder(), a partir de order.installType. -->
+        <div class="agendamento-card" id="entregaAutoCard">
+          <div class="info-card-copy">
+            <p class="agendamento-card-title">Entrega do pedido</p>
+            <p class="info-card-desc">Confira o prazo de entrega do seu aparelho.</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço de entrega</p>
+            <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo de entrega</p>
+            <p class="agendamento-block-value">3 dias úteis</p>
+          </div>
+        </div>
+
+        <!-- Agendamento da instalação — produtos "Cabo" (Box Cabo/Soundbox
+             Cabo): visita de Técnico Claro. Data/período herdados do
+             checkout (ver renderAgendamentoFromStorage). -->
+        <div class="agendamento-card" id="entregaTecnicoCard" hidden>
           <p class="agendamento-card-title">Agendamento da instalação</p>
 
           <div class="agendamento-block">
@@ -538,11 +555,11 @@
             <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Agendamento da instalação</p>
             <div class="agendamento-row">
               <p class="agendamento-row-label">Data:</p>
-              <p class="agendamento-row-value" data-role="agendamento-date">30/04 - Quarta-feira</p>
+              <p class="agendamento-row-value" data-role="agendamento-date">—</p>
             </div>
             <div class="agendamento-row">
               <p class="agendamento-row-label">Período:</p>
-              <p class="agendamento-row-value" data-role="agendamento-period">Tarde - Das 12:00 até 18:00</p>
+              <p class="agendamento-row-value" data-role="agendamento-period">—</p>
             </div>
           </div>
 
@@ -556,6 +573,16 @@
             <p class="info-card-desc">Saiba como ativar os streamings incluídos no seu plano.</p>
           </div>
           <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/ativar-streamings" target="_blank">Saiba mais</a>
+        </div>
+
+        <!-- Autoinstalação — some para produtos "Cabo" (o card de agendamento
+             acima já cobre a instalação técnica, sem precisar repetir o aviso). -->
+        <div class="info-card" id="autoinstalacaoCard">
+          <div class="info-card-copy">
+            <p class="info-card-title" id="installCardTitle">Autoinstalação Box Claro tv+</p>
+            <p class="info-card-desc">É fácil, rápido e não precisa de um técnico Claro. Quando receber o seu aparelho em casa, siga os passos e pronto!</p>
+          </div>
+          <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/box#instalacao" target="_blank">Saiba mais</a>
         </div>
 
       </div>
@@ -576,14 +603,8 @@
       </div>
       <div class="termos-content">
         <div class="termos-item">
-          <p class="termos-item-title">Condições de oferta - Banda Larga</p>
-          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - Banda Larga">
-            <i class="mdn-Icon-olho"></i>
-          </button>
-        </div>
-        <div class="termos-item">
-          <p class="termos-item-title">Condições de oferta - Plano de Celular</p>
-          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - Plano de Celular">
+          <p class="termos-item-title">Condições de oferta - TV</p>
+          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
             <i class="mdn-Icon-olho"></i>
           </button>
         </div>
@@ -664,11 +685,103 @@
   swapTicketEdge();
   window.addEventListener('resize', swapTicketEdge);
 
+  // ===== Resumo do pedido dinâmico =====
+  // Lê o pedido gravado pelo checkout (ver finalizarPedido() em
+  // checkout-box.html e variantes) em vez de ter uma página de conclusão fixa
+  // por produto. Sem dado salvo (ex.: acesso direto a esta URL), cai no
+  // pedido padrão abaixo em vez de deixar a tela quebrada.
+  const DEFAULT_ORDER = {
+    // Lista de produtos do pedido — 1 item nos produtos de TV (Box, Box Cabo,
+    // Soundbox, Soundbox Cabo), 2+ em checkouts com bundle (ex.: Internet +
+    // Celular em checkout-600mega-100gb.html). O resumo do pedido renderiza
+    // um bloco por item da lista.
+    products: [
+      { name: 'Claro tv+ Box', icon: 'mdn-Icon-tv', price: 139.90 },
+    ],
+    shortName: 'Box',
+    installType: 'auto',
+    hasMobilePlan: false, // true → mostra o passo 4 "Ativação da linha móvel"
+    total: 139.90,
+    addons: [],
+  };
+
+  function loadOrder() {
+    try {
+      const raw = sessionStorage.getItem('claroCheckoutOrder');
+      if (!raw) return DEFAULT_ORDER;
+      return Object.assign({}, DEFAULT_ORDER, JSON.parse(raw));
+    } catch (e) {
+      return DEFAULT_ORDER;
+    }
+  }
+
+  function formatPriceBRL(value) {
+    return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function renderOrder() {
+    const order = loadOrder();
+
+    const productsEl = document.getElementById('summaryProducts');
+    const products = Array.isArray(order.products) && order.products.length ? order.products : DEFAULT_ORDER.products;
+    productsEl.innerHTML = products.map(p => `
+      <div class="summary-product-block">
+        <div class="summary-product">
+          <div class="summary-product-icon"><i class="${p.icon}"></i></div>
+          <p class="summary-product-name">${p.name}</p>
+        </div>
+        <div class="summary-price">
+          <span class="prefix">R$</span>
+          <span class="amount">${formatPriceBRL(p.price)}</span>
+          <span class="suffix">/mês</span>
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('summaryTotalPrice').textContent = formatPriceBRL(order.total);
+
+    const addonsEl = document.getElementById('summaryAddons');
+    const addons = Array.isArray(order.addons) ? order.addons : [];
+    if (addons.length) {
+      addonsEl.innerHTML = addons.map(addon => `
+        <div class="summary-addon-row">
+          <p class="summary-addon-name">${addon.name}</p>
+          <p class="summary-addon-price">R$ ${formatPriceBRL(addon.price)} / mês</p>
+        </div>
+      `).join('');
+      addonsEl.hidden = false;
+    } else {
+      addonsEl.hidden = true;
+      addonsEl.innerHTML = '';
+    }
+
+    // Entrega (Box/Soundbox) vs. Agendamento da instalação (Box Cabo/Soundbox
+    // Cabo): dois cards prontos no HTML, só alterna qual fica visível. O card
+    // de autoinstalação some pros produtos "Cabo" — o de agendamento, com
+    // data/período reais, já cobre esse aviso.
+    const isTecnico = order.installType === 'tecnico';
+    document.getElementById('entregaAutoCard').hidden = isTecnico;
+    document.getElementById('entregaTecnicoCard').hidden = !isTecnico;
+    document.getElementById('autoinstalacaoCard').hidden = isTecnico;
+    document.getElementById('installCardTitle').textContent = `Autoinstalação ${order.shortName} Claro tv+`;
+
+    document.getElementById('step2Title').textContent = isTecnico ? 'Instalação' : 'Entrega';
+    document.getElementById('step2Desc').innerHTML = isTecnico
+      ? 'O técnico chegará à sua casa no <strong>dia agendado para fazer a instalação</strong>. Você poderá <strong>acompanhar tudo pelo app</strong>.'
+      : 'Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.';
+
+    // Passo 4 "Ativação da linha móvel" — só em pedidos com plano de celular
+    // (ex.: checkout-600mega-100gb.html), nunca nos produtos de TV puros.
+    document.getElementById('step4MobileActivation').hidden = !order.hasMobilePlan;
+
+    if (isTecnico) renderAgendamentoFromStorage();
+  }
+  renderOrder();
+
   // Herda a data/período escolhidos no Agendamento da instalação do
   // checkout (salvos em localStorage antes do redirect pelo botão
-  // "Concluir pedido" em checkout-600mega-100gb.html). Se não houver nada
-  // salvo (ex.: acesso direto a esta página), mantém o texto estático
-  // acima como fallback de demonstração.
+  // "Concluir pedido" em checkout-box-cabo.html / checkout-soundbox-cabo.html
+  // — mesmo mecanismo de checkout-600mega-100gb.html). Sem nada salvo (ex.:
+  // acesso direto a esta página), mantém o texto padrão "—" dos spans.
   function renderAgendamentoFromStorage() {
     const WEEKDAYS_FULL = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
     const PERIODS = {
@@ -696,7 +809,6 @@
       periodEl.textContent = p.label + ' - ' + p.summaryRange;
     }
   }
-  renderAgendamentoFromStorage();
 </script>
 
 </body>
