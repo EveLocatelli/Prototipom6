@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detalhes Box Cabo · M6 (Piloto)</title>
+<title>Detalhes do produto · M6 (Piloto)</title>
 
 <!-- Mondrian via CDN -->
 <link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
@@ -25,9 +25,6 @@
     --shadow-1:0 4px 8px rgba(31,29,29,0.16);
   }
 
-  /* Breakpoints responsivos */
-  /* Mobile: 360px (Figma) | Desktop: 1440px (Figma) */
-
   *{box-sizing:border-box;}
   [hidden]{display:none !important;}
   body{
@@ -38,16 +35,10 @@
   }
   a{color:inherit;text-decoration:none;}
 
-  /* ===== Topbar (igual checkout-box.html / vitrine.html) ===== */
+  /* ===== Topbar (igual checkout/vitrine) ===== */
   .topbar-inner{
-    width:100%;
-    max-width:1440px;
-    margin:0 auto;
-    padding:0 80px;
-    box-sizing:border-box;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+    width:100%;max-width:1440px;margin:0 auto;padding:0 80px;box-sizing:border-box;
+    display:flex;align-items:center;justify-content:space-between;
   }
   .topbar-utility{background:var(--red-dark);height:46px;display:flex;}
   .topbar-utility .topbar-inner{height:100%;}
@@ -64,81 +55,42 @@
 
   /* ===== Breadcrumb ===== */
   .mdn-Breadcrumb{margin:0;}
-  .pdp-breadcrumb-desktop{
-    max-width:1440px;
-    margin:0 auto;
-    padding:24px 80px 0;
-  }
+  .pdp-breadcrumb-desktop{max-width:1440px;margin:0 auto;padding:24px 80px 0;}
   .pdp-breadcrumb-light .mdn-Breadcrumb-link{color:#fff;}
   .pdp-breadcrumb-light .mdn-Breadcrumb-icon{color:#fff;}
 
   /* ===== Hero (mobile) ===== */
-  .pdp-hero{
-    background:var(--red-darkest);
-    padding:24px 16px 96px;
-  }
-  .pdp-hero-inner{
-    display:flex;
-    flex-direction:column;
-    gap:24px;
-  }
-  .pdp-hero-title{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-    text-align:center;
-    color:#fff;
-  }
+  .pdp-hero{background:var(--red-darkest);padding:24px 16px 96px;}
+  .pdp-hero-inner{display:flex;flex-direction:column;gap:24px;}
+  .pdp-hero-title{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:#fff;}
   .pdp-hero-icon{
-    width:38px;
-    height:38px;
-    border-radius:19px;
-    background:#fff;
-    border:1px solid var(--gray-line);
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    width:38px;height:38px;border-radius:19px;background:#fff;border:1px solid var(--gray-line);
+    display:flex;align-items:center;justify-content:center;
   }
   .pdp-hero-icon i{font-size:24px;line-height:1;color:var(--red);}
   .pdp-hero-eyebrow{font-size:12px;font-weight:400;margin:0;}
   .pdp-hero-name{font-size:32px;font-weight:700;font-family:'AMX', sans-serif;margin:0;}
   .pdp-hero-tagline{font-size:14px;font-weight:700;margin:0;}
 
-  /* ===== Product title (desktop, dentro da sidebar) ===== */
+  /* ===== Título (desktop, dentro da sidebar) ===== */
   .pdp-title-desktop{color:var(--ink);}
   .pdp-title-desktop .pdp-hero-eyebrow{font-size:12px;font-weight:400;margin:0;}
   .pdp-title-desktop .pdp-hero-name{font-size:48px;font-weight:700;font-family:'AMX', sans-serif;margin:0;}
   .pdp-title-desktop .pdp-hero-tagline{font-size:16px;font-weight:700;margin:0;}
 
-  /* ===== Layout (duas colunas no desktop, uma no mobile) ===== */
-  .pdp-layout{
-    max-width:1440px;
-    margin:0 auto;
-    padding:24px 80px 48px;
-    display:flex;
-    gap:48px;
-    align-items:flex-start;
-  }
+  /* ===== Layout ===== */
+  .pdp-layout{max-width:1440px;margin:0 auto;padding:24px 80px 48px;display:flex;gap:48px;align-items:flex-start;}
   .pdp-main{flex:1;min-width:0;position:relative;}
   .pdp-aside{width:480px;flex-shrink:0;}
 
-  /* ===== Card principal (alterna seções brancas/cinzas) =====
-     padding-top reserva espaço para o card flutuante de benefícios no mobile
-     (.pdp-benefits--mobile, top:-70px) não cobrir a primeira seção; sem
-     efeito no desktop, onde o card de benefícios fica dentro da sidebar
-     (ver reset em @media min-width:1024px). */
-  .pdp-card{
-    background:#fff;
-    border-radius:32px 32px 0 0;
-    padding-top:80px;
-    display:flex;
-    flex-direction:column;
-  }
+  .pdp-card{background:#fff;border-radius:32px 32px 0 0;padding-top:80px;display:flex;flex-direction:column;}
+  /* Sem essa faixa de benefícios (produto ainda sem Detalhes_Beneficios
+     preenchida), não reserva o respiro de 80px pensado pra ela flutuar. */
+  .pdp-card.no-benefits{padding-top:0;}
   .pdp-section{padding:34px 16px;background:#fff;}
   .pdp-section--alt{background:var(--bg-page);}
 
-  /* ===== Descrição do produto + características (igual checkout-box.html) ===== */
+  /* ===== Descrição + características ===== */
   .detalhes-description{background:transparent;padding:0;display:flex;flex-direction:column;gap:32px;}
   .detalhes-heading{display:flex;flex-direction:column;gap:8px;}
   .detalhes-heading-label{font-size:12px;font-weight:400;color:var(--gray-dark);margin:0;}
@@ -151,75 +103,44 @@
   .detalhes-feature{display:flex;align-items:center;gap:16px;}
   .detalhes-feature-icon{
     width:48px;height:48px;flex-shrink:0;background:var(--red-lightest);
-    border-radius:8px;display:flex;align-items:center;justify-content:center;
+    border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;
   }
   .detalhes-feature-icon i{font-size:32px;line-height:1;color:var(--red);}
+  .detalhes-feature-icon img{width:28px;height:28px;object-fit:contain;}
   .detalhes-feature-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
   .detalhes-feature-title{font-size:16px;font-weight:700;color:var(--ink);margin:0;}
   .detalhes-feature-desc{font-size:14px;font-weight:400;color:var(--gray-dark);margin:0;}
 
-  /* ===== Alert (Mondrian nativo, sem CSS custom) ===== */
-
-  /* ===== Grade de canais ===== */
+  /* ===== Grade de canais (só produtos de TV) ===== */
   .pdp-grade-card{
-    background:#fff;
-    border:1px solid var(--gray-line);
-    border-radius:12px;
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    gap:32px;
+    background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:16px;
+    display:flex;flex-direction:column;gap:32px;
   }
   .pdp-grade-row{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    padding:0;
-    height:24px;
-    background:none;
-    border:none;
-    cursor:pointer;
-    width:100%;
-    transition:opacity 0.2s cubic-bezier(0.2,0,0,1);
+    display:flex;align-items:center;justify-content:center;gap:8px;padding:0;height:24px;
+    background:none;border:none;cursor:pointer;width:100%;transition:opacity 0.2s cubic-bezier(0.2,0,0,1);
   }
-  @media (hover:hover){
-    .pdp-grade-row:hover{opacity:0.72;}
-  }
+  @media (hover:hover){.pdp-grade-row:hover{opacity:0.72;}}
   .pdp-grade-row-text{font-size:16px;font-weight:500;color:var(--ink);}
   .pdp-grade-row i{font-size:24px;line-height:1;color:var(--ink);transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
   .pdp-grade-row.open i{transform:rotate(180deg);}
 
-  /* ===== Busca da grade (usa .mdn-Input Mondrian real, só sobrescreve o necessário) =====
-     A classe Mondrian .mdn-Input-action--left só posiciona/dimensiona o botão
-     (position:absolute + size); a centralização do ícone dentro dele depende
-     de regras que só existem para os ícones do action à direita (via seletor
-     ~), então o ícone da esquerda fica desalinhado sem isso. */
   .grade-search.mdn-Input--actionLeft{min-width:0;}
   .grade-search .mdn-Input-action--left,
   .grade-search [data-mdn-action="clear-field"]{display:flex;align-items:center;justify-content:center;}
 
-  /* ===== Acordeão de categorias da grade ===== */
-  .grade-accordion{
-    display:flex;flex-direction:column;width:100%;
-    border:1px solid var(--gray-line);border-radius:12px;overflow:hidden;
-  }
+  .grade-accordion{display:flex;flex-direction:column;width:100%;border:1px solid var(--gray-line);border-radius:12px;overflow:hidden;}
   .grade-category + .grade-category{border-top:1px solid var(--gray-line);}
   .grade-category-header{
-    display:flex;align-items:center;justify-content:space-between;gap:24px;
-    width:100%;padding:24px;background:#fff;border:none;cursor:pointer;text-align:left;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;padding:24px;
+    background:#fff;border:none;cursor:pointer;text-align:left;
   }
   .grade-category-name{font-size:16px;font-weight:500;color:var(--ink);}
   .grade-category-icon{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
   .grade-category.open .grade-category-icon{transform:rotate(180deg);}
-  .grade-category-content{
-    display:none;grid-template-columns:repeat(2,1fr);gap:16px 8px;
-    padding:0 16px 16px;background:#fff;
-  }
+  .grade-category-content{display:none;grid-template-columns:repeat(2,1fr);gap:16px 8px;padding:0 16px 16px;background:#fff;}
   .grade-category.open .grade-category-content{display:grid;}
-  @media (min-width:700px){
-    .grade-category-content{grid-template-columns:repeat(auto-fill, minmax(180px,1fr));}
-  }
+  @media (min-width:700px){.grade-category-content{grid-template-columns:repeat(auto-fill, minmax(180px,1fr));}}
   .grade-channel{display:flex;align-items:center;gap:12px;min-width:0;}
   .grade-channel[hidden]{display:none;}
   .grade-channel-logo{
@@ -231,15 +152,12 @@
   .grade-channel-name{font-size:14px;font-weight:400;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .grade-empty{font-size:16px;color:var(--gray-dark);margin:0;text-align:center;padding:24px 0;}
 
-  /* ===== "Incluso neste plano" - carrossel de streamings (igual checkout-box.html) ===== */
+  /* ===== Incluso neste plano (streamings) ===== */
   .detalhes-plan-inner{display:flex;flex-direction:column;gap:16px;width:100%;min-width:0;}
   .detalhes-plan-subtitle{font-size:16px;font-weight:400;color:var(--ink);margin:0;}
   .streaming-carousel{
     display:flex;gap:8px;min-width:0;overflow-x:auto;scroll-snap-type:x proximity;
     scrollbar-width:none;margin:0 -16px;padding:0 16px;cursor:grab;user-select:none;
-    /* Sem isso, scroll-snap-align:start no primeiro card ignora o padding e
-       alinha a borda do card com a borda do viewport, comendo o respiro
-       esquerdo que devia bater com o título "Incluso neste plano". */
     scroll-padding-left:16px;
   }
   .streaming-carousel.dragging,.services-carousel.dragging{cursor:grabbing;scroll-snap-type:none;}
@@ -261,7 +179,7 @@
   .streaming-card-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:#fff;margin:0;}
   .streaming-card-desc{font-size:16px;font-weight:400;color:#fff;margin:0;}
 
-  /* ===== "Serviços digitais" - carrossel de cards (igual checkout-box.html) ===== */
+  /* ===== Serviços digitais ===== */
   .detalhes-services-inner{display:flex;flex-direction:column;gap:16px;min-width:0;width:100%;}
   .detalhes-services-subtitle{font-size:16px;font-weight:400;color:var(--gray-dark);margin:0;}
   .services-carousel{
@@ -288,22 +206,13 @@
   .swiper-arrow:disabled{opacity:0.32;cursor:default;}
   .swiper-arrow:active:not(:disabled){transform:scale(0.95);}
 
-  /* ===== Termos (igual checkout-box.html, + sombra fixa) =====
-     A sombra fica no container (não só no header) para continuar envolvendo
-     o bloco inteiro quando o conteúdo expande — aqui o Termos senta direto
-     num fundo branco (.pdp-section), então precisa de destaque próprio mesmo
-     colapsado, diferente do checkout-box.html onde o fundo já é cinza. */
+  /* ===== Termos ===== */
   .termos-container{border-radius:12px;box-shadow:var(--shadow-1);}
   .termos-header{
     display:flex;align-items:center;gap:24px;padding:24px;background:#fff;border-radius:12px;
     cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);
   }
-  /* @media (hover:hover) evita que o box-shadow fique "grudado" em telas
-     touch: sem mouse pra sair do elemento, :hover normal nunca desliga
-     depois do tap, e a sombra vira uma linha cinza perene sob o header. */
-  @media (hover:hover){
-    .termos-header:hover{box-shadow:0 8px 16px rgba(0,0,0,0.12);}
-  }
+  @media (hover:hover){.termos-header:hover{box-shadow:0 8px 16px rgba(0,0,0,0.12);}}
   .termos-header.open{border-radius:12px 12px 0 0;}
   .termos-header-text{display:flex;flex:1;min-width:0;align-items:center;gap:16px;}
   .termos-icon-wrapper{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink);line-height:1;}
@@ -326,37 +235,36 @@
   .termos-item-icon:active{transform:scale(0.9);}
   .termos-item-icon i{font-size:16px;line-height:1;color:#fff;}
 
-  /* ===== Container destaque benefícios (flutuante no mobile, in-flow no desktop) ===== */
+  /* ===== Benefícios (flutuante no mobile, in-flow no desktop) ===== */
   .pdp-benefits{
-    background:#fff;
-    border:1px solid var(--gray-line);
-    border-radius:12px;
-    box-shadow:var(--shadow-1);
-    padding:24px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+    background:#fff;border:1px solid var(--gray-line);border-radius:12px;box-shadow:var(--shadow-1);
+    padding:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
   }
-  .pdp-benefit-item{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;flex-shrink:0;}
+  /* flex:1+min-width:0 (em vez de flex-shrink:0) porque os textos vêm da
+     planilha e variam bastante de tamanho — precisam dividir o espaço
+     disponível e quebrar linha, não estourar o card numa linha só. */
+  .pdp-benefit-item{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;flex:1 1 0;min-width:0;}
   .pdp-benefit-item i{font-size:24px;line-height:1;color:var(--red-dark);}
-  .pdp-benefit-item p{font-size:12px;font-weight:500;color:var(--gray-dark);margin:0;line-height:1.3;white-space:nowrap;}
+  .pdp-benefit-item img{width:24px;height:24px;object-fit:contain;}
+  .pdp-benefit-item p{font-size:12px;font-weight:500;color:var(--gray-dark);margin:0;line-height:1.3;white-space:normal;word-break:break-word;}
   .pdp-benefit-divider{width:1px;align-self:stretch;background:var(--gray-line);flex-shrink:0;}
 
-  .pdp-benefits--mobile{
-    position:absolute;
-    top:-70px;
-    left:50%;
-    transform:translateX(-50%);
-    width:328px;
-  }
+  /* width:100% (do .pdp-main, ancestor position:relative — não mais um valor
+     fixo de 328px) porque com textos mais longos o card precisa aproveitar
+     toda a largura disponível pra não deixar as 3 colunas espremidas. Em
+     360px de viewport (mínimo de design) isso reproduz exatamente os 328px
+     de antes (360 - 16px de padding de cada lado do .pdp-layout); em
+     telas maiores o card só ganha mais respiro, até o teto de 400px. */
+  .pdp-benefits--mobile{position:absolute;top:-70px;left:50%;transform:translateX(-50%);width:100%;max-width:400px;}
 
-  /* ===== Preço + CTA (reaproveita padrão visual do action-card-price / btn-sale) ===== */
+  /* ===== Preço + CTA ===== */
   .pdp-price{display:flex;flex-direction:column;align-items:flex-start;max-width:200px;}
   .pdp-price-label{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
-  .pdp-price-value{display:flex;align-items:center;white-space:nowrap;color:var(--ink);}
+  .pdp-price-value{display:flex;align-items:flex-end;white-space:nowrap;color:var(--ink);}
   .pdp-price-value-inner{display:flex;align-items:flex-end;gap:4px;}
   .pdp-price-prefix{font-size:16px;font-weight:700;}
   .pdp-price-amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .pdp-price-cents{font-size:16px;}
   .pdp-price-suffix{font-size:16px;font-weight:700;}
   .btn-sale{
     background:var(--yellow);border:none;border-radius:500px;padding:16px 32px;height:48px;
@@ -368,44 +276,20 @@
 
   /* ===== Sidebar (desktop, sticky) ===== */
   .pdp-sidebar{
-    background:#fff;
-    border-radius:24px;
-    box-shadow:var(--shadow-1);
-    padding:48px;
-    display:flex;
-    flex-direction:column;
-    gap:32px;
-    position:sticky;
-    top:24px;
+    background:#fff;border-radius:24px;box-shadow:var(--shadow-1);padding:48px;
+    display:flex;flex-direction:column;gap:32px;position:sticky;top:24px;
   }
 
   /* ===== CTA fixa (mobile) ===== */
   .pdp-mobile-cta{
-    display:none;
-    position:fixed;
-    bottom:0;left:0;right:0;
-    background:#fff;
-    border-top:1px solid var(--gray-line);
-    border-radius:12px 12px 0 0;
-    padding:12px 16px;
-    gap:16px;
-    flex-direction:column;
-    z-index:100;
+    display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;
+    border-top:1px solid var(--gray-line);border-radius:12px 12px 0 0;padding:12px 16px;
+    gap:16px;flex-direction:column;z-index:100;
   }
 
-  /* ===== Motion (mesma linguagem de checkout-box.html) ===== */
+  /* ===== Motion ===== */
   @keyframes slide-up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
   @keyframes content-fade{from{opacity:0;}to{opacity:1;}}
-  /* .pdp-card e .pdp-sidebar não animam mais: ambos envolvem o título do
-     produto e/ou .pdp-benefits (que já tem sua própria animação — ver
-     abaixo), e duas animações de opacidade sobrepostas com easings
-     diferentes rodando ao mesmo tempo no mesmo trecho de tela piscavam de
-     forma estranha. O título e a descrição agora nascem direto no estado
-     final, sem efeito de entrada. */
-  /* .pdp-benefits--mobile usa transform:translateX(-50%) para centralizar;
-     uma animação com translateY sobrescreveria esse transform (CSS anima a
-     propriedade inteira, não soma com o valor estático), por isso aqui só a
-     opacidade anima, nunca transform. */
   .pdp-benefits{opacity:0;animation:content-fade 0.4s cubic-bezier(0,0,0.2,1) forwards;animation-delay:60ms;}
   .streaming-card,.service-card{opacity:0;animation:slide-up 0.35s cubic-bezier(0.05,0.7,0.1,1) forwards;}
   .streaming-carousel .streaming-card:nth-child(1){animation-delay:0ms;}
@@ -419,9 +303,6 @@
   .services-carousel .service-card:nth-child(3){animation-delay:120ms;}
   .services-carousel .service-card:nth-child(4){animation-delay:180ms;}
   .termos-content.open{animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
-  /* Grade de canais: mesmo fade plano do acordeão de Termos, tanto pro
-     reveal da busca+lista de categorias (Ver grade completa) quanto pra
-     cada categoria abrindo individualmente. */
   .grade-search:not([hidden]),
   #gradeAccordion:not([hidden]){animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
   .grade-category.open .grade-category-content{animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
@@ -434,19 +315,14 @@
     .pdp-layout{padding:24px 24px 48px;}
     .pdp-breadcrumb-desktop{padding:24px 24px 0;}
   }
-
   @media (max-width:1023px){
     .pdp-mobile-cta{display:flex;}
     .mdn-Footer{padding-bottom:140px;}
   }
-
-  /* Mobile: até 599px (Figma mobile: 360px) */
   @media (max-width:599px){
     .topbar-inner{padding:0 16px;}
     .pdp-layout{padding:24px 16px 32px;}
   }
-
-  /* Desktop: a partir de 1024px */
   @media (min-width:1024px){
     .pdp-hero,.pdp-breadcrumb-light{display:none;}
     .pdp-aside{display:block;}
@@ -454,14 +330,7 @@
     .pdp-title-desktop{display:block;}
     .pdp-benefits--desktop{display:flex;}
     .pdp-benefits--mobile{display:none;}
-
-    .pdp-card{
-      border-radius:24px;
-      overflow:hidden;
-      box-shadow:var(--shadow-1);
-      padding-top:0;
-      width:100%;
-    }
+    .pdp-card{border-radius:24px;overflow:hidden;box-shadow:var(--shadow-1);padding-top:0;width:100%;}
     .pdp-section{padding:32px 48px;}
   }
 </style>
@@ -501,16 +370,12 @@
   </div>
 </header>
 
-<!-- Breadcrumb desktop (texto escuro, acima do layout de duas colunas):
-     volta para a página anterior do histórico (vitrine ou vitrine > detalhes,
-     dependendo de onde o usuário veio) -->
 <nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile pdp-breadcrumb-desktop">
   <a class="mdn-Breadcrumb-link" href="vitrine.html">
     <i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md" aria-hidden="true"></i>Voltar
   </a>
 </nav>
 
-<!-- Hero mobile (fundo vermelho escuro + breadcrumb claro + título do produto) -->
 <div class="pdp-hero">
   <div class="pdp-hero-inner">
     <nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile pdp-breadcrumb-light">
@@ -518,89 +383,26 @@
         <i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md mdn-Icon--inverse" aria-hidden="true"></i>Voltar
       </a>
     </nav>
-    <div class="pdp-hero-title">
-      <div class="pdp-hero-icon"><i class="mdn-Icon-tv"></i></div>
-      <p class="pdp-hero-eyebrow">TV</p>
-      <p class="pdp-hero-name">Claro tv+ Box Cabo</p>
-      <p class="pdp-hero-tagline">6 streamings em 1 assinatura</p>
-    </div>
+    <div class="pdp-hero-title" id="heroTitleMobile"></div>
   </div>
 </div>
 
 <main class="pdp-layout">
 
-  <!-- Coluna principal -->
   <div class="pdp-main">
-    <div class="pdp-card">
+    <div class="pdp-card" id="pdpCard">
 
-      <!-- Card de benefícios flutuante (mobile) -->
-      <div class="pdp-benefits pdp-benefits--mobile">
-        <div class="pdp-benefit-item">
-          <i class="mdn-Icon-video-reuniao"></i>
-          <p>Mais de 120<br>canais ao vivo</p>
-        </div>
-        <div class="pdp-benefit-divider"></div>
-        <div class="pdp-benefit-item">
-          <i class="mdn-Icon-filme-rolo-play"></i>
-          <p>6 streamings<br>inclusos</p>
-        </div>
-        <div class="pdp-benefit-divider"></div>
-        <div class="pdp-benefit-item">
-          <i class="mdn-Icon-chave-combinada"></i>
-          <p>Instalação via<br>Técnico Claro</p>
-        </div>
-      </div>
+      <div class="pdp-benefits pdp-benefits--mobile" id="benefitsMobile"></div>
 
-      <!-- Descrição do produto + características + Alert -->
       <div class="pdp-section">
         <div class="detalhes-description">
           <div class="detalhes-heading">
-            <p class="detalhes-heading-label">Claro tv+ Box Cabo</p>
+            <p class="detalhes-heading-label" id="descLabel"></p>
             <p class="detalhes-heading-title">Descrição do produto</p>
           </div>
-          <div class="detalhes-body">
-            <p>A Box (via cabo) transforma qualquer TV com entrada HDMI em uma Smart TV completa, com instalação realizada por um técnico Claro, garantindo maior estabilidade de sinal. O aparelho fica fixo no local de instalação e oferece acesso aos principais streamings, TV ao vivo, gravação de programas e controle por voz com Alexa integrada.</p>
-            <p><strong>Instalação:</strong> Feita por um técnico Claro, o produto fica fixo no local de instalação.</p>
-          </div>
-          <div class="detalhes-features">
-            <div class="detalhes-feature">
-              <div class="detalhes-feature-icon"><i class="mdn-Icon-video-reuniao"></i></div>
-              <div class="detalhes-feature-text">
-                <p class="detalhes-feature-title">Mais de 120 canais ao vivo</p>
-                <p class="detalhes-feature-desc">Filmes, séries, notícias, músicas e muito mais: fique por dentro de tudo que passa no mundo!</p>
-              </div>
-            </div>
-            <div class="detalhes-feature">
-              <div class="detalhes-feature-icon"><i class="mdn-Icon-controle-remoto"></i></div>
-              <div class="detalhes-feature-text">
-                <p class="detalhes-feature-title">Controle remoto por voz</p>
-                <p class="detalhes-feature-desc">Busque, troque de canal e dê o play com um comando de voz.</p>
-              </div>
-            </div>
-            <div class="detalhes-feature">
-              <div class="detalhes-feature-icon"><i class="mdn-Icon-computador-celular"></i></div>
-              <div class="detalhes-feature-text">
-                <p class="detalhes-feature-title">Multitelas</p>
-                <p class="detalhes-feature-desc">No smartphone, no tablet, na TV ou no computador: assista onde o seu coração mandar.</p>
-              </div>
-            </div>
-            <div class="detalhes-feature">
-              <div class="detalhes-feature-icon"><i class="mdn-Icon-atualizar-play"></i></div>
-              <div class="detalhes-feature-text">
-                <p class="detalhes-feature-title">Replay TV</p>
-                <p class="detalhes-feature-desc">Volte a programação em até 7 dias</p>
-              </div>
-            </div>
-            <div class="detalhes-feature">
-              <div class="detalhes-feature-icon"><i class="mdn-Icon-gravador"></i></div>
-              <div class="detalhes-feature-text">
-                <p class="detalhes-feature-title">Gravação e bloqueio</p>
-                <p class="detalhes-feature-desc">Grave conteúdos ao vivo para assistir depois e bloqueie canais impróprios para a criançada.</p>
-              </div>
-            </div>
-          </div>
+          <div class="detalhes-body" id="descBody"></div>
+          <div class="detalhes-features" id="descFeatures"></div>
 
-          <!-- Alert (Mondrian: componentes-web-alert--danger-light) -->
           <div class="mdn-Alert mdn-Alert--danger mdn-Alert--light" id="alertBox" aria-hidden="true" tabindex="-1" hidden>
             <div class="mdn-Alert-content">
               <div class="mdn-Topic mdn-Topic--horizontal mdn-Topic--sm">
@@ -617,15 +419,13 @@
         </div>
       </div>
 
-      <!-- Grade de canais -->
-      <div class="pdp-section pdp-section--alt">
+      <!-- Grade de canais: só existe pra produtos de TV -->
+      <div class="pdp-section pdp-section--alt" id="gradeSection" hidden>
         <div class="pdp-grade-card">
           <div class="detalhes-heading">
             <p class="detalhes-heading-title">Grade de canais</p>
             <p class="detalhes-plan-subtitle">São mais de 120 canais para curtir o seu conteúdo favorito.</p>
           </div>
-
-          <!-- Busca (componente real Mondrian: componentes-web-input--search), só aparece com a grade expandida -->
           <div class="mdn-Input mdn-Input--actionLeft grade-search" hidden>
             <button type="button" class="mdn-Input-action mdn-Input-action--left" tabindex="-1">
               <em aria-hidden="true" class="mdn-Icon-busca mdn-Icon--md"></em>
@@ -636,11 +436,8 @@
               <em aria-hidden="true" class="mdn-Icon-fechar mdn-Icon--md"></em>
             </button>
           </div>
-
-          <!-- Acordeões por categoria, preenchidos via JS a partir de CHANNELS_DATA -->
           <div class="grade-accordion" id="gradeAccordion" hidden></div>
           <p class="grade-empty" id="gradeEmpty" hidden>Nenhum canal encontrado.</p>
-
           <button type="button" class="pdp-grade-row" id="gradeToggleBtn" onclick="toggleGrade()">
             <span class="pdp-grade-row-text" id="gradeToggleText">Ver grade completa</span>
             <i class="mdn-Icon-baixo" id="gradeToggleIcon"></i>
@@ -648,117 +445,36 @@
         </div>
       </div>
 
-      <!-- Incluso neste plano -->
-      <div class="pdp-section">
+      <!-- Incluso neste plano: só existe se o produto tiver streamings -->
+      <div class="pdp-section" id="streamingsSection" hidden>
         <div class="detalhes-plan-inner">
           <div class="detalhes-heading">
             <p class="detalhes-heading-title">Incluso neste plano</p>
             <p class="detalhes-plan-subtitle">O melhor do entretenimento escolhido especialmente para você e sua família.</p>
           </div>
-          <div class="streaming-carousel" data-role="streaming-carousel">
-            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-disney.png')">
-              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+"></div>
-              <div class="streaming-card-text">
-                <p class="streaming-card-title">Disney +</p>
-                <p class="streaming-card-desc">Plano padrão com anúncios e 2 usuários simultâneos.</p>
-              </div>
-            </div>
-            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
-              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime"></div>
-              <div class="streaming-card-text">
-                <p class="streaming-card-title">Amazon Prime</p>
-                <p class="streaming-card-desc">Prime Video com anúncios, Amazon Music, Prime Gaming, Prime Reading e Frete Grátis para milhões de produtos.</p>
-              </div>
-            </div>
-            <div class="streaming-card streaming-card--overlay" style="background-image:url('assets/detalhes/bg-globoplay.png');background-size:100.13% 146.6%;background-position:center bottom;">
-              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay"></div>
-              <div class="streaming-card-text">
-                <p class="streaming-card-title">Globoplay</p>
-                <p class="streaming-card-desc">Plano Premium: Até 5 telas simultâneas.</p>
-              </div>
-            </div>
-            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-appletv.png')">
-              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV"></div>
-              <div class="streaming-card-text">
-                <p class="streaming-card-title">Apple TV</p>
-                <p class="streaming-card-desc">Todos os conteúdos estarão disponíveis e 5 usuários simultâneos</p>
-              </div>
-            </div>
-            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-amazon-netflix.png')">
-              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/netflix.svg" alt="Netflix"></div>
-              <div class="streaming-card-text">
-                <p class="streaming-card-title">Netflix</p>
-                <p class="streaming-card-desc">Plano com Anúncios: Até 2 telas simultâneas e qualidade de imagem full HD.</p>
-              </div>
-            </div>
-            <div class="streaming-card" style="background-image:url('assets/detalhes/bg-hbomax.png')">
-              <div class="streaming-card-logo"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/hbo-max.svg" alt="HBO Max"></div>
-              <div class="streaming-card-text">
-                <p class="streaming-card-title">HBO Max</p>
-                <p class="streaming-card-desc">Plano básico com anúncios e 2 usuários simultâneos, Full HD + Canal HBO 2.</p>
-              </div>
-            </div>
-          </div>
+          <div class="streaming-carousel" data-role="streaming-carousel" id="streamingCarousel"></div>
           <div class="detalhes-swiper-nav">
-            <button type="button" class="swiper-arrow" data-role="streaming-prev" aria-label="Anterior">
-              <i class="mdn-Icon-esquerda"></i>
-            </button>
-            <button type="button" class="swiper-arrow" data-role="streaming-next" aria-label="Próximo">
-              <i class="mdn-Icon-direita"></i>
-            </button>
+            <button type="button" class="swiper-arrow" data-role="streaming-prev" aria-label="Anterior"><i class="mdn-Icon-esquerda"></i></button>
+            <button type="button" class="swiper-arrow" data-role="streaming-next" aria-label="Próximo"><i class="mdn-Icon-direita"></i></button>
           </div>
         </div>
       </div>
 
-      <!-- Serviços digitais -->
-      <div class="pdp-section pdp-section--alt">
+      <!-- Serviços digitais: só existe se o produto tiver algum -->
+      <div class="pdp-section pdp-section--alt" id="servicesSection" hidden>
         <div class="detalhes-services-inner">
           <div class="detalhes-heading">
             <p class="detalhes-heading-title">Serviços digitais</p>
             <p class="detalhes-services-subtitle">Benefícios que só cliente Claro tem</p>
           </div>
-          <div class="services-carousel" data-role="services-carousel">
-            <div class="service-card">
-              <div class="service-card-header">
-                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/claro-video.svg" alt=""></div>
-                <p class="service-card-name">Claro video</p>
-              </div>
-              <p class="service-card-desc">Milhares de filmes, séries, documentários, shows, infantis e muito mais. Os conteúdos estão disponíveis dentro da plataforma Claro tv+ (clarotvmais.com.br).</p>
-            </div>
-            <div class="service-card">
-              <div class="service-card-header">
-                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/mcafee.svg" alt=""></div>
-                <p class="service-card-name">Proteção Digital (McAfee)</p>
-              </div>
-              <p class="service-card-desc">Antivírus disponível para um dispositivo (computador, celular, leitor de livros digitais ou tablet).</p>
-            </div>
-            <div class="service-card">
-              <div class="service-card-header">
-                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/skeelo.svg" alt=""></div>
-                <p class="service-card-name">Skeelo Audiobooks</p>
-              </div>
-              <p class="service-card-desc">Plataforma digital que reúne os livros mais vendidos em forma de áudio com diversas categorias como: ficção, romance, biografia, autoajuda e outros.</p>
-            </div>
-            <div class="service-card">
-              <div class="service-card-header">
-                <div class="service-card-icon"><img src="https://mondrian.claro.com.br/brands/app/32px-alternative/claro-banca.svg" alt=""></div>
-                <p class="service-card-name">Claro Banca</p>
-              </div>
-              <p class="service-card-desc">O Claro banca é um serviço fácil de usar que contém as principais revistas e jornais do país para você ler onde e quando quiser. Cliente Banda Larga possui exclusividade nos conteúdos: Folha de São Paulo, Isto É e Isto É Dinheiro.</p>
-            </div>
-          </div>
+          <div class="services-carousel" data-role="services-carousel" id="servicesCarousel"></div>
           <div class="detalhes-swiper-nav">
-            <button type="button" class="swiper-arrow" data-role="services-prev" aria-label="Anterior">
-              <i class="mdn-Icon-esquerda"></i>
-            </button>
-            <button type="button" class="swiper-arrow" data-role="services-next" aria-label="Próximo">
-              <i class="mdn-Icon-direita"></i>
-            </button>
+            <button type="button" class="swiper-arrow" data-role="services-prev" aria-label="Anterior"><i class="mdn-Icon-esquerda"></i></button>
+            <button type="button" class="swiper-arrow" data-role="services-next" aria-label="Próximo"><i class="mdn-Icon-direita"></i></button>
           </div>
         </div>
       </div>
 
-      <!-- Termos -->
       <div class="pdp-section">
         <div class="termos-container">
           <div class="termos-header" onclick="toggleTermos(this)">
@@ -766,22 +482,16 @@
               <div class="termos-icon-wrapper"><i class="mdn-Icon-documento mdn-Icon--md"></i></div>
               <p class="termos-text">Condições da oferta e termo de adesão</p>
             </div>
-            <button type="button" class="termos-toggle-icon" aria-label="Expandir">
-              <i class="mdn-Icon-baixo mdn-Icon--md"></i>
-            </button>
+            <button type="button" class="termos-toggle-icon" aria-label="Expandir"><i class="mdn-Icon-baixo mdn-Icon--md"></i></button>
           </div>
           <div class="termos-content">
             <div class="termos-item">
-              <p class="termos-item-title">Condições de oferta - TV</p>
-              <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
-                <i class="mdn-Icon-olho"></i>
-              </button>
+              <p class="termos-item-title" id="termosCategoriaTitle"></p>
+              <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta"><i class="mdn-Icon-olho"></i></button>
             </div>
             <div class="termos-item">
               <p class="termos-item-title">Termo de Adesão</p>
-              <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão">
-                <i class="mdn-Icon-olho"></i>
-              </button>
+              <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão"><i class="mdn-Icon-olho"></i></button>
             </div>
           </div>
         </div>
@@ -790,65 +500,40 @@
     </div>
   </div>
 
-  <!-- Sidebar (desktop, sticky) -->
   <aside class="pdp-aside">
     <div class="pdp-sidebar">
-      <div class="pdp-title-desktop">
-        <p class="pdp-hero-eyebrow">TV</p>
-        <p class="pdp-hero-name">Claro tv+ Box Cabo</p>
-        <p class="pdp-hero-tagline">6 streamings em 1 assinatura</p>
-      </div>
-
-      <div class="pdp-benefits pdp-benefits--desktop">
-        <div class="pdp-benefit-item">
-          <i class="mdn-Icon-video-reuniao"></i>
-          <p>Mais de 120<br>canais ao vivo</p>
-        </div>
-        <div class="pdp-benefit-divider"></div>
-        <div class="pdp-benefit-item">
-          <i class="mdn-Icon-filme-rolo-play"></i>
-          <p>6 streamings<br>inclusos</p>
-        </div>
-        <div class="pdp-benefit-divider"></div>
-        <div class="pdp-benefit-item">
-          <i class="mdn-Icon-chave-combinada"></i>
-          <p>Instalação via<br>Técnico Claro</p>
-        </div>
-      </div>
-
+      <div class="pdp-title-desktop" id="heroTitleDesktop"></div>
+      <div class="pdp-benefits pdp-benefits--desktop" id="benefitsDesktop"></div>
       <div class="pdp-price">
         <p class="pdp-price-label">Valor do produto</p>
         <div class="pdp-price-value">
           <div class="pdp-price-value-inner">
             <span class="pdp-price-prefix">R$</span>
-            <span class="pdp-price-amount">169,90</span>
+            <span class="pdp-price-amount" id="priceAmountDesktop"></span>
           </div>
           <span class="pdp-price-suffix">/mês</span>
         </div>
       </div>
-
-      <button type="button" class="btn-sale" onclick="window.location.href='checkout-box-cabo.html'">Adicionar ao carrinho</button>
+      <button type="button" class="btn-sale" onclick="startCheckout()">Adicionar ao carrinho</button>
     </div>
   </aside>
 
 </main>
 
-<!-- CTA fixa (mobile) -->
 <div class="pdp-mobile-cta">
   <div class="pdp-price">
     <p class="pdp-price-label">Valor do produto</p>
     <div class="pdp-price-value">
       <div class="pdp-price-value-inner">
         <span class="pdp-price-prefix">R$</span>
-        <span class="pdp-price-amount">169,90</span>
+        <span class="pdp-price-amount" id="priceAmountMobile"></span>
       </div>
       <span class="pdp-price-suffix">/mês</span>
     </div>
   </div>
-  <button type="button" class="btn-sale" onclick="window.location.href='checkout-box-cabo.html'">Adicionar ao carrinho</button>
+  <button type="button" class="btn-sale" onclick="startCheckout()">Adicionar ao carrinho</button>
 </div>
 
-<!-- Componente real Mondrian Footer, variante "Public Simple" -->
 <footer class="mdn-Footer mdn-Footer--default mdn-Footer--signature mdn-Footer--simple" role="contentinfo">
   <div class="mdn-Container">
     <div class="mdn-Footer-content">
@@ -880,51 +565,244 @@
   </div>
 </footer>
 
+<script src="product-catalog.js"></script>
 <script src="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.js"></script>
 <script>
-  // Permite arrastar os carrosséis com o mouse (clicar e segurar), já que
-  // overflow-x:auto só responde nativamente a touch/trackpad e scrollbar.
+  // ===== Resolução de produto a partir da URL (?produto=<id>) =====
+  const params = new URLSearchParams(window.location.search);
+  const PRODUCT_ID = params.get('produto') || 'tv-box';
+  const product = PRODUCT_CATALOG[PRODUCT_ID] || PRODUCT_CATALOG['tv-box'];
+
+  function formatBRL(value) {
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Renderiza um ícone (classe mdn-Icon-* real ou logo de marca via <img>) —
+  // mesmo formato gerado por scripts/gen_catalog.py a partir da planilha.
+  function iconHtml(icon, extraClass) {
+    if (!icon) return '';
+    if (icon.kind === 'img') return `<img src="${icon.src}" alt="${icon.alt || ''}">`;
+    if (icon.kind === 'mdn' && icon.class) return `<i class="${icon.class} ${extraClass || ''}"></i>`;
+    return '';
+  }
+
+  function renderHero() {
+    const eyebrow = product.badgeCategoria || product.categoriaLabel;
+    const html = `
+      <div class="pdp-hero-icon">${iconHtml(product.icone)}</div>
+      <p class="pdp-hero-eyebrow">${eyebrow}</p>
+      <p class="pdp-hero-name">${product.nome}</p>
+      <p class="pdp-hero-tagline">${product.subtitulo || ''}</p>
+    `;
+    document.getElementById('heroTitleMobile').innerHTML = html;
+    document.getElementById('heroTitleDesktop').innerHTML = `
+      <p class="pdp-hero-eyebrow">${eyebrow}</p>
+      <p class="pdp-hero-name">${product.nome}</p>
+      <p class="pdp-hero-tagline">${product.subtitulo || ''}</p>
+    `;
+  }
+
+  function renderDescricao() {
+    document.getElementById('descLabel').textContent = product.descricaoCurta || product.nome;
+
+    const paragraphs = [];
+    if (product.descricaoLonga) {
+      product.descricaoLonga.split(/\n\n+/).forEach(block => {
+        paragraphs.push(`<p>${block.replace(/\n/g, '<br>')}</p>`);
+      });
+    }
+    if (product.naCaixa) {
+      paragraphs.push('<p><strong>O que vem na caixa:</strong></p>');
+      paragraphs.push(`<p>${product.naCaixa}</p>`);
+    }
+    if (product.necessarioTer) {
+      paragraphs.push('<p><strong>Necessário ter:</strong></p>');
+      paragraphs.push(`<p>${product.necessarioTer}</p>`);
+    }
+    document.getElementById('descBody').innerHTML = paragraphs.join('');
+
+    document.getElementById('descFeatures').innerHTML = product.detalhesDestaques.map(f => `
+      <div class="detalhes-feature">
+        <div class="detalhes-feature-icon">${iconHtml(f.icone)}</div>
+        <div class="detalhes-feature-text">
+          <p class="detalhes-feature-title">${f.titulo}</p>
+          <p class="detalhes-feature-desc">${f.descricao}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Lê da aba Detalhes_Beneficios da planilha — a faixa compacta de ~3 itens
+  // no topo da página de Detalhes. NÃO é a mesma fonte de Card_Destaques
+  // (aquilo é pros bullets do card da vitrine, ainda não usado em nenhuma
+  // página) nem de Detalhes_Destaques (a lista grande mais abaixo).
+  function renderBenefits() {
+    const mobileEl = document.getElementById('benefitsMobile');
+    const desktopEl = document.getElementById('benefitsDesktop');
+    if (!product.beneficios.length) {
+      mobileEl.hidden = true;
+      desktopEl.hidden = true;
+      document.getElementById('pdpCard').classList.add('no-benefits');
+      return;
+    }
+    const items = product.beneficios.map(b => `
+      <div class="pdp-benefit-item">
+        ${iconHtml(b.icone)}
+        <p>${b.texto}</p>
+      </div>
+    `);
+    const withDividers = items.join('<div class="pdp-benefit-divider"></div>');
+    mobileEl.innerHTML = withDividers;
+    desktopEl.innerHTML = withDividers;
+  }
+
+  function renderStreamings() {
+    const section = document.getElementById('streamingsSection');
+    if (!product.streamings.length) { section.hidden = true; return; }
+    section.hidden = false;
+
+    // Os 6 streamings usados na planilha já têm plano de fundo baixado
+    // localmente (ver assets/detalhes/) — Globoplay usa o mesmo tratamento
+    // especial de recorte+overlay já documentado (a imagem original vem com
+    // a logo grande "queimada" no meio).
+    const STREAMING_ASSETS = {
+      'Disney+': { bg: 'assets/detalhes/bg-disney.png', logo: 'disneyplus' },
+      'Amazon Prime': { bg: 'assets/detalhes/bg-amazon-netflix.png', logo: 'amazon-prime' },
+      'Globoplay': { bg: 'assets/detalhes/bg-globoplay.png', logo: 'globoplay', overlay: true },
+      'Apple TV': { bg: 'assets/detalhes/bg-appletv.png', logo: 'apple-tv' },
+      'Netflix': { bg: 'assets/detalhes/bg-amazon-netflix.png', logo: 'netflix' },
+      'HBO Max': { bg: 'assets/detalhes/bg-hbomax.png', logo: 'hbo-max' },
+    };
+
+    document.getElementById('streamingCarousel').innerHTML = product.streamings.map(s => {
+      const asset = STREAMING_ASSETS[s.nome];
+      const bgStyle = asset
+        ? (asset.overlay
+            ? `background-image:url('${asset.bg}');background-size:100.13% 146.6%;background-position:center bottom;`
+            : `background-image:url('${asset.bg}')`)
+        : `background:var(--ink)`;
+      const logoSrc = asset ? `https://mondrian.claro.com.br/brands/app/32px-alternative/${asset.logo}.svg` : '';
+      return `
+        <div class="streaming-card${asset && asset.overlay ? ' streaming-card--overlay' : ''}" style="${bgStyle}">
+          ${logoSrc ? `<div class="streaming-card-logo"><img src="${logoSrc}" alt="${s.nome}"></div>` : '<div></div>'}
+          <div class="streaming-card-text">
+            <p class="streaming-card-title">${s.nome}</p>
+            <p class="streaming-card-desc">${s.descricao}</p>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderServices() {
+    const section = document.getElementById('servicesSection');
+    if (!product.servicosDigitais.length) { section.hidden = true; return; }
+    section.hidden = false;
+    document.getElementById('servicesCarousel').innerHTML = product.servicosDigitais.map(s => `
+      <div class="service-card">
+        <div class="service-card-header">
+          <div class="service-card-icon">${iconHtml(s.icone)}</div>
+          <p class="service-card-name">${s.nome}</p>
+        </div>
+        <p class="service-card-desc">${s.descricao}</p>
+      </div>
+    `).join('');
+  }
+
+  function renderTermos() {
+    document.getElementById('termosCategoriaTitle').textContent = product.categoriaTermos || 'Condições de oferta';
+  }
+
+  function renderPrice() {
+    const formatted = formatBRL(product.preco);
+    const commaIdx = formatted.indexOf(',');
+    const html = commaIdx === -1 ? formatted : formatted.slice(0, commaIdx) + '<span class="pdp-price-cents">' + formatted.slice(commaIdx) + '</span>';
+    document.getElementById('priceAmountDesktop').innerHTML = html;
+    document.getElementById('priceAmountMobile').innerHTML = html;
+  }
+
+  // Grava o produto único como "pedido em andamento" (mesmo formato de array
+  // que o combo grava em comboSelected → checkout.html) e manda pro checkout.
+  // Mesma regra de "1 produto por categoria" de vitrine.html (mergeIntoCart) —
+  // adicionar aqui substitui só o produto da mesma categoria já no carrinho,
+  // preserva o resto. Ver [[vitrine_persistent_cart]].
+  function mergeIntoCart(newIds) {
+    var current;
+    try {
+      current = JSON.parse(sessionStorage.getItem('pedidoEmAndamento'));
+      if (!Array.isArray(current)) current = [];
+    } catch (e) {
+      current = [];
+    }
+    var newCategorias = {};
+    newIds.forEach(function (id) {
+      var p = PRODUCT_CATALOG[id];
+      if (p) newCategorias[p.categoria] = true;
+    });
+    var kept = current.filter(function (id) {
+      var p = PRODUCT_CATALOG[id];
+      return p && !newCategorias[p.categoria];
+    });
+    return kept.concat(newIds);
+  }
+
+  // Limpa adicionais (ver [[checkout_dynamic_page]]) de qualquer produto que
+  // saiu do carrinho nesse merge — mesma lógica de vitrine.html.
+  function pruneAdicionaisTo(ids) {
+    var raw;
+    try { raw = JSON.parse(sessionStorage.getItem('pedidoAdicionais')); } catch (e) { raw = null; }
+    if (!raw || typeof raw !== 'object') return;
+    var idSet = {};
+    ids.forEach(function (id) { idSet[id] = true; });
+    var changed = false;
+    Object.keys(raw).forEach(function (pid) {
+      if (!idSet[pid]) { delete raw[pid]; changed = true; }
+    });
+    if (changed) sessionStorage.setItem('pedidoAdicionais', JSON.stringify(raw));
+  }
+
+  function startCheckout() {
+    var merged = mergeIntoCart([PRODUCT_ID]);
+    sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(merged));
+    pruneAdicionaisTo(merged);
+    sessionStorage.removeItem('pedidoOfertaId'); // produto solo não tem desconto multi
+    window.location.href = 'checkout.html';
+  }
+
+  renderHero();
+  renderDescricao();
+  renderBenefits();
+  renderStreamings();
+  renderServices();
+  renderTermos();
+  renderPrice();
+
+  // Grade de canais só existe pra categoria TV — CHANNELS_DATA é compartilhado
+  // entre todos os produtos de TV (mesma grade de canais pra Box/Box Cabo/
+  // Soundbox/Soundbox Cabo), não vem da planilha por produto.
+  if (product.categoria === 'tv') {
+    document.getElementById('gradeSection').hidden = false;
+  }
+
+  // Permite arrastar os carrosséis com o mouse (clicar e segurar)
   function makeDraggable(track) {
     if (!track) return;
-    let isDown = false;
-    let moved = false;
-    let startX = 0;
-    let startScrollLeft = 0;
-
+    let isDown = false, moved = false, startX = 0, startScrollLeft = 0;
     track.addEventListener('mousedown', (e) => {
-      isDown = true;
-      moved = false;
-      startX = e.pageX;
-      startScrollLeft = track.scrollLeft;
-      e.preventDefault();
+      isDown = true; moved = false; startX = e.pageX; startScrollLeft = track.scrollLeft; e.preventDefault();
     });
     window.addEventListener('mousemove', (e) => {
       if (!isDown) return;
       const dx = e.pageX - startX;
-      if (Math.abs(dx) > 3) {
-        moved = true;
-        track.classList.add('dragging');
-      }
+      if (Math.abs(dx) > 3) { moved = true; track.classList.add('dragging'); }
       track.scrollLeft = startScrollLeft - dx;
     });
-    window.addEventListener('mouseup', () => {
-      isDown = false;
-      track.classList.remove('dragging');
-    });
-    track.addEventListener('click', (e) => {
-      if (moved) { e.preventDefault(); e.stopPropagation(); }
-    }, true);
+    window.addEventListener('mouseup', () => { isDown = false; track.classList.remove('dragging'); });
+    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
   }
 
-  // Navegação dos carrosséis (setas de "Serviços digitais")
   function initCarouselNav(track, prevBtn, nextBtn) {
     if (!track) return;
-    // Carrosséis full-bleed (ex: .streaming-carousel, com margem negativa)
-    // nascem com um scrollLeft > 0 "de fábrica", sem o usuário ter rolado
-    // nada — e se o carrossel começa escondido (dentro de um acordeão
-    // fechado), isso só é mensurável quando ele ganha tamanho real, não no
-    // load. Por isso capturamos esse valor a primeira vez que houver
-    // clientWidth > 0 e usamos como baseline do "início", em vez de 0 fixo.
     let baseline = null;
     function scrollByCard(dir) {
       const card = track.querySelector(':scope > *');
@@ -932,9 +810,7 @@
       track.scrollBy({ left: dir * amount, behavior: 'smooth' });
     }
     function updateNav() {
-      if (baseline === null && track.clientWidth > 0) {
-        baseline = track.scrollLeft;
-      }
+      if (baseline === null && track.clientWidth > 0) baseline = track.scrollLeft;
       const max = track.scrollWidth - track.clientWidth - 1;
       if (prevBtn) prevBtn.disabled = track.scrollLeft <= (baseline ?? 0);
       if (nextBtn) nextBtn.disabled = track.scrollLeft >= max;
@@ -943,40 +819,25 @@
     if (nextBtn) nextBtn.addEventListener('click', () => scrollByCard(1));
     track.addEventListener('scroll', updateNav);
     window.addEventListener('resize', updateNav);
-    if (window.ResizeObserver) {
-      new ResizeObserver(updateNav).observe(track);
-    }
+    if (window.ResizeObserver) new ResizeObserver(updateNav).observe(track);
     updateNav();
   }
 
   document.querySelectorAll('.streaming-carousel, .services-carousel').forEach(makeDraggable);
-  initCarouselNav(
-    document.querySelector('[data-role="streaming-carousel"]'),
-    document.querySelector('[data-role="streaming-prev"]'),
-    document.querySelector('[data-role="streaming-next"]')
-  );
-  initCarouselNav(
-    document.querySelector('[data-role="services-carousel"]'),
-    document.querySelector('[data-role="services-prev"]'),
-    document.querySelector('[data-role="services-next"]')
-  );
+  initCarouselNav(document.querySelector('[data-role="streaming-carousel"]'), document.querySelector('[data-role="streaming-prev"]'), document.querySelector('[data-role="streaming-next"]'));
+  initCarouselNav(document.querySelector('[data-role="services-carousel"]'), document.querySelector('[data-role="services-prev"]'), document.querySelector('[data-role="services-next"]'));
 
-  // Toggle Termos (com ícone de seta)
   function toggleTermos(headerEl) {
     const contentEl = headerEl.nextElementSibling;
     contentEl.classList.toggle('open');
     headerEl.classList.toggle('open');
   }
 
-  // Fechar alert (Mondrian usa a classe mdn-is-open para controlar a visibilidade)
   function closeAlert() {
-    const alert = document.getElementById('alertBox');
-    alert.classList.remove('mdn-is-open');
+    document.getElementById('alertBox').classList.remove('mdn-is-open');
   }
 
-  // ===== Grade de canais (acordeão + busca) =====
-  // Logos reais buscados em mondrian.claro.com.br/channels; os 2 canais sem
-  // logo no catálogo (TBS HD, Like) caem no fallback de iniciais em texto.
+  // ===== Grade de canais (acordeão + busca) — compartilhada entre produtos de TV =====
   const CHANNELS_DATA = [
     { name: 'Canais abertos HD', items: [
       { label: 'Globo HD', src: 'https://mondrian.claro.com.br/channels/default/globo.svg' },
@@ -1134,13 +995,10 @@
     const btn = document.getElementById('gradeToggleBtn');
     const text = document.getElementById('gradeToggleText');
     const isOpen = btn.classList.toggle('open');
-
     search.hidden = !isOpen;
     accordion.hidden = !isOpen;
     text.textContent = isOpen ? 'Ocultar grade' : 'Ver grade completa';
-
     if (!isOpen) {
-      // Reset ao colapsar: fecha categorias e limpa a busca
       document.getElementById('gradeSearchInput').value = '';
       filterGradeChannels('');
       accordion.querySelectorAll('.grade-category.open').forEach(c => c.classList.remove('open'));
@@ -1151,7 +1009,6 @@
     const query = normalizeSearch(rawQuery.trim());
     const categories = document.querySelectorAll('#gradeAccordion .grade-category');
     let totalMatches = 0;
-
     categories.forEach(cat => {
       let matchesInCategory = 0;
       cat.querySelectorAll('.grade-channel').forEach(ch => {
@@ -1163,9 +1020,7 @@
       cat.classList.toggle('open', !!query && matchesInCategory > 0);
       totalMatches += matchesInCategory;
     });
-
     document.getElementById('gradeEmpty').hidden = !(query && totalMatches === 0);
-
     const clearBtn = document.querySelector('.grade-search [data-mdn-action="clear-field"]');
     if (clearBtn) clearBtn.style.display = rawQuery ? 'flex' : 'none';
   }
@@ -1177,10 +1032,10 @@
     filterGradeChannels('');
   }
 
-  renderGradeAccordion();
-  const gradeSearchInput = document.getElementById('gradeSearchInput');
-  if (gradeSearchInput) {
-    gradeSearchInput.addEventListener('input', (e) => filterGradeChannels(e.target.value));
+  if (product.categoria === 'tv') {
+    renderGradeAccordion();
+    const gradeSearchInput = document.getElementById('gradeSearchInput');
+    if (gradeSearchInput) gradeSearchInput.addEventListener('input', (e) => filterGradeChannels(e.target.value));
   }
 </script>
 

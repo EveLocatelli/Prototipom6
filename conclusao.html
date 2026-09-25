@@ -494,7 +494,7 @@
                 <p class="summary-fee-label">Taxa de Adesão</p>
                 <p class="summary-fee-value">Grátis</p>
               </div>
-              <div class="summary-fee-row">
+              <div class="summary-fee-row" id="instalacaoFeeRow">
                 <p class="summary-fee-label">Instalação</p>
                 <p class="summary-fee-value">Grátis</p>
               </div>
@@ -522,7 +522,11 @@
 
         <!-- Entrega do pedido — produtos autoinstaláveis (Box/Soundbox): só
              entrega, sem visita técnica. Alternado com o card de agendamento
-             abaixo via renderOrder(), a partir de order.installType. -->
+             abaixo via renderOrder(), a partir de order.installType. Some
+             também quando order.hasPhysicalDelivery é false (pedido 'auto'
+             que é só troca de plano de Celular já possuído, nada físico pra
+             entregar — o card "Atualização do plano" abaixo cobre esse
+             caso). -->
         <div class="agendamento-card" id="entregaAutoCard">
           <div class="info-card-copy">
             <p class="agendamento-card-title">Entrega do pedido</p>
@@ -564,6 +568,30 @@
           </div>
 
           <button type="button" class="btn-primary">Adicionar ao meu calendário</button>
+        </div>
+
+        <!-- Atualização do plano — plano de Celular cuja categoria já é
+             possuída (troca de plano, usuário já tem número Claro, não há
+             nada físico pra receber): ver showAtualizacaoPlano, mesmo
+             critério de checkout.html. SUBSTITUI os dois cards acima, nunca
+             soma — escondido sempre que o pedido tiver qualquer produto que
+             exija Entrega ou Agendamento (Figma "Checkout exclusivo - M6",
+             node 13297:4426). -->
+        <div class="agendamento-card" id="atualizacaoPlanoCard" hidden>
+          <div class="info-card-copy">
+            <p class="agendamento-card-title">Atualização do plano</p>
+            <p class="info-card-desc">Seu novo plano será atualizado em nosso sistema.</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-documento"></i>Contrato de ativação</p>
+            <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo para atualização</p>
+            <p class="agendamento-block-value">24 horas</p>
+          </div>
         </div>
 
         <!-- Ative os seus streamings -->
@@ -701,6 +729,8 @@
     shortName: 'Box',
     installType: 'auto',
     hasMobilePlan: false, // true → mostra o passo 4 "Ativação da linha móvel"
+    hasCelularPlanChange: false, // true → mostra o card "Atualização do plano"
+    hasPhysicalDelivery: true, // false → esconde Entrega/Autoinstalação (só troca de plano de Celular já possuído)
     total: 139.90,
     addons: [],
   };
@@ -759,19 +789,45 @@
     // de autoinstalação some pros produtos "Cabo" — o de agendamento, com
     // data/período reais, já cobre esse aviso.
     const isTecnico = order.installType === 'tecnico';
-    document.getElementById('entregaAutoCard').hidden = isTecnico;
+    // hasPhysicalDelivery pode faltar em pedidos salvos antes desse campo
+    // existir — default true (comportamento antigo, sempre mostrava Entrega).
+    const hasPhysicalDelivery = order.hasPhysicalDelivery !== false;
+    // "Instalação: Grátis" no resumo só faz sentido pra pedidos com
+    // instalação técnica de verdade — Celular e TV Box/Soundbox sem cabo
+    // (installType 'auto') não têm instalação nenhuma.
+    document.getElementById('instalacaoFeeRow').hidden = !isTecnico;
+    document.getElementById('entregaAutoCard').hidden = isTecnico || !hasPhysicalDelivery;
     document.getElementById('entregaTecnicoCard').hidden = !isTecnico;
-    document.getElementById('autoinstalacaoCard').hidden = isTecnico;
+    document.getElementById('autoinstalacaoCard').hidden = isTecnico || !hasPhysicalDelivery;
     document.getElementById('installCardTitle').textContent = `Autoinstalação ${order.shortName} Claro tv+`;
+    // Atualização do plano — SUBSTITUI Entrega/Agendamento, nunca soma: só
+    // aparece quando não há instalação técnica nem entrega física alguma no
+    // pedido (mesma condição do step2 "Atualização" abaixo).
+    const showAtualizacaoPlano = !!order.hasCelularPlanChange && !isTecnico && !hasPhysicalDelivery;
+    document.getElementById('atualizacaoPlanoCard').hidden = !showAtualizacaoPlano;
 
-    document.getElementById('step2Title').textContent = isTecnico ? 'Instalação' : 'Entrega';
-    document.getElementById('step2Desc').innerHTML = isTecnico
-      ? 'O técnico chegará à sua casa no <strong>dia agendado para fazer a instalação</strong>. Você poderá <strong>acompanhar tudo pelo app</strong>.'
-      : 'Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.';
+    if (isTecnico) {
+      document.getElementById('step2Title').textContent = 'Instalação';
+      document.getElementById('step2Desc').innerHTML = 'O técnico chegará à sua casa no <strong>dia agendado para fazer a instalação</strong>. Você poderá <strong>acompanhar tudo pelo app</strong>.';
+    } else if (showAtualizacaoPlano) {
+      // Figma "Tela de Conclusão - M6", node 13025:9279 ("Bullet -
+      // Confirmação" / passo 2 "Atualização do plano") — só o prazo ("1 dia
+      // útil") fica em negrito, diferente dos outros dois ramos.
+      document.getElementById('step2Title').textContent = 'Atualização do plano';
+      document.getElementById('step2Desc').innerHTML = 'Seu novo plano será atualizado em nosso sistema no prazo de até <strong>24 horas</strong>.';
+    } else {
+      document.getElementById('step2Title').textContent = 'Entrega';
+      document.getElementById('step2Desc').innerHTML = 'Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.';
+    }
 
     // Passo 4 "Ativação da linha móvel" — só em pedidos com plano de celular
-    // (ex.: checkout-600mega-100gb.html), nunca nos produtos de TV puros.
-    document.getElementById('step4MobileActivation').hidden = !order.hasMobilePlan;
+    // (ex.: checkout-600mega-100gb.html), nunca nos produtos de TV puros. E
+    // nunca quando é troca de plano de Celular já possuído
+    // (order.hasCelularPlanChange) — esse passo fala de receber/ativar um
+    // chip ou eSim novo, o que não existe numa troca de plano no número que
+    // o cliente já tem (mesma regra que esconde Entrega/mostra "Atualização
+    // do plano" acima).
+    document.getElementById('step4MobileActivation').hidden = !order.hasMobilePlan || !!order.hasCelularPlanChange;
 
     if (isTecnico) renderAgendamentoFromStorage();
   }

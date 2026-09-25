@@ -28,6 +28,7 @@
     --bg-page:#f8f8f8;
   }
   *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
   body{
     margin:0;
     font-family: 'Roboto', sans-serif;
@@ -58,8 +59,21 @@
   .topbar-utility .topbar-inner{height:100%;}
   .topbar-location{
     display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;
+    position:relative;cursor:pointer;user-select:none;
   }
   .topbar-location i{font-size:24px;line-height:1;}
+  .posse-dropdown{
+    position:absolute;top:calc(100% + 8px);left:0;min-width:220px;
+    background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.2);
+    padding:8px;z-index:100;
+  }
+  .posse-dropdown-item{
+    display:block;width:100%;text-align:left;background:none;border:none;
+    padding:10px 12px;border-radius:6px;color:var(--ink);font-size:14px;
+    font-family:inherit;cursor:pointer;
+  }
+  .posse-dropdown-item:hover{background:var(--bg-page);}
+  .posse-dropdown-item.active{color:var(--red);font-weight:700;}
   .topbar-a11y{display:flex;align-items:center;gap:16px;}
   .topbar-a11y i{font-size:16px;line-height:1;}
 
@@ -91,8 +105,9 @@
   .greeting p{font-size:16px;color:var(--gray-dark);margin:0;}
 
   /* ===== Categorias ===== */
-  /* Full-bleed + sticky: ocupa a viewport inteira e fica fixo no topo ao
-     rolar. O wrapper interno usa o mesmo max-width/padding do resto do
+  /* Full-bleed, rola junto com o resto da página (não é mais sticky — em
+     telas menores o menu fixo ocupava espaço útil e escondia informação dos
+     cards). O wrapper interno usa o mesmo max-width/padding do resto do
      conteúdo, então o alinhamento não muda mesmo sendo full-bleed. */
   .categories{
     background:var(--bg-page);
@@ -101,9 +116,6 @@
     margin-right:calc(50% - 50vw);
     margin-bottom:64px; /* respiro entre o menu de categorias e a próxima seção — ver nota de espaçamento abaixo */
     padding:16px 0;
-    position:sticky;
-    top:0;
-    z-index:30;
   }
   .categories-inner{
     max-width:1440px;
@@ -137,7 +149,7 @@
      media query lá embaixo). Escala de 8px — respiro generoso o bastante
      agora que as linhas divisórias foram removidas. Pedir pra Eve replicar
      esses valores no Figma (gap do auto-layout entre os blocos de seção). */
-  .section{margin-top:64px;scroll-margin-top:200px;} /* altura do menu fixo (~177px) + respiro */
+  .section{margin-top:64px;}
   .section-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
   .section-icon{
     width:64px;height:64px;border-radius:999px;background:#fff;border:2px solid var(--gray-line);
@@ -279,6 +291,16 @@
     color:var(--ink);cursor:pointer;
   }
   .btn-yellow:hover{filter:brightness(0.95);}
+  /* "Remover do carrinho" — mesma proporção/tamanho do .btn-yellow, estilo
+     do componente Mondrian Button/Primary Inverse (mdn-Button--primaryInverse):
+     fundo branco, borda e texto vermelhos. Substitui o .btn-yellow em cards
+     cujo produto já está no carrinho — ver markCartItemsOnCards(). */
+  .btn-outline{
+    width:100%;background:#fff;border:1px solid var(--red);border-radius:500px;
+    height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;
+    color:var(--red);cursor:pointer;
+  }
+  .btn-outline:hover{background:#fff5f5;}
   .card-actions{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:16px;width:100%;}
   .card-link{font-size:16px;font-weight:500;color:var(--teal-dark, #005c66);text-decoration:underline;}
 
@@ -634,6 +656,230 @@
     .desktop-only{display:none;}
     .mobile-only{display:block;}
   }
+
+  /* ===== Monte seu combo (modal mobile / gaveta lateral desktop) =====
+     Figma: https://www.figma.com/design/nkemnAg0XyDHPJCf1RcUL6/Monte-seu-combo
+     node 4:8512 (layout), 4:8580 (estados dos chips), 9:8969 (botão Adicionar/Adicionado), 4:8939 (total).
+     Só existe frame mobile no Figma; o layout desktop (gaveta lateral) é uma
+     adaptação nossa do mesmo conteúdo, confirmada com a Eve. */
+
+  /* Botão de entrada (placeholder — local definitivo na vitrine ainda em aberto) */
+  .combo-trigger-btn{
+    position:fixed;right:24px;bottom:24px;z-index:500;
+    display:flex;align-items:center;gap:8px;
+    background:var(--red);color:#fff;border:none;border-radius:500px;
+    padding:14px 24px 14px 18px;font-size:16px;font-weight:500;font-family:inherit;
+    cursor:pointer;box-shadow:0 4px 16px rgba(31,29,29,.25);
+    transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1), filter 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  .combo-trigger-btn:hover{filter:brightness(0.95);}
+  .combo-trigger-btn:active{transform:scale(0.97);}
+  .combo-trigger-btn i{font-size:24px;}
+
+  .combo-overlay{
+    position:fixed;inset:0;z-index:999;
+    background:rgba(31,29,29,0.5); /* color/neutral/inverse (--ink) a 50% */
+    display:flex;justify-content:flex-end;
+  }
+  .combo-overlay[hidden]{display:none;}
+  .combo-overlay:not([hidden]){animation:combo-overlay-fade 0.25s cubic-bezier(0,0,0.2,1);}
+  @keyframes combo-overlay-fade{from{opacity:0;}to{opacity:1;}}
+
+  .combo-modal{
+    background:#fff;width:420px;max-width:100%;height:100%;
+    display:flex;flex-direction:column;
+    box-shadow:-4px 0 24px rgba(31,29,29,0.15);
+  }
+  .combo-overlay:not([hidden]) .combo-modal{animation:combo-drawer-slide-in 0.3s cubic-bezier(0.05,0.7,0.1,1);}
+  @keyframes combo-drawer-slide-in{from{transform:translateX(100%);}to{transform:translateX(0);}}
+
+  .combo-head{
+    flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;
+    gap:16px;padding:32px 16px 24px;
+  }
+  .combo-head-text h2{margin:0 0 12px;font-size:24px;font-weight:700;font-family:'AMX',sans-serif;color:var(--ink);}
+  .combo-head-text p{margin:0;font-size:14px;color:var(--gray-dark);}
+  .combo-close{
+    width:32px;height:32px;flex-shrink:0;border:none;background:none;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;
+    transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .combo-close:active{transform:scale(0.9);}
+  .combo-close i{font-size:20px;line-height:1;}
+
+  .combo-scroll{flex:1 1 auto;overflow-y:auto;padding:0 16px;}
+
+  /* Filtro de chips: sticky no topo da área de scroll, fundo opaco pra cobrir
+     o conteúdo passando por baixo enquanto rola. */
+  .combo-chips{
+    position:sticky;top:0;z-index:2;
+    display:flex;gap:8px;align-items:center;
+    padding:8px 0 18px;background:#fff;
+    overflow-x:auto;scrollbar-width:none;
+  }
+  .combo-chips::-webkit-scrollbar{display:none;}
+  .combo-chip{
+    display:flex;align-items:center;gap:8px;flex-shrink:0;white-space:nowrap;
+    padding:8px 16px;border-radius:24px;border:1px solid var(--gray-line);
+    background:#fff;color:var(--ink);font-size:14px;font-weight:500;font-family:inherit;
+    cursor:pointer;
+    transition:background 0.2s cubic-bezier(0.2,0,0,1), border-color 0.2s cubic-bezier(0.2,0,0,1), color 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  .combo-chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+  .combo-chip-check{display:none;font-size:16px;line-height:1;color:inherit;}
+  .combo-chip.has-added .combo-chip-check{display:block;}
+
+  .combo-sections{display:flex;flex-direction:column;padding-bottom:24px;}
+  .combo-section + .combo-section{margin-top:32px;}
+  /* Compensa a altura real do filtro sticky (medida via JS, ver comboSyncChipsHeight)
+     pra scrollIntoView parar com o título da categoria visível, não escondido atrás
+     do filtro fixo. Fallback de 64px cobre o instante antes do JS medir. */
+  .combo-section{scroll-margin-top:var(--combo-chips-h, 64px);}
+  .combo-section-title{margin:0 0 18px;font-size:24px;font-weight:700;font-family:'AMX',sans-serif;color:var(--ink);}
+  .combo-offers{display:flex;flex-direction:column;gap:18px;}
+  .combo-divider{height:1px;width:100%;background:var(--gray-line);}
+
+  .combo-offer{display:flex;align-items:center;gap:16px;width:100%;}
+  .combo-item-icon{
+    width:42px;height:42px;flex-shrink:0;border:2px solid var(--gray-line);border-radius:999px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .combo-item-icon i{font-size:24px;color:var(--ink);}
+  .combo-item-info{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:4px;}
+  .combo-item-name{margin:0;font-size:16px;font-weight:700;color:var(--ink);}
+  .combo-item-price{margin:0;font-size:16px;font-weight:400;color:var(--gray-dark);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  /* Preview "De/Por" por item — Figma node 10:4438 (aparece a partir do
+     momento em que o 1º produto do combo é escolhido, nos itens que
+     resultariam em desconto — ver comboWouldQualifyForDiscount). */
+  .combo-item-price-was{font-size:14px;font-weight:400;color:var(--gray-dark);text-decoration:line-through;}
+  .combo-item-price-discounted{font-size:16px;font-weight:700;color:var(--green-text);}
+
+  .combo-add-btn{
+    flex-shrink:0;height:28px;padding:0 16px;border-radius:500px;
+    display:flex;align-items:center;justify-content:center;line-height:1;
+    border:1px solid var(--red);background:#fff;color:var(--red);
+    font-size:12px;font-weight:500;font-family:inherit;white-space:nowrap;cursor:pointer;
+    transition:background 0.2s cubic-bezier(0.2,0,0,1), color 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .combo-add-btn:hover{background:#fff5f5;}
+  .combo-add-btn:active{transform:scale(0.96);}
+  .combo-add-btn.is-added{background:var(--red);color:#fff;}
+  .combo-add-btn.is-added:hover{filter:brightness(0.95);background:var(--red);}
+
+  .combo-footer{
+    flex-shrink:0;display:flex;flex-direction:column;gap:16px;
+    padding:12px 16px 20px;border-top:1px solid var(--gray-line);background:#fff;
+  }
+  .combo-total{display:flex;flex-direction:column;max-width:200px;}
+  .combo-total-label{margin:0 0 2px;font-size:12px;font-weight:700;color:var(--ink);}
+  .combo-total-value{display:flex;align-items:flex-end;}
+  .combo-total-value .prefix{font-size:16px;font-weight:700;color:var(--ink);}
+  .combo-total-value .big{font-size:36px;font-weight:700;line-height:1;font-family:inherit;color:var(--ink);}
+  .combo-total-value .cents,
+  .combo-total-suffix{font-size:16px;font-weight:700;color:var(--ink);}
+  .combo-cta{
+    width:100%;height:48px;border:none;border-radius:500px;
+    background:var(--yellow);color:var(--ink);font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;
+    transition:filter 0.2s cubic-bezier(0.2,0,0,1), opacity 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .combo-cta:hover:not(:disabled){filter:brightness(0.97);}
+  .combo-cta:active:not(:disabled){transform:scale(0.98);}
+  .combo-cta:disabled{opacity:0.5;cursor:not-allowed;}
+
+  @media (max-width:599px){
+    .combo-trigger-btn{right:16px;bottom:16px;padding:12px 20px 12px 16px;font-size:14px;}
+    .combo-overlay{align-items:flex-end;}
+    .combo-modal{width:100%;height:100%;border-radius:12px 12px 0 0;}
+    .combo-overlay:not([hidden]) .combo-modal{animation:combo-sheet-slide-up 0.3s cubic-bezier(0.05,0.7,0.1,1);}
+    .combo-head{padding:24px 16px 16px;}
+    .combo-section-title{font-size:20px;}
+  }
+  @keyframes combo-sheet-slide-up{from{transform:translateY(100%);}to{transform:translateY(0);}}
+
+  /* ===== Carrinho persistente =====
+     Aparece quando sessionStorage['pedidoEmAndamento'] já tem produto(s)
+     salvos — ou seja, o usuário clicou em "Assinar"/"Mudar para este"/
+     "Continuar para o resumo", foi pro checkout.html e voltou pra vitrine
+     (via "Voltar") sem finalizar o pedido. Nunca é limpo por navegar de
+     volta — só em finalizarPedido() no checkout, ao concluir o pedido de
+     verdade. Ver renderCarrinhoPersistente() no script.
+     Mobile: mesmo componente flutuante-expansível de checkout.html
+     (.checkout-footer) — reproduzido aqui com prefixo vitrine-cart-*.
+     Desktop: barra horizontal nova (Figma node 6724:13553), visível ≥1024px
+     (mesmo breakpoint do sidebar desktop do checkout). Entre 600-1023px
+     nenhum dos dois aparece — mesma lacuna que já existe em checkout.html
+     nessa faixa, não é algo novo desta feature. */
+  .vitrine-cart-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);border-radius:12px 12px 0 0;padding:12px 16px;gap:16px;flex-direction:column;z-index:100;}
+  .vitrine-cart-total-row{display:flex;gap:16px;align-items:center;width:100%;}
+  .vitrine-cart-toggle{width:24px;height:24px;flex-shrink:0;border:none;background:none;padding:0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .vitrine-cart-toggle:active{transform:scale(0.9);}
+  .vitrine-cart-toggle i{font-size:24px;line-height:1;}
+  .vitrine-cart-total-text{flex:1;min-width:0;}
+  .vitrine-cart-text{color:#fff;font-size:16px;font-weight:400;margin:0;}
+  .vitrine-cart-price{color:#fff;display:flex;align-items:baseline;gap:2px;margin:4px 0 0;}
+  .vitrine-cart-price-amount{font-size:24px;font-weight:700;font-family:'AMX';}
+  .vitrine-cart-price-prefix{font-size:16px;}
+  .vitrine-cart-price-cents{font-size:16px;}
+  .vitrine-cart-price-suffix{font-size:16px;font-weight:700;}
+  .vitrine-cart-adjusted{color:#fff;font-size:12px;font-weight:400;margin:0;}
+  .vitrine-cart-btn{background:var(--yellow);border:none;border-radius:500px;padding:16px 32px;height:48px;font-size:16px;font-weight:500;color:var(--ink);cursor:pointer;width:100%;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .vitrine-cart-btn:hover{filter:brightness(0.95);}
+  .vitrine-cart-btn:active{transform:scale(0.98);}
+  /* "Esvaziar carrinho" — Figma: logo abaixo do botão Continuar, ~12px de
+     espaço, texto sublinhado e centralizado na mesma largura do botão. O
+     gap vem do wrapper (.vitrine-cart-footer-actions/.vitrine-cart-bar-actions),
+     não de margin aqui — botão+link ficam num wrapper próprio, separado do
+     gap:16px do footer/barra (senão os dois gaps somavam e ficava longe). */
+  .vitrine-cart-clear{display:block;width:100%;background:none;border:none;padding:0;color:#fff;font-size:16px;font-weight:400;text-decoration:underline;text-align:center;cursor:pointer;}
+  .vitrine-cart-clear:hover{opacity:0.85;}
+  .vitrine-cart-footer-actions{display:flex;flex-direction:column;gap:12px;}
+
+  .vitrine-cart-expanded{display:flex;flex-direction:column;gap:12px;width:100%;}
+  .vitrine-cart-expanded[hidden]{display:none;}
+  .vitrine-cart-expanded:not([hidden]){animation:fade-in 0.3s cubic-bezier(0,0,0.2,1);}
+  @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+  .vitrine-cart-disclaimer{color:#fff;font-size:14px;font-weight:400;text-align:center;margin:0;}
+  /* Mobile: mantém o layout original — cada linha ocupa a largura toda do
+     card (mesma largura dos outros elementos, como o preço/disclaimer), com
+     o valor alinhado à direita via space-between. Eve pediu explicitamente
+     pra manter esse comportamento aqui, só o desktop mudou (ver
+     .vitrine-cart-bar-taxas logo abaixo, que usa grid pra aproximar as duas
+     colunas — mobile não teve esse pedido). */
+  .vitrine-cart-taxas{display:flex;flex-direction:column;gap:4px;width:100%;}
+  .vitrine-cart-taxas .vitrine-cart-taxa-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;width:100%;}
+  .vitrine-cart-taxa-label{font-weight:700;margin:0;color:#fff;font-size:14px;}
+  .vitrine-cart-taxa-value{font-weight:400;margin:0;color:#fff;font-size:14px;text-align:right;}
+  .vitrine-cart-divider{height:1px;background:var(--gray-line);width:100%;}
+
+  @media (max-width:599px){
+    .vitrine-cart-footer.is-visible{display:flex;}
+  }
+
+  /* Barra desktop — espaçamento medido direto no Figma (node 6724:13553):
+     gap uniforme de 80px entre TODOS os elementos (disclaimer → taxas →
+     divider → total → botão), cluster inteiro centralizado na barra (não é
+     um layout "space-between" com o botão grudado na borda direita — as
+     margens esquerda/direita batem exatamente quando o conjunto é
+     centralizado), e 12px de padding vertical (altura total da barra fecha
+     em 130px com o bloco de taxas, que é o mais alto, em 106px). */
+  .vitrine-cart-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);z-index:100;padding:12px 80px;align-items:center;justify-content:center;gap:80px;}
+  .vitrine-cart-bar-disclaimer{color:#fff;font-size:14px;font-weight:400;max-width:190px;margin:0;flex-shrink:0;}
+  /* Desktop: rótulo e valor formam duas colunas de verdade (grid), rótulos
+     à esquerda (coluna do tamanho do maior rótulo), valores à direita logo
+     em seguida — bem mais próximos do que o space-between original, que
+     esticava o valor até a borda dos 276px. */
+  .vitrine-cart-bar-taxas{display:grid;grid-template-columns:max-content max-content;column-gap:16px;row-gap:4px;flex-shrink:0;}
+  .vitrine-cart-bar-taxas .vitrine-cart-taxa-row{display:contents;}
+  .vitrine-cart-bar-taxas .vitrine-cart-taxa-value{justify-self:end;text-align:right;}
+  .vitrine-cart-bar-divider{width:1px;align-self:stretch;background:rgba(255,255,255,0.24);flex-shrink:0;}
+  .vitrine-cart-bar-total{flex-shrink:0;}
+  .vitrine-cart-bar-actions{display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0;}
+  .vitrine-cart-bar .vitrine-cart-btn{width:auto;}
+  .vitrine-cart-bar .vitrine-cart-clear{width:auto;}
+
+  @media (min-width:1024px){
+    .vitrine-cart-bar.is-visible{display:flex;}
+  }
 </style>
 </head>
 <body>
@@ -641,10 +887,11 @@
 <header>
   <div class="topbar-utility">
     <div class="topbar-inner">
-      <div class="topbar-location">
+      <div class="topbar-location" id="posse-selector-toggle" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
         <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
-        <span>Nome da Rua</span>
+        <span id="posse-selector-label">Vitrine Piloto</span>
         <i class="mdn-Icon-seta-baixo-preenchida mdn-Icon--sm mdn-Icon--inverse"></i>
+        <div class="posse-dropdown" id="posse-dropdown" role="listbox" hidden></div>
       </div>
       <div class="topbar-a11y">
         <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
@@ -732,7 +979,7 @@
       <div class="swiper-wrapper mdn-Swiper-wrapper">
 
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
-          <div class="card">
+          <div class="card" data-card-key="pos60gb-bundle">
             <div class="card-top">
               <div class="card-tags-row">
                 <div class="tags-group">
@@ -784,7 +1031,7 @@
         </div>
 
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
-          <div class="card">
+          <div class="card" data-oferta-id="oferta-600mega-pos100gb">
             <div class="card-top">
               <div class="card-tags-row">
                 <div class="tags-group">
@@ -830,13 +1077,20 @@
                   <div class="amount"><span class="prefix">R$</span><span class="big">159</span><span class="cents">,90</span></div>
                 </div>
               </div>
-              <a class="btn-yellow swiper-no-swiping" href="checkout-600mega-100gb.html">Assinar</a>
+              <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
             </div>
           </div>
         </div>
 
+        <!-- Oferta de 1 produto só (Claro tv+ Box) — mesmo template unificado
+             de "Melhores ofertas" das ofertas com 2+ produtos, pra garantir
+             altura de card consistente entre elas (ver .card-middle
+             flex:1;justify-content:center, que já centraliza 1 ou N
+             product-blocks). Conteúdo estático abaixo é só fallback antes do
+             JS rodar; hydrateOfertaCards() substitui tudo a partir de
+             OFERTAS_COMBINADAS['oferta-box']. -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
-          <div class="card">
+          <div class="card" data-oferta-id="oferta-box">
             <div class="card-top">
               <div class="card-tags-row">
                 <div class="tags-group">
@@ -847,63 +1101,11 @@
                 </div>
                 <div class="context-badge">TV</div>
               </div>
-              <div class="card-title-block">
-                <h3>Claro tv+ Box</h3>
-                <p>6 streamings em 1 assinatura</p>
-              </div>
             </div>
             <div class="card-middle">
-              <div class="card-simple-item">
-                <span class="label">Mais de 120 canais ao vivo</span>
-                <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
-              </div>
-              <div class="card-simple-item">
-                <span class="label">6 streamings inclusos</span>
-                <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Disney+"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+" title="Disney+" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Disney+</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Globoplay"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay" title="Globoplay" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Globoplay</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Apple TV"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV" title="Apple TV" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Apple TV</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais streamings: Netflix, HBO Max" aria-expanded="false">+</button>
-                  </li>
-                </ul>
-              </div>
-              <div class="card-simple-item">
-                <span class="label">Leve para onde quiser</span>
-                <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-tv mdn-Icon--sm"></i><strong>Claro tv+ Box</strong></div>
+                <p class="product-desc">6 streamings em 1 assinatura</p>
               </div>
             </div>
             <div class="card-bottom">
@@ -913,22 +1115,19 @@
                   <div class="amount"><span class="prefix">R$</span><span class="big">139</span><span class="cents">,90</span></div>
                 </div>
               </div>
-              <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
+              <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
             </div>
           </div>
         </div>
 
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
-          <div class="card">
+          <div class="card" data-card-key="jbl-fone">
             <div class="card-top">
               <div class="card-tags-row">
-                <div class="tags-group">
-                  <span class="tag tag-outline"><i class="mdn-Icon-fone-de-ouvido mdn-Icon--sm"></i>Fone de ouvido</span>
-                  <span class="tag tag-error"><i class="mdn-Icon-raio mdn-Icon--sm"></i>Oferta Black Friday</span>
-                </div>
+                <div class="tags-group"></div>
               </div>
               <div class="card-image">
-                <img src="https://www.figma.com/api/mcp/asset/00725418-dec3-4ce6-aa5a-87ac93dc47fa.png" alt="Fone de ouvido JBL T520">
+                <img src="https://planoscelular.claro.com.br/medias/300Wx300H-productCard-62753-zero.png?context=bWFzdGVyfGltYWdlc3wyNjQ3MHxpbWFnZS9wbmd8YURWaUwyZzBaUzh4TURReE1qa3hOall6TnpjeU5pOHpNREJYZURNd01FaGZjSEp2WkhWamRFTmhjbVJmTmpJM05UTmZlbVZ5Ynk1d2JtY3wzNmU1YmNhZDgxM2VlNDkxYWQ3ZjIyNzc2ZTc0M2JjOGRmZWYyNGM3YTU1MjYzYTNmN2Y3Njk3YTk2NDhmNjYx" alt="Fone de ouvido JBL T520">
               </div>
               <div class="card-title-block">
                 <h3>Fone de ouvido JBL</h3>
@@ -949,168 +1148,190 @@
           </div>
         </div>
 
+        <!-- Oferta de 1 produto só (Controle 40GB) — mesmo template unificado
+             de oferta-box; hydrateOfertaCards() substitui tudo a partir de
+             OFERTAS_COMBINADAS['oferta-controle40gb']. -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="4">
-          <div class="card">
+          <div class="card" data-oferta-id="oferta-controle40gb">
             <div class="card-top">
               <div class="card-tags-row">
-                <div class="tags-group">
-                  <span class="tag tag-success">
-                    <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
-                    Oferta recomendada
-                  </span>
-                </div>
-                <div class="context-badge">TV</div>
-              </div>
-              <div class="card-title-block">
-                <h3>Claro tv+ Box</h3>
-                <p>6 streamings em 1 assinatura</p>
+                <div class="tags-group"></div>
+                <div class="context-badge">Controle</div>
               </div>
             </div>
             <div class="card-middle">
-              <div class="card-simple-item">
-                <span class="label">Mais de 120 canais ao vivo</span>
-                <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
-              </div>
-              <div class="card-simple-item">
-                <span class="label">6 streamings inclusos</span>
-                <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Disney+"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+" title="Disney+" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Disney+</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Globoplay"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay" title="Globoplay" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Globoplay</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Apple TV"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV" title="Apple TV" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Apple TV</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais streamings: Netflix, HBO Max" aria-expanded="false">+</button>
-                  </li>
-                </ul>
-              </div>
-              <div class="card-simple-item">
-                <span class="label">Leve para onde quiser</span>
-                <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-celular mdn-Icon--sm"></i><strong>Controle 40GB</strong></div>
+                <p class="product-desc">Assinatura Amazon Prime por 3 meses</p>
               </div>
             </div>
             <div class="card-bottom">
               <div class="price-row">
                 <span class="price-label">Valor mensal</span>
                 <div class="price-value">
-                  <div class="amount"><span class="prefix">R$</span><span class="big">139</span><span class="cents">,90</span></div>
+                  <div class="amount"><span class="prefix">R$</span><span class="big">59</span><span class="cents">,90</span></div>
                 </div>
               </div>
-              <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
+              <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
             </div>
           </div>
         </div>
 
+        <!-- Oferta de 1 produto só (Pós 50GB) — mesmo template unificado de
+             oferta-box; hydrateOfertaCards() substitui tudo a partir de
+             OFERTAS_COMBINADAS['oferta-pos50gb']. -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="5">
-          <div class="card">
+          <div class="card" data-oferta-id="oferta-pos50gb">
             <div class="card-top">
               <div class="card-tags-row">
-                <div class="tags-group">
-                  <span class="tag tag-success">
-                    <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
-                    Oferta recomendada
-                  </span>
-                </div>
-                <div class="context-badge">TV</div>
-              </div>
-              <div class="card-title-block">
-                <h3>Claro tv+ Box</h3>
-                <p>6 streamings em 1 assinatura</p>
+                <div class="tags-group"></div>
+                <div class="context-badge">Pós</div>
               </div>
             </div>
             <div class="card-middle">
-              <div class="card-simple-item">
-                <span class="label">Mais de 120 canais ao vivo</span>
-                <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
-              </div>
-              <div class="card-simple-item">
-                <span class="label">6 streamings inclusos</span>
-                <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Disney+"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/disneyplus.svg" alt="Disney+" title="Disney+" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Disney+</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Globoplay"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/globoplay.svg" alt="Globoplay" title="Globoplay" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Globoplay</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-focus" aria-label="Apple TV"></button>
-                    <figure class="mdn-BrandGroup-image">
-                      <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" alt="Apple TV" title="Apple TV" />
-                      <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Apple TV</p>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="mdn-BrandGroup-item">
-                    <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais streamings: Netflix, HBO Max" aria-expanded="false">+</button>
-                  </li>
-                </ul>
-              </div>
-              <div class="card-simple-item">
-                <span class="label">Leve para onde quiser</span>
-                <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-celular mdn-Icon--sm"></i><strong>Pós 50GB</strong></div>
+                <p class="product-desc">Assinatura Amazon Prime por 3 meses</p>
               </div>
             </div>
             <div class="card-bottom">
               <div class="price-row">
                 <span class="price-label">Valor mensal</span>
                 <div class="price-value">
-                  <div class="amount"><span class="prefix">R$</span><span class="big">139</span><span class="cents">,90</span></div>
+                  <div class="amount"><span class="prefix">R$</span><span class="big">124</span><span class="cents">,90</span></div>
                 </div>
               </div>
-              <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
+              <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Oferta de 2 produtos (600 Mega + Pós 50GB), desconto de combo pela
+             regra CATEGORY_DISCOUNTS (celular -R$40, mesma regra do carrinho/
+             checkout) — hydrateOfertaCards() substitui tudo a partir de
+             OFERTAS_COMBINADAS['oferta-600mega-pos50gb']. -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="6">
+          <div class="card" data-oferta-id="oferta-600mega-pos50gb">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group"></div>
+                <div class="context-badge">Multi</div>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-wifi mdn-Icon--sm"></i><strong>600 Mega</strong></div>
+                <p class="product-desc">Com Globoplay incluso</p>
+              </div>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-celular mdn-Icon--sm"></i><strong>Pós 50GB</strong></div>
+                <p class="product-desc">Assinatura Amazon Prime por 3 meses</p>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <p class="price-was">De <s>R$ 224,80</s> por:</p>
+                  <div class="amount"><span class="prefix">R$</span><span class="big">184</span><span class="cents">,80</span></div>
+                </div>
+              </div>
+              <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Oferta de 1 produto só (350 Mega) — mesmo template unificado de
+             oferta-box; hydrateOfertaCards() substitui tudo a partir de
+             OFERTAS_COMBINADAS['oferta-350mega']. -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="7">
+          <div class="card" data-oferta-id="oferta-350mega">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group"></div>
+                <div class="context-badge">Fibra</div>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-wifi mdn-Icon--sm"></i><strong>350 Mega</strong></div>
+                <p class="product-desc">Com Globoplay incluso</p>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <div class="amount"><span class="prefix">R$</span><span class="big">89</span><span class="cents">,90</span></div>
+                </div>
+              </div>
+              <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Oferta de 2 produtos (Claro tv+ Box + 600 Mega), desconto de combo
+             pela regra CATEGORY_DISCOUNTS (tv -R$20) — hydrateOfertaCards()
+             substitui tudo a partir de OFERTAS_COMBINADAS['oferta-600mega-box']. -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="8">
+          <div class="card" data-oferta-id="oferta-600mega-box">
+            <div class="card-top">
+              <div class="card-tags-row">
+                <div class="tags-group"></div>
+                <div class="context-badge">Multi</div>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-wifi mdn-Icon--sm"></i><strong>600 Mega</strong></div>
+                <p class="product-desc">Com Globoplay incluso</p>
+              </div>
+              <div class="product-block">
+                <div class="product-name"><i class="mdn-Icon-tv mdn-Icon--sm"></i><strong>Claro tv+ Box</strong></div>
+                <p class="product-desc">6 streamings em 1 assinatura</p>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Valor mensal</span>
+                <div class="price-value">
+                  <p class="price-was">De <s>R$ 259,80</s> por:</p>
+                  <div class="amount"><span class="prefix">R$</span><span class="big">239</span><span class="cents">,80</span></div>
+                </div>
+              </div>
+              <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card estático (Iphone 17e) — mesma chave data-card-key do card em
+             "Celulares e smartphones", sem dado no catálogo ainda (mesmo
+             estado do fone JBL): clique não monta pedido. -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="9">
+          <div class="card" data-card-key="iphone-17e">
+            <div class="card-top">
+              <div class="card-image">
+                <img src="assets/aparelhos/produto-iphone-17e.png" alt="Iphone 17e">
+              </div>
+              <div class="card-title-block">
+                <h3>Iphone 17e</h3>
+                <p class="brand-label">Apple</p>
+              </div>
+            </div>
+            <div class="card-middle">
+              <div class="spec-row"><span class="label">Capacidade</span><span class="value">256GB</span></div>
+              <div class="spec-row"><span class="label">No plano</span><span class="value">Pós 150GB</span></div>
+            </div>
+            <div class="card-bottom">
+              <div class="price-row">
+                <span class="price-label">Por apenas:</span>
+                <div class="price-value">
+                  <p class="topline">21x de</p>
+                  <div class="amount"><span class="prefix">R$</span><span class="big">205</span><span class="cents">,00</span></div>
+                  <p class="installment-suffix">À vista: R$ 4.299,00</p>
+                </div>
+              </div>
+              <button class="btn-yellow">Eu quero</button>
             </div>
           </div>
         </div>
@@ -1123,8 +1344,8 @@
     </div>
   </section>
 
-  <!-- Banner Promocional -->
-  <section class="section" id="banner-promocional">
+  <!-- Banner Promocional — oculto por enquanto a pedido da Eve, 2026-09-22 -->
+  <section class="section" id="banner-promocional" hidden>
     <div class="promo-banner-slider" id="promoBannerSlider" role="region" aria-roledescription="carrossel" aria-label="Banners promocionais">
       <!-- Slide 1: Claro Multi -->
       <div class="promo-banner-slide active" data-slide-index="0">
@@ -1155,14 +1376,15 @@
 
 
   <!-- Seção TV -->
-  <section class="section" id="planos-tv">
+  <section class="section" id="planos-tv" data-categoria="tv">
     <div class="section-header">
       <div class="section-icon">
         <i class="mdn-Icon-tv"></i>
       </div>
       <div class="section-title">
         <h2>Planos de TV</h2>
-        <p>Canais ao vivo e streamings em um só lugar</p>
+        <p class="section-support-text">Canais ao vivo e streamings em um só lugar</p>
+        <p class="current-plan-price" hidden><b>Valor do plano atual:</b> <span class="current-plan-value"></span></p>
       </div>
     </div>
 
@@ -1171,7 +1393,7 @@
 
       <!-- Card TV 1 -->
       <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
-<div class="card">
+<div class="card" data-produto-id="tv-box">
         <div class="card-top">
           <div class="card-tags-row">
             <div class="tags-group">
@@ -1249,8 +1471,8 @@
             </div>
           </div>
           <div class="card-actions">
-            <a class="btn-yellow swiper-no-swiping" href="checkout-box.html">Assinar</a>
-            <a href="detalhes-box.html" class="card-link swiper-no-swiping">Mais detalhes</a>
+            <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            <a href="detalhes.html?produto=tv-box" class="card-link swiper-no-swiping">Mais detalhes</a>
           </div>
         </div>
       </div>
@@ -1258,7 +1480,7 @@
 
       <!-- Card TV 2 -->
       <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
-<div class="card">
+<div class="card" data-produto-id="tv-box-cabo">
         <div class="card-top">
           <div class="card-tags-row">
             <div class="tags-group"></div>
@@ -1331,8 +1553,8 @@
             </div>
           </div>
           <div class="card-actions">
-            <a class="btn-yellow swiper-no-swiping" href="checkout-box-cabo.html">Assinar</a>
-            <a href="detalhes-box-cabo.html" class="card-link">Mais detalhes</a>
+            <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            <a href="detalhes.html?produto=tv-box-cabo" class="card-link">Mais detalhes</a>
           </div>
         </div>
       </div>
@@ -1340,7 +1562,7 @@
 
       <!-- Card TV 3 -->
       <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
-<div class="card">
+<div class="card" data-produto-id="tv-soundbox">
         <div class="card-top">
           <div class="card-tags-row">
             <div class="tags-group">
@@ -1418,8 +1640,8 @@
             </div>
           </div>
           <div class="card-actions">
-            <a class="btn-yellow swiper-no-swiping" href="checkout-soundbox.html">Assinar</a>
-            <a href="detalhes-soundbox.html" class="card-link">Mais detalhes</a>
+            <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            <a href="detalhes.html?produto=tv-soundbox" class="card-link">Mais detalhes</a>
           </div>
         </div>
       </div>
@@ -1427,7 +1649,7 @@
 
       <!-- Card TV 4 -->
       <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
-<div class="card">
+<div class="card" data-produto-id="tv-soundbox-cabo">
         <div class="card-top">
           <div class="card-tags-row">
             <div class="tags-group">
@@ -1505,8 +1727,8 @@
             </div>
           </div>
           <div class="card-actions">
-            <a class="btn-yellow swiper-no-swiping" href="checkout-soundbox-cabo.html">Assinar</a>
-            <a href="detalhes-soundbox-cabo.html" class="card-link">Mais detalhes</a>
+            <a class="btn-yellow swiper-no-swiping" href="checkout.html">Assinar</a>
+            <a href="detalhes.html?produto=tv-soundbox-cabo" class="card-link">Mais detalhes</a>
           </div>
         </div>
       </div>
@@ -1522,7 +1744,7 @@
 
 
   <!-- Seção Aparelhos -->
-  <section class="section" id="aparelhos">
+  <section class="section" id="aparelhos" data-categoria="aparelhos">
     <div class="section-header">
       <div class="section-icon">
         <i class="mdn-Icon-celular"></i>
@@ -1568,7 +1790,7 @@
 
       <!-- Card Aparelho 2 -->
       <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
-<div class="card">
+<div class="card" data-card-key="iphone-17e">
         <div class="card-top">
           <div class="card-image">
             <img src="assets/aparelhos/produto-iphone-17e.png" alt="Iphone 17e">
@@ -1662,7 +1884,7 @@
 
 
   <!-- Seção Acessórios -->
-  <section class="section" id="acessorios">
+  <section class="section" id="acessorios" data-categoria="acessorios">
     <div class="section-header">
       <div class="section-icon">
         <i class="mdn-Icon-fone-de-ouvido"></i>
@@ -1772,14 +1994,15 @@
     </section>
 
     <!-- Seção Internet Residencial -->
-    <section class="section" id="internet-residencial">
+    <section class="section" id="internet-residencial" data-categoria="internet">
       <div class="section-header">
         <div class="section-icon">
           <i class="mdn-Icon-wifi"></i>
         </div>
         <div class="section-title">
           <h2>Internet residencial</h2>
-          <p><b>Valor do plano atual:</b> R$ 89,90/mês</p>
+          <p class="section-support-text" hidden>Conexão rápida para toda a sua casa</p>
+          <p class="current-plan-price"><b>Valor do plano atual:</b> <span class="current-plan-value">R$ 89,90/mês</span></p>
         </div>
       </div>
 
@@ -1788,7 +2011,7 @@
 
         <!-- Card Internet 1 -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
-<div class="card">
+<div class="card" data-produto-id="internet-350">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group"></div>
@@ -1860,7 +2083,7 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=internet-350" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
@@ -1868,7 +2091,7 @@
 
         <!-- Card Internet 2 -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
-<div class="card">
+<div class="card" data-produto-id="internet-600">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group">
@@ -1954,7 +2177,7 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=internet-600" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
@@ -1962,7 +2185,7 @@
 
         <!-- Card Internet 3 -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
-<div class="card">
+<div class="card" data-produto-id="internet-1000">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group">
@@ -2051,7 +2274,7 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=internet-1000" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
@@ -2078,14 +2301,15 @@
 
 
     <!-- Seção Planos de Celular -->
-    <section class="section" id="planos-celular">
+    <section class="section" id="planos-celular" data-categoria="celular">
       <div class="section-header">
         <div class="section-icon">
           <i class="mdn-Icon-celular-5g"></i>
         </div>
         <div class="section-title">
           <h2>Planos de celular</h2>
-          <p><b>Valor do plano atual:</b> R$ 59,90/mês</p>
+          <p class="section-support-text" hidden>Encontre o plano ideal para o seu dia a dia</p>
+          <p class="current-plan-price"><b>Valor do plano atual:</b> <span class="current-plan-value">R$ 59,90/mês</span></p>
         </div>
       </div>
 
@@ -2094,7 +2318,7 @@
 
         <!-- Card Celular 1 -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
-<div class="card">
+<div class="card" data-produto-id="celular-40gb">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group"></div>
@@ -2188,15 +2412,118 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=celular-40gb" class="card-link">Mais detalhes</a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- Card Celular 1b (Controle 45GB, novo produto — mesmas
+             características do Controle 40GB acima, só nome/preço mudam) -->
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
+<div class="card" data-produto-id="celular-45gb">
+          <div class="card-top">
+            <div class="card-tags-row">
+              <div class="tags-group"></div>
+              <div class="context-badge">Controle</div>
+            </div>
+            <div class="card-title-block">
+              <h3>Controle 45GB</h3>
+              <p>Com Amazon Prime por 3 Meses</p>
+            </div>
+          </div>
+          <div class="card-middle">
+            <div class="card-simple-item">
+              <span class="label">WhatsApp ilimitado</span>
+              <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
+                <li class="mdn-BrandGroup-item">
+                  <button class="mdn-BrandGroup-item-focus" aria-label="WhatsApp"></button>
+                  <figure class="mdn-BrandGroup-image">
+                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/whatsapp.svg" alt="WhatsApp" title="WhatsApp" />
+                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">WhatsApp</p>
+                    </figcaption>
+                  </figure>
+                </li>
+              </ul>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Bônus extra nos apps</span>
+              <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
+                <li class="mdn-BrandGroup-item">
+                  <button class="mdn-BrandGroup-item-focus" aria-label="YouTube"></button>
+                  <figure class="mdn-BrandGroup-image">
+                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/youtube.svg" alt="YouTube" title="YouTube" />
+                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">YouTube</p>
+                    </figcaption>
+                  </figure>
+                </li>
+                <li class="mdn-BrandGroup-item">
+                  <button class="mdn-BrandGroup-item-focus" aria-label="Instagram"></button>
+                  <figure class="mdn-BrandGroup-image">
+                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/instagram.svg" alt="Instagram" title="Instagram" />
+                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Instagram</p>
+                    </figcaption>
+                  </figure>
+                </li>
+                <li class="mdn-BrandGroup-item">
+                  <button class="mdn-BrandGroup-item-focus" aria-label="Facebook"></button>
+                  <figure class="mdn-BrandGroup-image">
+                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/facebook.svg" alt="Facebook" title="Facebook" />
+                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Facebook</p>
+                    </figcaption>
+                  </figure>
+                </li>
+                <li class="mdn-BrandGroup-item">
+                  <button class="mdn-BrandGroup-item-focus" aria-label="TikTok"></button>
+                  <figure class="mdn-BrandGroup-image">
+                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/tik-tok.svg" alt="TikTok" title="TikTok" />
+                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">TikTok</p>
+                    </figcaption>
+                  </figure>
+                </li>
+                <li class="mdn-BrandGroup-item">
+                  <button class="mdn-BrandGroup-item-expand mdn-Text mdn-Text--body mdn-Text--md" aria-label="Mais aplicativos" aria-expanded="false">+</button>
+                </li>
+              </ul>
+            </div>
+            <div class="card-simple-item">
+              <span class="label">Assinatura Amazon Prime por 3 meses</span>
+              <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
+                <li class="mdn-BrandGroup-item">
+                  <button class="mdn-BrandGroup-item-focus" aria-label="Amazon Prime"></button>
+                  <figure class="mdn-BrandGroup-image">
+                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/amazon-prime.svg" alt="Amazon Prime" title="Amazon Prime" />
+                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
+                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Amazon Prime</p>
+                    </figcaption>
+                  </figure>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="price-row">
+              <span class="price-label">Valor mensal</span>
+              <div class="price-value">
+                <div class="amount"><span class="prefix">R$</span><span class="big">69</span><span class="cents">,90</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-yellow">Mudar para este</button>
+              <a href="detalhes.html?produto=celular-45gb" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
         </div>
 
         <!-- Card Celular 2 -->
-        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
-<div class="card">
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
+<div class="card" data-produto-id="celular-pos50">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group"></div>
@@ -2249,15 +2576,15 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=celular-pos50" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
         </div>
 
         <!-- Card Celular 3 -->
-        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
-<div class="card">
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
+<div class="card" data-produto-id="celular-pos100">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group"></div>
@@ -2310,15 +2637,15 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=celular-pos100" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
         </div>
 
         <!-- Card Celular 4 -->
-        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
-<div class="card">
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="4">
+<div class="card" data-produto-id="celular-pos200">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group"></div>
@@ -2371,75 +2698,14 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
-            </div>
-          </div>
-        </div>
-        </div>
-
-        <!-- Card Celular 5 -->
-        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="4">
-<div class="card">
-          <div class="card-top">
-            <div class="card-tags-row">
-              <div class="tags-group"></div>
-              <div class="context-badge">Pós</div>
-            </div>
-            <div class="card-title-block">
-              <h3>Pós 300GB</h3>
-              <p>Com Amazon Prime por 3 Meses</p>
-            </div>
-          </div>
-          <div class="card-middle">
-            <div class="card-simple-item">
-              <span class="label">Roaming: Passaporte Mundo</span>
-              <i class="mdn-Icon-aviao mdn-Icon--sm"></i>
-            </div>
-            <div class="card-simple-item">
-              <span class="label">Incluso até 100GB de armazenamento na nuvem</span>
-              <ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">
-                <li class="mdn-BrandGroup-item">
-                  <button class="mdn-BrandGroup-item-focus" aria-label="Google One"></button>
-                  <figure class="mdn-BrandGroup-image">
-                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/google-one.svg" alt="Google One" title="Google One" />
-                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">Google One</p>
-                    </figcaption>
-                  </figure>
-                </li>
-                <li class="mdn-BrandGroup-item">
-                  <button class="mdn-BrandGroup-item-focus" aria-label="iCloud+"></button>
-                  <figure class="mdn-BrandGroup-image">
-                    <img class="mdn-BrandGroup-image mdn-Brand-image" src="https://mondrian.claro.com.br/brands/app/32px-alternative/icloudplus-icone.svg" alt="iCloud+" title="iCloud+" />
-                    <figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">
-                      <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">iCloud+</p>
-                    </figcaption>
-                  </figure>
-                </li>
-              </ul>
-            </div>
-            <div class="card-simple-item">
-              <span class="label">Claro Sync: smartwatch conectado</span>
-              <i class="mdn-Icon-relogio-pulso mdn-Icon--sm"></i>
-            </div>
-          </div>
-          <div class="card-bottom">
-            <div class="price-row">
-              <span class="price-label">Valor mensal</span>
-              <div class="price-value">
-                <div class="amount"><span class="prefix">R$</span><span class="big">359</span><span class="cents">,90</span></div>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=celular-pos200" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
         </div>
 
         <!-- Card institucional -->
-        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="5">
+        <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="4">
 <div class="card-cta">
           <div class="card-cta-text">
             <h3>Ainda não encontrou o produto desejado?</h3>
@@ -2459,14 +2725,15 @@
 
 
     <!-- Seção Telefone Fixo -->
-    <section class="section" id="telefone-fixo-section">
+    <section class="section" id="telefone-fixo-section" data-categoria="telefone">
       <div class="section-header">
         <div class="section-icon">
           <i class="mdn-Icon-telefone-fixo"></i>
         </div>
         <div class="section-title">
           <h2>Telefone fixo</h2>
-          <p><b>Valor do plano atual:</b> R$ 35,00/mês</p>
+          <p class="section-support-text" hidden>Comunicação ilimitada para sua casa</p>
+          <p class="current-plan-price"><b>Valor do plano atual:</b> <span class="current-plan-value">R$ 35,00/mês</span></p>
         </div>
       </div>
 
@@ -2475,7 +2742,7 @@
 
         <!-- Card Telefone Fixo 1 -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
-<div class="card">
+<div class="card" data-produto-id="telefone-brasil">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group"></div>
@@ -2509,7 +2776,7 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=telefone-brasil" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
@@ -2517,7 +2784,7 @@
 
         <!-- Card Telefone Fixo 2 -->
         <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
-<div class="card">
+<div class="card" data-produto-id="telefone-mundo">
           <div class="card-top">
             <div class="card-tags-row">
               <div class="tags-group"></div>
@@ -2550,7 +2817,7 @@
             </div>
             <div class="card-actions">
               <button class="btn-yellow">Mudar para este</button>
-              <a href="#" class="card-link">Mais detalhes</a>
+              <a href="detalhes.html?produto=telefone-mundo" class="card-link">Mais detalhes</a>
             </div>
           </div>
         </div>
@@ -2601,6 +2868,111 @@
   </div>
 </footer>
 
+<!-- ===== Carrinho persistente (mobile) =====
+     Mesmo componente flutuante-expansível de checkout.html (.checkout-footer),
+     reproduzido aqui como .vitrine-cart-footer. Conteúdo populado via JS em
+     renderCarrinhoPersistente(); "is-visible" só é adicionado quando há
+     produto salvo em pedidoEmAndamento. ===== -->
+<div class="vitrine-cart-footer" id="vitrineCartFooter">
+  <div class="vitrine-cart-expanded" id="vitrineCartExpanded" hidden>
+    <p class="vitrine-cart-disclaimer">Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.</p>
+    <div class="vitrine-cart-taxas">
+      <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Fidelidade</p><p class="vitrine-cart-taxa-value">12 meses</p></div>
+      <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+      <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Instalação</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+      <div class="vitrine-cart-taxa-row" data-role="vitrine-desconto-row" hidden><p class="vitrine-cart-taxa-label">Desconto Multi</p><p class="vitrine-cart-taxa-value" data-role="vitrine-desconto-value"></p></div>
+    </div>
+    <div class="vitrine-cart-divider"></div>
+  </div>
+
+  <div class="vitrine-cart-total-row">
+    <button type="button" class="vitrine-cart-toggle" onclick="toggleVitrineCartFooter()" aria-label="Expandir">
+      <i class="mdn-Icon-cima" id="vitrineCartToggleIcon"></i>
+    </button>
+    <div class="vitrine-cart-total-text">
+      <p class="vitrine-cart-text">Total do seu carrinho:</p>
+      <div class="vitrine-cart-price">
+        <span class="vitrine-cart-price-amount" data-role="vitrine-cart-amount"></span>
+        <span class="vitrine-cart-price-suffix">/ mês</span>
+      </div>
+      <p class="vitrine-cart-adjusted">ajustado à sua fatura</p>
+    </div>
+  </div>
+
+  <div class="vitrine-cart-footer-actions">
+    <button type="button" class="vitrine-cart-btn" onclick="goToCheckoutFromCart()">Continuar</button>
+    <button type="button" class="vitrine-cart-clear" onclick="clearCartFromFooter()">Esvaziar carrinho</button>
+  </div>
+</div>
+
+<!-- ===== Carrinho persistente (desktop) =====
+     Barra horizontal fixa, Figma node 6724:13553. Mesmos dados do componente
+     mobile acima, só que sempre expandido (sem toggle) e em linha. ===== -->
+<div class="vitrine-cart-bar" id="vitrineCartBar">
+  <p class="vitrine-cart-bar-disclaimer">Os valores dos produtos adicionados ou alterados no seu carrinho serão atualizados em sua fatura.</p>
+  <div class="vitrine-cart-bar-taxas">
+    <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Fidelidade</p><p class="vitrine-cart-taxa-value">12 meses</p></div>
+    <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+    <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Instalação</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+    <div class="vitrine-cart-taxa-row" data-role="vitrine-desconto-row" hidden><p class="vitrine-cart-taxa-label">Desconto Multi</p><p class="vitrine-cart-taxa-value" data-role="vitrine-desconto-value"></p></div>
+  </div>
+  <div class="vitrine-cart-bar-divider"></div>
+  <div class="vitrine-cart-bar-total">
+    <p class="vitrine-cart-text">Total do seu carrinho:</p>
+    <div class="vitrine-cart-price">
+      <span class="vitrine-cart-price-amount" data-role="vitrine-cart-amount"></span>
+      <span class="vitrine-cart-price-suffix">/ mês</span>
+    </div>
+    <p class="vitrine-cart-adjusted">ajustado à sua fatura</p>
+  </div>
+  <div class="vitrine-cart-bar-actions">
+    <button type="button" class="vitrine-cart-btn" onclick="goToCheckoutFromCart()">Continuar</button>
+    <button type="button" class="vitrine-cart-clear" onclick="clearCartFromFooter()">Esvaziar carrinho</button>
+  </div>
+</div>
+
+<!-- ===== Monte seu combo: botão de entrada =====
+     Placeholder: a jornada ainda não tem um local definitivo de partida na
+     vitrine (confirmado com a Eve) — por isso um botão flutuante, visível em
+     qualquer ponto de scroll, fácil de mover/substituir depois de decidido. -->
+<button type="button" class="combo-trigger-btn" onclick="openComboModal()">
+  <i class="mdn-Icon-mais" aria-hidden="true"></i>
+  Monte seu combo
+</button>
+
+<!-- ===== Monte seu combo: modal (mobile) / gaveta lateral (desktop) =====
+     Figma: node 4:8512 (layout), 4:8580 (chips), 9:8969 (botão), 4:8939 (total). -->
+<div class="combo-overlay" id="comboOverlay" hidden onclick="if(event.target===this) closeComboModal();">
+  <div class="combo-modal" role="dialog" aria-modal="true" aria-labelledby="comboModalTitle">
+    <div class="combo-head">
+      <div class="combo-head-text">
+        <h2 id="comboModalTitle">Monte seu combo</h2>
+        <p>Escolha os produtos de cada categoria e adicione ao seu combo.</p>
+      </div>
+      <button type="button" class="combo-close" aria-label="Fechar" onclick="closeComboModal()">
+        <i class="mdn-Icon-fechar mdn-Icon--md" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="combo-scroll" id="comboScroll">
+      <div class="combo-chips" id="comboChips"></div>
+      <div class="combo-sections" id="comboSections"></div>
+    </div>
+
+    <div class="combo-footer">
+      <div class="combo-total">
+        <p class="combo-total-label">Valor total</p>
+        <p class="price-was" id="comboTotalWas" hidden>De <s></s></p>
+        <div class="combo-total-value">
+          <span class="prefix">R$</span><span class="big" id="comboTotalInt">0</span><span class="cents" id="comboTotalDec">,00</span><span class="combo-total-suffix">/mês</span>
+        </div>
+      </div>
+      <button type="button" class="combo-cta" id="comboCtaBtn" disabled onclick="continueComboResumo()">Continuar para o resumo</button>
+    </div>
+  </div>
+</div>
+
+<script src="product-catalog.js"></script>
 <script src="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.js"></script>
 <script>
   // Navegação por categorias: clicar em uma categoria ativa ela (círculo vermelho),
@@ -2685,6 +3057,1046 @@
 
     if (slides.length > 1) startAutoplay();
   })();
+
+  // ===== Monte seu combo: catálogo, montagem do modal/gaveta e regra de
+  // "1 item por categoria" (selecionar um novo item desmarca o anterior da
+  // mesma categoria). Funções ficam no escopo global porque são chamadas via
+  // onclick inline no HTML, mesmo padrão do modal de remoção do checkout. =====
+  var COMBO_CATALOG = [
+    { id: 'internet', label: 'Internet', title: 'Planos de Internet', icon: 'mdn-Icon-wifi', items: [
+      { id: 'internet-350', name: '350 Mega', price: 89.90 },
+      { id: 'internet-600', name: '600 Mega', price: 99.90 },
+      { id: 'internet-1000', name: '1 Giga', price: 179.90 }
+    ]},
+    { id: 'celular', label: 'Plano de Celular', title: 'Planos de Celular', icon: 'mdn-Icon-celular-5g', items: [
+      { id: 'celular-40gb', name: 'Controle 40GB', price: 59.90 },
+      { id: 'celular-pos50', name: 'Pós 50GB', price: 124.90 },
+      { id: 'celular-pos100', name: 'Pós 100GB', price: 179.90 }
+    ]},
+    { id: 'tv', label: 'TV', title: 'Planos de TV', icon: 'mdn-Icon-tv', items: [
+      { id: 'tv-box', name: 'Claro tv+ Box', price: 159.90 },
+      { id: 'tv-box-cabo', name: 'Claro tv+ Box Cabo', price: 169.90 },
+      { id: 'tv-soundbox', name: 'Claro tv+ Soundbox', price: 269.90 }
+    ]},
+    { id: 'telefone', label: 'Telefone', title: 'Planos de Telefone', icon: 'mdn-Icon-telefone-fixo', items: [
+      { id: 'telefone-brasil', name: 'Ilimitado Brasil', price: 35.90 },
+      { id: 'telefone-mundo', name: 'Ilimitado Mundo', price: 65.90 }
+    ]}
+  ];
+
+  var comboSelected = {}; // categoryId -> itemId selecionado (1 por categoria) | null
+
+  function comboFormatBRL(value) {
+    var parts = value.toFixed(2).split('.');
+    return { int: parts[0], cents: parts[1] };
+  }
+
+  function comboFindItem(categoryId, itemId) {
+    var cat = COMBO_CATALOG.find(function (c) { return c.id === categoryId; });
+    return cat ? cat.items.find(function (i) { return i.id === itemId; }) : null;
+  }
+
+  function comboSetActiveChip(categoryId) {
+    document.querySelectorAll('#comboChips .combo-chip').forEach(function (chip) {
+      chip.classList.toggle('active', chip.getAttribute('data-category') === categoryId);
+    });
+  }
+
+  // Mesma regra de desconto por combinação de categorias do checkout/barra
+  // persistente (ver [[vitrine_persistent_cart]] — CATEGORY_DISCOUNTS):
+  // TV=-20, Celular=-40, Telefone=-10, aplicados quando 2+ categorias
+  // diferentes estão selecionadas no combo. Internet nunca é descontada.
+  var COMBO_CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
+
+  // ===== Preview de desconto por item, dentro do "Monte seu combo" =====
+  // Figma: node 10:4438. A partir do momento em que o 1º produto é
+  // selecionado, todo item da lista (de qualquer categoria, inclusive
+  // alternativas dentro de uma categoria já escolhida) que resultaria em
+  // desconto se fosse escolhido passa a mostrar "De <riscado> Por <verde>"
+  // no lugar do preço único. Internet nunca entra aqui (não tem desconto
+  // próprio). "Resultaria em desconto" = a união das categorias já
+  // selecionadas + a categoria deste item específico tem 2+ categorias —
+  // cobre tanto "primeira vez que essa categoria entraria" quanto "trocar
+  // por outro item dentro de uma categoria que já está combinada com outra".
+  function comboWouldQualifyForDiscount(categoryId) {
+    if (COMBO_CATEGORY_DISCOUNTS[categoryId] === undefined) return false;
+    var categorias = {};
+    Object.keys(comboSelected).forEach(function (cid) { if (comboSelected[cid]) categorias[cid] = true; });
+    categorias[categoryId] = true;
+    return Object.keys(categorias).length >= 2;
+  }
+
+  function comboItemPriceHtml(categoryId, item) {
+    var full = comboFormatBRL(item.price);
+    if (!comboWouldQualifyForDiscount(categoryId)) {
+      return 'R$ ' + full.int + ',' + full.cents + '/mês';
+    }
+    var discounted = comboFormatBRL(Math.max(item.price - COMBO_CATEGORY_DISCOUNTS[categoryId], 0));
+    return '<span class="combo-item-price-was">R$ ' + full.int + ',' + full.cents + '</span>' +
+      '<span class="combo-item-price-discounted">R$ ' + discounted.int + ',' + discounted.cents + '/mês</span>';
+  }
+
+  function comboUpdateItemPrices() {
+    document.querySelectorAll('.combo-item-price[data-category]').forEach(function (el) {
+      var categoryId = el.getAttribute('data-category');
+      var itemId = el.getAttribute('data-item');
+      var item = comboFindItem(categoryId, itemId);
+      if (item) el.innerHTML = comboItemPriceHtml(categoryId, item);
+    });
+  }
+
+  function comboUpdateTotal() {
+    var total = 0;
+    var categoriasSelecionadas = {};
+    Object.keys(comboSelected).forEach(function (categoryId) {
+      var itemId = comboSelected[categoryId];
+      if (!itemId) return;
+      var item = comboFindItem(categoryId, itemId);
+      if (item) {
+        total += item.price;
+        categoriasSelecionadas[categoryId] = true;
+      }
+    });
+
+    var desconto = 0;
+    if (Object.keys(categoriasSelecionadas).length >= 2) {
+      Object.keys(COMBO_CATEGORY_DISCOUNTS).forEach(function (categoria) {
+        if (categoriasSelecionadas[categoria]) desconto += COMBO_CATEGORY_DISCOUNTS[categoria];
+      });
+    }
+
+    var totalComDesconto = desconto > 0 ? total - desconto : total;
+    var formatted = comboFormatBRL(totalComDesconto);
+    document.getElementById('comboTotalInt').textContent = formatted.int;
+    document.getElementById('comboTotalDec').textContent = ',' + formatted.cents;
+    document.getElementById('comboCtaBtn').disabled = total <= 0;
+
+    var wasEl = document.getElementById('comboTotalWas');
+    if (desconto > 0) {
+      var was = comboFormatBRL(total);
+      wasEl.querySelector('s').textContent = 'R$ ' + was.int + ',' + was.cents;
+      wasEl.hidden = false;
+    } else {
+      wasEl.hidden = true;
+    }
+  }
+
+  function comboToggleItem(categoryId, itemId) {
+    // Regra de negócio: só 1 item por categoria. Clicar num item já
+    // selecionado desmarca ele; clicar em outro item da mesma categoria
+    // desmarca o anterior e marca o novo (nunca os dois ao mesmo tempo).
+    comboSelected[categoryId] = comboSelected[categoryId] === itemId ? null : itemId;
+
+    document.querySelectorAll('.combo-add-btn[data-category="' + categoryId + '"]').forEach(function (btn) {
+      var isSelected = btn.getAttribute('data-item') === comboSelected[categoryId];
+      btn.textContent = isSelected ? 'Adicionado' : 'Adicionar';
+      btn.classList.toggle('is-added', isSelected);
+    });
+
+    var chip = document.querySelector('#comboChips .combo-chip[data-category="' + categoryId + '"]');
+    if (chip) chip.classList.toggle('has-added', !!comboSelected[categoryId]);
+
+    comboUpdateItemPrices();
+    comboUpdateTotal();
+  }
+
+  function buildComboModal() {
+    var chipsEl = document.getElementById('comboChips');
+    chipsEl.innerHTML = COMBO_CATALOG.map(function (cat) {
+      return '<button type="button" class="combo-chip" data-category="' + cat.id + '">' +
+        '<span>' + cat.label + '</span>' +
+        '<i class="mdn-Icon-check-circulo combo-chip-check" aria-hidden="true"></i>' +
+        '</button>';
+    }).join('');
+
+    var sectionsEl = document.getElementById('comboSections');
+    sectionsEl.innerHTML = COMBO_CATALOG.map(function (cat) {
+      var offersHtml = cat.items.map(function (item, idx) {
+        var divider = idx > 0 ? '<div class="combo-divider"></div>' : '';
+        return divider +
+          '<div class="combo-offer">' +
+            '<div class="combo-item-icon"><i class="' + cat.icon + ' mdn-Icon--md" aria-hidden="true"></i></div>' +
+            '<div class="combo-item-info">' +
+              '<p class="combo-item-name">' + item.name + '</p>' +
+              '<p class="combo-item-price" data-category="' + cat.id + '" data-item="' + item.id + '">' + comboItemPriceHtml(cat.id, item) + '</p>' +
+            '</div>' +
+            '<button type="button" class="combo-add-btn" data-category="' + cat.id + '" data-item="' + item.id + '">Adicionar</button>' +
+          '</div>';
+      }).join('');
+      return '<section class="combo-section" id="combo-section-' + cat.id + '">' +
+        '<h3 class="combo-section-title">' + cat.title + '</h3>' +
+        '<div class="combo-offers">' + offersHtml + '</div>' +
+      '</section>';
+    }).join('');
+
+    chipsEl.addEventListener('click', function (e) {
+      var chip = e.target.closest('.combo-chip');
+      if (!chip) return;
+      var categoryId = chip.getAttribute('data-category');
+      comboSetActiveChip(categoryId);
+      var section = document.getElementById('combo-section-' + categoryId);
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    sectionsEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.combo-add-btn');
+      if (!btn) return;
+      comboToggleItem(btn.getAttribute('data-category'), btn.getAttribute('data-item'));
+    });
+
+    // Mantém --combo-chips-h correta caso o filtro mude de altura com o
+    // modal já aberto (ex: troca de breakpoint mobile/desktop em sessão).
+    if (window.ResizeObserver) {
+      new ResizeObserver(comboSyncChipsHeight).observe(chipsEl);
+    }
+  }
+
+  function comboEscHandler(e) {
+    if (e.key === 'Escape') closeComboModal();
+  }
+
+  // Mede a altura real (renderizada) do filtro de chips sticky e guarda numa
+  // CSS var lida por scroll-margin-top em .combo-section — sem isso o
+  // scrollIntoView do chip para com o título da categoria escondido atrás do
+  // filtro fixo, cortando o primeiro card. Não dá pra chutar esse valor: com
+  // o modal escondido (display:none) offsetHeight sempre daria 0.
+  function comboSyncChipsHeight() {
+    var chipsEl = document.getElementById('comboChips');
+    var scrollEl = document.getElementById('comboScroll');
+    if (chipsEl && scrollEl && chipsEl.offsetHeight) {
+      scrollEl.style.setProperty('--combo-chips-h', chipsEl.offsetHeight + 'px');
+    }
+  }
+
+  function openComboModal() {
+    document.getElementById('comboOverlay').hidden = false;
+    document.body.style.overflow = 'hidden';
+    document.getElementById('comboScroll').scrollTop = 0;
+    comboSetActiveChip(COMBO_CATALOG[0].id);
+    comboSyncChipsHeight();
+    document.addEventListener('keydown', comboEscHandler);
+  }
+
+  function closeComboModal() {
+    document.getElementById('comboOverlay').hidden = true;
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', comboEscHandler);
+  }
+
+  // ===== Regra: 1 produto por categoria no carrinho =====
+  // Eve, 2026-09-22: adicionar um produto de uma categoria que já está no
+  // carrinho SUBSTITUI o produto anterior daquela categoria — nunca soma dois
+  // da mesma categoria. Produtos de OUTRAS categorias já no carrinho são
+  // preservados (por isso não é um sessionStorage.setItem(ids) direto — teria
+  // que jogar fora tudo que já estava lá). Um card de oferta com 2+ produtos
+  // (ex: Internet+TV) substitui qualquer produto das categorias dele que já
+  // estivesse no carrinho — é só aplicar a mesma regra por categoria, não
+  // precisa de um caso especial pra "oferta prevalece sobre avulso".
+  function mergeIntoCart(newIds) {
+    var current;
+    try {
+      current = JSON.parse(sessionStorage.getItem('pedidoEmAndamento'));
+      if (!Array.isArray(current)) current = [];
+    } catch (e) {
+      current = [];
+    }
+    var newCategorias = {};
+    newIds.forEach(function (id) {
+      var p = PRODUCT_CATALOG[id];
+      if (p) newCategorias[p.categoria] = true;
+    });
+    var kept = current.filter(function (id) {
+      var p = PRODUCT_CATALOG[id];
+      return p && !newCategorias[p.categoria];
+    });
+    return kept.concat(newIds);
+  }
+
+  // Limpa sessionStorage['pedidoAdicionais'] (adicionais escolhidos no
+  // checkout, ver [[checkout_dynamic_page]]) de qualquer produto que não
+  // esteja mais em `ids` — evita adicional "fantasma" de um produto que saiu
+  // do carrinho (removido, ou trocado por outro da mesma categoria).
+  function pruneAdicionaisTo(ids) {
+    var raw;
+    try { raw = JSON.parse(sessionStorage.getItem('pedidoAdicionais')); } catch (e) { raw = null; }
+    if (!raw || typeof raw !== 'object') return;
+    var idSet = {};
+    ids.forEach(function (id) { idSet[id] = true; });
+    var changed = false;
+    Object.keys(raw).forEach(function (pid) {
+      if (!idSet[pid]) { delete raw[pid]; changed = true; }
+    });
+    if (changed) sessionStorage.setItem('pedidoAdicionais', JSON.stringify(raw));
+  }
+
+  function continueComboResumo() {
+    if (document.getElementById('comboCtaBtn').disabled) return;
+    var ids = Object.keys(comboSelected).map(function (cat) { return comboSelected[cat]; }).filter(Boolean);
+    if (!ids.length) return;
+    var merged = mergeIntoCart(ids);
+    sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(merged));
+    pruneAdicionaisTo(merged);
+    sessionStorage.removeItem('pedidoOfertaId'); // combo montado não é uma oferta com desconto multi
+    window.location.href = 'checkout.html';
+  }
+
+  buildComboModal();
+
+  // ===== Cards de produto único da vitrine: conteúdo dinâmico a partir do
+  // catálogo (mesma fonte de dados do "Monte seu combo" e de detalhes.html).
+  // Só os cards marcados com [data-produto-id] no HTML são hidratados — os
+  // cards de "Melhores ofertas" (2+ produtos) e os de celular/acessórios
+  // ainda não têm dado suficiente na planilha, continuam estáticos por
+  // enquanto (ver [[product_catalog_spreadsheet]] na memória do projeto). =====
+  function vitrineFormatBRL(value) {
+    var parts = value.toFixed(2).split('.');
+    return { int: parts[0], cents: parts[1] };
+  }
+
+  function brandGroupItemHtml(logo) {
+    if (logo.kind === 'more') {
+      return '<li class="mdn-BrandGroup-item"><span class="mdn-BrandGroup-image" style="display:flex;align-items:center;justify-content:center;background:var(--gray-line);color:var(--ink);font-size:12px;font-weight:700;border-radius:50%;">+</span></li>';
+    }
+    return '<li class="mdn-BrandGroup-item">' +
+      '<button class="mdn-BrandGroup-item-focus" aria-label="' + logo.alt + '"></button>' +
+      '<figure class="mdn-BrandGroup-image">' +
+        '<img class="mdn-BrandGroup-image mdn-Brand-image" src="' + logo.src + '" alt="' + logo.alt + '" title="' + logo.alt + '" />' +
+        '<figcaption class="mdn-BrandGroup-image-caption mdn-Tooltip mdn-Tooltip--top">' +
+          '<p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">' + logo.alt + '</p>' +
+        '</figcaption>' +
+      '</figure>' +
+    '</li>';
+  }
+
+  function cardBulletHtml(bullet) {
+    if (bullet.tipo === 'icone') {
+      var iconClass = bullet.icone && bullet.icone.kind === 'mdn' ? bullet.icone.class : '';
+      return '<div class="card-simple-item"><span class="label">' + bullet.texto + '</span>' +
+        (iconClass ? '<i class="' + iconClass + ' mdn-Icon--sm"></i>' : '') +
+        '</div>';
+    }
+    var logosHtml = (bullet.logos || []).map(brandGroupItemHtml).join('');
+    return '<div class="card-simple-item"><span class="label">' + bullet.texto + '</span>' +
+      '<ul class="mdn-BrandGroup mdn-BrandGroup--overlaid">' + logosHtml + '</ul>' +
+    '</div>';
+  }
+
+  function hydrateProductCards() {
+    document.querySelectorAll('[data-produto-id]').forEach(function (cardEl) {
+      var id = cardEl.getAttribute('data-produto-id');
+      var product = PRODUCT_CATALOG[id];
+      if (!product) return;
+
+      var titleBlock = cardEl.querySelector('.card-title-block');
+      if (titleBlock) {
+        var h3 = titleBlock.querySelector('h3');
+        var p = titleBlock.querySelector('p');
+        if (h3) h3.textContent = product.nome;
+        if (p) p.textContent = product.subtitulo || '';
+      }
+
+      var badgeEl = cardEl.querySelector('.context-badge');
+      if (badgeEl) badgeEl.textContent = product.badgeCategoria || '';
+
+      var tagsGroup = cardEl.querySelector('.tags-group');
+      if (tagsGroup) {
+        var selo = product.selos && product.selos[0];
+        if (selo) {
+          var seloIconHtml = selo.icone && selo.icone.kind === 'mdn' && selo.icone.class
+            ? '<i class="' + selo.icone.class + ' mdn-Icon--sm"></i>' : '';
+          tagsGroup.innerHTML = '<span class="tag tag-' + selo.estilo + '">' + seloIconHtml + selo.texto + '</span>';
+        } else {
+          tagsGroup.innerHTML = '';
+        }
+      }
+
+      var middle = cardEl.querySelector('.card-middle');
+      if (middle && product.cardDestaques.length) {
+        middle.innerHTML = product.cardDestaques.map(cardBulletHtml).join('');
+      }
+
+      var priceAmountEl = cardEl.querySelector('.price-value .amount');
+      if (priceAmountEl) {
+        var formatted = vitrineFormatBRL(product.preco);
+        var bigEl = priceAmountEl.querySelector('.big');
+        var centsEl = priceAmountEl.querySelector('.cents');
+        if (bigEl) bigEl.textContent = formatted.int;
+        if (centsEl) centsEl.textContent = ',' + formatted.cents;
+      }
+    });
+  }
+
+  hydrateProductCards();
+
+  // ===== Cards de "Melhores ofertas" (1 ou mais produtos combinados num
+  // card só) — mesmo template unificado pras duas situações, alimentado por
+  // OFERTAS_COMBINADAS. Cards marcados com [data-oferta-id] no HTML; os que
+  // ainda não têm entrada na planilha (ex: o combo de 3 produtos com "Pós
+  // 60GB", que nem existe mais como produto, e o card de acessório JBL)
+  // continuam estáticos até a Eve completar os dados. =====
+  function ofertaBulletHtml(bullet) {
+    if (bullet.tipo === 'icone') {
+      var iconClass = bullet.icone && bullet.icone.kind === 'mdn' ? bullet.icone.class : '';
+      return '<div class="item-row"><span class="label">' + bullet.texto + '</span>' +
+        (iconClass ? '<i class="' + iconClass + ' mdn-Icon--sm"></i>' : '') +
+        '</div>';
+    }
+    var imgsHtml = (bullet.logos || []).map(function (logo) {
+      if (logo.kind === 'more') {
+        return '<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--gray-line);font-size:12px;font-weight:700;">+</span>';
+      }
+      return '<img src="' + logo.src + '" alt="' + logo.alt + '">';
+    }).join('');
+    return '<div class="item-row"><span class="label">' + bullet.texto + '</span><div class="brands">' + imgsHtml + '</div></div>';
+  }
+
+  function ofertaProductBlockHtml(p) {
+    var iconClass = p.icone && p.icone.kind === 'mdn' ? p.icone.class : '';
+    var itemsHtml = p.bullets.length
+      ? '<div class="product-items">' + p.bullets.map(ofertaBulletHtml).join('') + '</div>'
+      : '';
+    return '<div class="product-block">' +
+      '<div class="product-name">' + (iconClass ? '<i class="' + iconClass + ' mdn-Icon--sm"></i>' : '') + '<strong>' + p.nome + '</strong></div>' +
+      '<p class="product-desc">' + p.subtitulo + '</p>' +
+      itemsHtml +
+    '</div>';
+  }
+
+  function hydrateOfertaCards() {
+    document.querySelectorAll('[data-oferta-id]').forEach(function (cardEl) {
+      var id = cardEl.getAttribute('data-oferta-id');
+      var oferta = typeof OFERTAS_COMBINADAS !== 'undefined' ? OFERTAS_COMBINADAS[id] : null;
+      if (!oferta) return;
+
+      var tagsGroup = cardEl.querySelector('.tags-group');
+      if (tagsGroup) {
+        if (oferta.selo) {
+          var seloIconHtml = oferta.seloIcone && oferta.seloIcone.kind === 'mdn' && oferta.seloIcone.class
+            ? '<i class="' + oferta.seloIcone.class + ' mdn-Icon--sm"></i>' : '';
+          tagsGroup.innerHTML = '<span class="tag tag-' + oferta.seloEstilo + '">' + seloIconHtml + oferta.selo + '</span>';
+        } else {
+          tagsGroup.innerHTML = '';
+        }
+      }
+
+      var badgeEl = cardEl.querySelector('.context-badge');
+      if (badgeEl) badgeEl.textContent = oferta.badgeCategoria || '';
+
+      var middle = cardEl.querySelector('.card-middle');
+      if (middle) middle.innerHTML = oferta.produtos.map(ofertaProductBlockHtml).join('');
+
+      var priceValueEl = cardEl.querySelector('.price-value');
+      if (priceValueEl) {
+        var formatted = vitrineFormatBRL(oferta.precoTotal);
+        var bigEl = priceValueEl.querySelector('.big');
+        var centsEl = priceValueEl.querySelector('.cents');
+        if (bigEl) bigEl.textContent = formatted.int;
+        if (centsEl) centsEl.textContent = ',' + formatted.cents;
+
+        var wasEl = priceValueEl.querySelector('.price-was');
+        if (wasEl) {
+          if (oferta.precoRiscado) {
+            var riscado = vitrineFormatBRL(oferta.precoRiscado);
+            wasEl.innerHTML = 'De <s>R$ ' + riscado.int + ',' + riscado.cents + '</s> por:';
+            wasEl.hidden = false;
+          } else {
+            wasEl.hidden = true;
+          }
+        }
+
+        var suffixEl = priceValueEl.querySelector('.installment-suffix');
+        if (suffixEl) {
+          suffixEl.textContent = oferta.precoSufixo || '';
+          suffixEl.hidden = !oferta.precoSufixo;
+        }
+      }
+    });
+  }
+
+  hydrateOfertaCards();
+
+  // ===== Posse (perfil do cliente) selecionável no header =====
+  // POSSE_CONFIGS vem de product-catalog.js, gerado a partir das abas
+  // Posses/Posses_Categoria_Atual/Posses_Ordem_Secoes/Posses_Ordem_Navegacao/
+  // Posses_Melhores_Ofertas da planilha. ordemSecoes (posição física das
+  // seções) e ordemNavegacao (itens do menu "Navegue por categorias") são
+  // dois campos independentes — nunca derive um do outro. Uma posse sem
+  // algum desses campos preenchido herda, campo a campo, o valor
+  // correspondente da vitrine-piloto (ver resolvePosseCfg) em vez de
+  // renderizar quebrada.
+  var CATEGORIAS_OWNABLE = ['internet', 'tv', 'celular', 'telefone'];
+  var SECAO_ID_POR_CATEGORIA = {
+    internet: 'internet-residencial',
+    tv: 'planos-tv',
+    celular: 'planos-celular',
+    telefone: 'telefone-fixo-section',
+    aparelhos: 'aparelhos',
+    acessorios: 'acessorios',
+  };
+  var SWIPER_ID_POR_CATEGORIA = {
+    internet: 'swiper-internet-residencial',
+    tv: 'swiper-planos-tv',
+    celular: 'swiper-planos-celular',
+    telefone: 'swiper-telefone-fixo',
+    aparelhos: 'swiper-aparelhos',
+    acessorios: 'swiper-acessorios',
+  };
+
+  // Filtra/reordena os cards [data-produto-id] dentro de um carrossel
+  // específico. allowedIds vazio = mostra tudo, sem mexer (comportamento
+  // padrão hoje, ninguém preencheu Posses_Produtos_Carrossel pra essa
+  // categoria ainda). Se allowedIds veio preenchido mas nenhum id bateu com
+  // nenhum card real (typo na planilha, por exemplo), não esvazia o
+  // carrossel inteiro por segurança — mantém tudo visível.
+  function filterSwiperByProdutoId(swiperId, allowedIds) {
+    var wrapper = document.querySelector('#' + swiperId + ' .swiper-wrapper');
+    if (!wrapper || !allowedIds || !allowedIds.length) return;
+    var slides = Array.prototype.slice.call(wrapper.querySelectorAll(':scope > .swiper-slide'));
+    var keyed = {};
+    slides.forEach(function (slide) {
+      var card = slide.querySelector('.card');
+      var key = card && card.getAttribute('data-produto-id');
+      if (key) keyed[key] = slide;
+    });
+    var toShow = allowedIds.map(function (id) { return keyed[id]; }).filter(Boolean);
+    if (!toShow.length) return;
+    toShow.forEach(function (slide) { wrapper.appendChild(slide); });
+    slides.forEach(function (slide) {
+      if (toShow.indexOf(slide) === -1 && slide.parentNode) slide.parentNode.removeChild(slide);
+    });
+    var swiperEl = document.getElementById(swiperId);
+    if (swiperEl && swiperEl.swiper) {
+      swiperEl.swiper.update();
+      swiperEl.swiper.slideTo(0, 0);
+    }
+  }
+
+  // A posse "padrão"/referência (usada quando nada foi selecionado ainda e
+  // como fonte de fallback pra posses incompletas) não é mais um id fixo no
+  // código — é sempre a posse com menor "Ordem no seletor" na planilha. Hoje
+  // é vitrine-multi (Ordem 1); vitrine-piloto virou backup (Ordem 7) e
+  // continua 100% selecionável, só não é mais a referência. Se a ordem
+  // mudar de novo na planilha, isso se ajusta sozinho, sem editar código.
+  function getPosseDefaultId() {
+    var lista = Object.keys(POSSE_CONFIGS).map(function (id) { return POSSE_CONFIGS[id]; })
+      .sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+    return lista.length ? lista[0].id : 'vitrine-piloto';
+  }
+
+  function getPosseAtiva() {
+    var id = sessionStorage.getItem('posseAtiva');
+    return (id && typeof POSSE_CONFIGS !== 'undefined' && POSSE_CONFIGS[id]) ? id : getPosseDefaultId();
+  }
+
+  // categoriasPossui/categoriaAtual/ordemSecoes/ordemNavegacao/melhoresOfertas
+  // são 5 campos independentes. Uma posse que não preencheu um deles na
+  // planilha herda esse campo específico da posse padrão/referência (não os
+  // outros campos que ela já tenha preenchido) — assim uma posse "pela
+  // metade" funciona igual à referência só onde falta dado, em vez de
+  // renderizar quebrada. ordemSecoes (posição física das seções na página) e
+  // ordemNavegacao (itens do menu "Navegue por categorias") são propósitos
+  // diferentes e nunca devem ser derivados um do outro.
+  function resolvePosseCfg(cfg) {
+    var piloto = POSSE_CONFIGS[getPosseDefaultId()] || {};
+    function fallbackList(field) {
+      return (cfg[field] && cfg[field].length) ? cfg[field] : (piloto[field] || []);
+    }
+    function fallbackMap(field) {
+      return (cfg[field] && Object.keys(cfg[field]).length) ? cfg[field] : (piloto[field] || {});
+    }
+    return {
+      id: cfg.id,
+      label: cfg.label || cfg.id,
+      categoriasPossui: fallbackList('categoriasPossui'),
+      categoriaAtual: fallbackMap('categoriaAtual'),
+      categoriaAtualValor: fallbackMap('categoriaAtualValor'),
+      ordemSecoes: fallbackList('ordemSecoes'),
+      ordemNavegacao: fallbackList('ordemNavegacao'),
+      melhoresOfertas: fallbackList('melhoresOfertas'),
+      produtosCarrossel: fallbackList('produtosCarrossel'),
+    };
+  }
+
+  // ===== Label do CTA principal dos cards de produto (plano), regra global
+  // válida em qualquer posse: "Mudar para este" só quando a categoria do
+  // produto é uma das que o usuário já possui nessa posse (ownedSet);
+  // qualquer outra categoria de plano (não possuída) usa "Assinar". Produtos
+  // físicos (aparelhos/acessorios) ficam de fora dessa troca — continuam
+  // sempre "Eu quero", fixo no HTML, nunca precisam mudar por posse. =====
+  function updateCtaLabels(ownedSet) {
+    document.querySelectorAll('[data-produto-id]').forEach(function (cardEl) {
+      var id = cardEl.getAttribute('data-produto-id');
+      var product = typeof PRODUCT_CATALOG !== 'undefined' ? PRODUCT_CATALOG[id] : null;
+      if (!product || CATEGORIAS_OWNABLE.indexOf(product.categoria) === -1) return;
+      var ctaEl = cardEl.querySelector('.card-actions .btn-yellow');
+      if (ctaEl) ctaEl.textContent = ownedSet[product.categoria] ? 'Mudar para este' : 'Assinar';
+    });
+  }
+
+  function applyPosseConfig() {
+    if (typeof POSSE_CONFIGS === 'undefined') return;
+    var posseId = getPosseAtiva();
+    var rawCfg = POSSE_CONFIGS[posseId] || POSSE_CONFIGS['vitrine-piloto'];
+    if (!rawCfg) return;
+    var cfg = resolvePosseCfg(rawCfg);
+
+    var ownedSet = {};
+    cfg.categoriasPossui.forEach(function (c) { ownedSet[c] = true; });
+    var temAlgumPossuido = cfg.categoriasPossui.length > 0;
+
+    var possuiContainer = document.querySelector('.plans-body-inner');
+    var plansBody = document.querySelector('.plans-body');
+    var melhoresSection = document.getElementById('melhores-ofertas');
+    var naoPossuiContainer = melhoresSection ? melhoresSection.parentElement : null;
+    if (!possuiContainer || !naoPossuiContainer) return;
+
+    var ordemSecoes = cfg.ordemSecoes.length ? cfg.ordemSecoes : Object.keys(SECAO_ID_POR_CATEGORIA);
+
+    ordemSecoes.forEach(function (categoria) {
+      var secaoId = SECAO_ID_POR_CATEGORIA[categoria];
+      var section = secaoId && document.getElementById(secaoId);
+      if (!section) return;
+
+      var isOwned = CATEGORIAS_OWNABLE.indexOf(categoria) !== -1 && ownedSet[categoria];
+      if (isOwned) {
+        possuiContainer.appendChild(section);
+      } else if (plansBody) {
+        // .plans-body é irmã de #melhores-ofertas no mesmo <main> (não um
+        // descendente) — appendChild simples jogaria a seção pro fim de
+        // naoPossuiContainer, ou seja, DEPOIS de .plans-body (que nunca se
+        // move). insertBefore garante que toda seção "não possui" fique
+        // sempre antes da faixa "Produtos que você já possui", que deve
+        // ser sempre a última seção da página.
+        naoPossuiContainer.insertBefore(section, plansBody);
+      } else {
+        naoPossuiContainer.appendChild(section);
+      }
+
+      var priceEl = section.querySelector('.current-plan-price');
+      var supportEl = section.querySelector('.section-support-text');
+      if (priceEl) {
+        // Valor manual (categoriaAtualValor) tem prioridade sobre o SKU do
+        // catálogo — existe pra quando o "plano atual" da posse não é
+        // nenhum produto real cadastrado (ex.: plano legado, de valor
+        // menor que os disponíveis hoje).
+        var valorManual = isOwned ? cfg.categoriaAtualValor[categoria] : null;
+        var produtoId = isOwned && cfg.categoriaAtual[categoria];
+        var produto = produtoId && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[produtoId];
+        var precoFinal = typeof valorManual === 'number' ? valorManual : (produto ? produto.preco : null);
+        var isPriceShown = precoFinal != null;
+        if (isPriceShown) {
+          var preco = vitrineFormatBRL(precoFinal);
+          priceEl.querySelector('.current-plan-value').textContent = 'R$ ' + preco.int + ',' + preco.cents + '/mês';
+        }
+        priceEl.hidden = !isPriceShown;
+        // Texto de apoio (título de categoria) e "Valor do plano atual" são
+        // mutuamente exclusivos: apoio aparece pra categoria não possuída
+        // (ou possuída mas sem preço configurado, pra nunca deixar o
+        // subtítulo em branco), preço aparece quando ela já é possuída.
+        if (supportEl) supportEl.hidden = isPriceShown;
+      }
+
+      var swiperId = SWIPER_ID_POR_CATEGORIA[categoria];
+      if (swiperId && typeof PRODUCT_CATALOG !== 'undefined') {
+        var idsDestaCategoria = cfg.produtosCarrossel.filter(function (pid) {
+          var p = PRODUCT_CATALOG[pid];
+          return p && p.categoria === categoria;
+        });
+        filterSwiperByProdutoId(swiperId, idsDestaCategoria);
+      }
+    });
+
+    updateCtaLabels(ownedSet);
+
+    // Sem nenhuma categoria possuída, ".plans-body" fica vazio mas ainda tem
+    // background/margin/padding próprios (ver CSS) — colapsa a faixa cinza
+    // inteira nesse caso, não só o título.
+    if (plansBody) plansBody.hidden = !temAlgumPossuido;
+    var greeting = document.querySelector('.plans-greeting');
+    if (greeting) greeting.hidden = !temAlgumPossuido;
+
+    var navGrid = document.querySelector('.category-grid');
+    if (navGrid) {
+      var melhoresItem = navGrid.querySelector('[data-target="melhores-ofertas"]');
+      var ordemNavegacao = cfg.ordemNavegacao.length ? cfg.ordemNavegacao : Object.keys(SECAO_ID_POR_CATEGORIA);
+      ordemNavegacao.forEach(function (categoria) {
+        var item = navGrid.querySelector('[data-target="' + SECAO_ID_POR_CATEGORIA[categoria] + '"]');
+        if (item) navGrid.appendChild(item);
+      });
+      if (melhoresItem) navGrid.insertBefore(melhoresItem, navGrid.firstChild);
+    }
+
+    var wrapper = document.querySelector('#swiper-melhores-ofertas .swiper-wrapper');
+    if (wrapper) {
+      var slides = Array.prototype.slice.call(wrapper.querySelectorAll(':scope > .swiper-slide'));
+      var keyed = {};
+      slides.forEach(function (slide) {
+        var card = slide.querySelector('.card');
+        var key = card && (card.getAttribute('data-oferta-id') || card.getAttribute('data-produto-id') || card.getAttribute('data-card-key'));
+        if (key) keyed[key] = slide;
+      });
+      var list = cfg.melhoresOfertas.length ? cfg.melhoresOfertas : Object.keys(keyed);
+      var toShow = list.map(function (key) { return keyed[key]; }).filter(Boolean);
+      toShow.forEach(function (slide) { wrapper.appendChild(slide); });
+      slides.forEach(function (slide) {
+        if (toShow.indexOf(slide) === -1 && slide.parentNode) slide.parentNode.removeChild(slide);
+      });
+      var swiperEl = document.getElementById('swiper-melhores-ofertas');
+      if (swiperEl && swiperEl.swiper) {
+        swiperEl.swiper.update();
+        swiperEl.swiper.slideTo(0, 0);
+      }
+    }
+
+    var label = document.getElementById('posse-selector-label');
+    if (label) label.textContent = cfg.label;
+
+    // "Monte seu combo" é um campo booleano direto da própria posse — sem
+    // fallback pra posse padrão de propósito, pra não reaparecer sozinho em
+    // posses que ainda não têm essa decisão tomada. Hoje só vitrine-piloto
+    // tem "SIM" na planilha (Eve, 2026-09-22: "quero deixar ele apenas na
+    // vitrine piloto até que eu trabalhe um pouco melhor na ideia").
+    var comboTrigger = document.querySelector('.combo-trigger-btn');
+    if (comboTrigger) comboTrigger.hidden = !rawCfg.exibirCombo;
+  }
+
+  function initPosseSelector() {
+    var toggle = document.getElementById('posse-selector-toggle');
+    var dropdown = document.getElementById('posse-dropdown');
+    if (!toggle || !dropdown || typeof POSSE_CONFIGS === 'undefined') return;
+
+    var posseAtiva = getPosseAtiva();
+    var lista = Object.keys(POSSE_CONFIGS).map(function (id) { return POSSE_CONFIGS[id]; })
+      .sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+
+    dropdown.innerHTML = lista.map(function (p) {
+      return '<button type="button" class="posse-dropdown-item' + (p.id === posseAtiva ? ' active' : '') + '" role="option" data-posse-id="' + p.id + '">' + p.label + '</button>';
+    }).join('');
+
+    function closeDropdown() {
+      dropdown.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    function openDropdown() {
+      dropdown.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (dropdown.hidden) openDropdown(); else closeDropdown();
+    });
+    toggle.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (dropdown.hidden) openDropdown(); else closeDropdown();
+      }
+    });
+    dropdown.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-posse-id]');
+      if (!btn) return;
+      e.stopPropagation();
+      var novaPosse = btn.getAttribute('data-posse-id');
+      // Trocar de posse é trocar de "jornada de cliente" simulada — o
+      // carrinho é sempre específico de uma vitrine, então não faz sentido
+      // carregar produtos escolhidos numa posse pra dentro de outra. Só
+      // limpa se realmente mudou (reclicar na posse já ativa não deveria
+      // esvaziar o carrinho à toa).
+      if (novaPosse !== posseAtiva) {
+        sessionStorage.removeItem('pedidoEmAndamento');
+        sessionStorage.removeItem('pedidoOfertaId');
+        sessionStorage.removeItem('pedidoAdicionais');
+      }
+      sessionStorage.setItem('posseAtiva', novaPosse);
+      window.location.reload();
+    });
+    document.addEventListener('click', closeDropdown);
+  }
+
+  applyPosseConfig();
+  initPosseSelector();
+
+  // ===== CTAs "Assinar"/"Mudar para este" dos cards: levam pro checkout
+  // dinâmico do(s) produto(s) daquele card específico. Delegação de evento
+  // (não precisa reatribuir handler quando hydrateProductCards/
+  // hydrateOfertaCards reescrevem o conteúdo do card). Cards sem
+  // [data-produto-id]/[data-oferta-id] ainda (Pós 60GB, fone JBL) continuam
+  // sem dado suficiente pra montar o pedido — o clique não faz nada, como já
+  // era o caso. =====
+  function ctaProductIds(cardEl) {
+    var ofertaId = cardEl.getAttribute('data-oferta-id');
+    if (ofertaId) {
+      var oferta = typeof OFERTAS_COMBINADAS !== 'undefined' ? OFERTAS_COMBINADAS[ofertaId] : null;
+      if (oferta) return oferta.produtos.map(function (p) { return p.id; });
+      return null;
+    }
+    var produtoId = cardEl.getAttribute('data-produto-id');
+    return produtoId ? [produtoId] : null;
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.card-bottom .btn-yellow');
+    if (!btn) return;
+    var cardEl = btn.closest('[data-produto-id], [data-oferta-id]');
+    if (!cardEl) return;
+    var ids = ctaProductIds(cardEl);
+    if (!ids || !ids.length) return;
+    e.preventDefault();
+    var merged = mergeIntoCart(ids);
+    sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(merged));
+    pruneAdicionaisTo(merged);
+    // Desconto multi no checkout (ver [[checkout_dynamic_page]]) só se aplica
+    // quando o pedido vem de um card de "Melhores ofertas" — produto solo
+    // não tem pedidoOfertaId gravado.
+    var ofertaId = cardEl.getAttribute('data-oferta-id');
+    if (ofertaId) {
+      sessionStorage.setItem('pedidoOfertaId', ofertaId);
+    } else {
+      sessionStorage.removeItem('pedidoOfertaId');
+    }
+    window.location.href = 'checkout.html';
+  });
+
+  // ===== Carrinho persistente =====
+  // pedidoEmAndamento só é limpo em finalizarPedido() (checkout.html), ao
+  // concluir o pedido de verdade — então se o usuário voltar da tela de
+  // checkout sem finalizar, o produto continua lá e esse componente aparece
+  // pra deixar isso claro. Mesma lógica de desconto multi do checkout.html
+  // (ver [[checkout_dynamic_page]]), duplicada aqui porque este projeto não
+  // usa módulos JS — cada página é autocontida.
+  function vitrineCartFormatCentsHtml(value) {
+    var str = vitrineFormatBRL(value);
+    return '<span class="vitrine-cart-price-prefix">R$</span> ' + str.int + '<span class="vitrine-cart-price-cents">,' + str.cents + '</span>';
+  }
+
+  function renderCarrinhoPersistente() {
+    var pedidoIds;
+    try {
+      pedidoIds = JSON.parse(sessionStorage.getItem('pedidoEmAndamento'));
+    } catch (e) {
+      pedidoIds = null;
+    }
+    if (!Array.isArray(pedidoIds) || !pedidoIds.length) return;
+
+    var products = pedidoIds.map(function (id) { return PRODUCT_CATALOG[id]; }).filter(Boolean);
+    if (!products.length) return;
+
+    // Mesma validação de checkout.html: só é uma oferta com desconto se o
+    // conjunto de produtos do carrinho bater exatamente com o da oferta.
+    var pedidoOfertaId = null;
+    try { pedidoOfertaId = sessionStorage.getItem('pedidoOfertaId'); } catch (e) {}
+    var bundleOferta = null;
+    if (pedidoOfertaId && typeof OFERTAS_COMBINADAS !== 'undefined') {
+      var maybeOferta = OFERTAS_COMBINADAS[pedidoOfertaId];
+      if (maybeOferta && maybeOferta.precoRiscado && maybeOferta.produtos.length === products.length) {
+        var ofertaIds = maybeOferta.produtos.map(function (p) { return p.id; }).slice().sort();
+        var orderIds = products.map(function (p) { return p.id; }).slice().sort();
+        var matches = ofertaIds.every(function (id, i) { return id === orderIds[i]; });
+        if (matches) bundleOferta = maybeOferta;
+      }
+    }
+
+    var sumFullPrice = products.reduce(function (sum, p) { return sum + p.preco; }, 0);
+    var total = sumFullPrice;
+    var descontoTotal = 0;
+    if (bundleOferta) {
+      var ofertaDiscount = Math.round((sumFullPrice - bundleOferta.precoTotal) * 100) / 100;
+      if (ofertaDiscount > 0) {
+        descontoTotal = ofertaDiscount;
+        total = bundleOferta.precoTotal;
+      }
+    } else {
+      // Regra geral por combinação de categorias (ver checkout.html —
+      // CATEGORY_DISCOUNTS — mesma regra, duplicada aqui pra o carrinho
+      // persistente mostrar o total já com desconto sem precisar ir pro
+      // checkout). TV=-20, Celular=-40, Telefone=-10, cada uma aplicada no
+      // próprio produto sempre que o carrinho tiver 2+ categorias
+      // diferentes (Internet nunca tem desconto próprio, só conta como
+      // categoria presente) — todas as que se aplicarem somam.
+      var categoriasNoCarrinho = {};
+      products.forEach(function (p) { categoriasNoCarrinho[p.categoria] = true; });
+      if (Object.keys(categoriasNoCarrinho).length >= 2) {
+        var CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
+        Object.keys(CATEGORY_DISCOUNTS).forEach(function (categoria) {
+          if (categoriasNoCarrinho[categoria]) descontoTotal += CATEGORY_DISCOUNTS[categoria];
+        });
+      }
+      if (descontoTotal > 0) total = Math.round((sumFullPrice - descontoTotal) * 100) / 100;
+    }
+
+    // Adicionais escolhidos no checkout (ver [[checkout_dynamic_page]]) somam
+    // por cima do total, sem entrar na conta do desconto multi — mesmo
+    // tratamento de syncOrderTotal()/finalizarPedido() no checkout.html.
+    var adicionaisState;
+    try { adicionaisState = JSON.parse(sessionStorage.getItem('pedidoAdicionais')) || {}; } catch (e) { adicionaisState = {}; }
+    products.forEach(function (p) {
+      var selecionados = adicionaisState[p.id];
+      if (!Array.isArray(selecionados)) return;
+      selecionados.forEach(function (nome) {
+        var addon = (p.adicionais || []).find(function (a) { return a.nome === nome; });
+        if (addon) total = Math.round((total + addon.preco) * 100) / 100;
+      });
+    });
+
+    document.querySelectorAll('[data-role="vitrine-cart-amount"]').forEach(function (el) {
+      el.innerHTML = vitrineCartFormatCentsHtml(total);
+    });
+
+    if (descontoTotal > 0) {
+      document.querySelectorAll('[data-role="vitrine-desconto-row"]').forEach(function (row) {
+        row.hidden = false;
+        row.querySelector('[data-role="vitrine-desconto-value"]').textContent = '-R$ ' + vitrineFormatBRL(descontoTotal).int + ',' + vitrineFormatBRL(descontoTotal).cents;
+      });
+    }
+
+    document.getElementById('vitrineCartFooter').classList.add('is-visible');
+    document.getElementById('vitrineCartBar').classList.add('is-visible');
+    adjustComboTriggerPosition();
+  }
+
+  function toggleVitrineCartFooter() {
+    var expanded = document.getElementById('vitrineCartExpanded');
+    var isOpen = expanded.hidden;
+    expanded.hidden = !isOpen;
+    document.getElementById('vitrineCartToggleIcon').className = isOpen ? 'mdn-Icon-baixo' : 'mdn-Icon-cima';
+    adjustComboTriggerPosition();
+  }
+
+  function goToCheckoutFromCart() {
+    // pedidoEmAndamento/pedidoOfertaId já estão salvos — só retoma o checkout.
+    window.location.href = 'checkout.html';
+  }
+
+  // "Esvaziar carrinho" — limpa tudo (produto, oferta, adicionais salvos) e
+  // recarrega a própria vitrine; usuário continua onde está, só sem nenhum
+  // produto no carrinho (footer/barra somem, cards voltam ao CTA normal).
+  function clearCartFromFooter() {
+    sessionStorage.removeItem('pedidoEmAndamento');
+    sessionStorage.removeItem('pedidoOfertaId');
+    sessionStorage.removeItem('pedidoAdicionais');
+    window.location.reload();
+  }
+
+  // Evita que o botão flutuante "Monte seu combo" fique coberto pela barra/
+  // footer do carrinho persistente quando os dois aparecem juntos.
+  function adjustComboTriggerPosition() {
+    var trigger = document.querySelector('.combo-trigger-btn');
+    if (!trigger) return;
+    // offsetParent não serve aqui: os dois são position:fixed, e um elemento
+    // fixed sempre tem offsetParent === null mesmo quando visível na tela —
+    // isso é diferente do padrão usado em checkout.html (getVisibleOrderSummary),
+    // onde os elementos verificados têm posicionamento normal no fluxo.
+    var visible = [document.getElementById('vitrineCartFooter'), document.getElementById('vitrineCartBar')]
+      .find(function (el) { return el && getComputedStyle(el).display !== 'none'; });
+    if (visible) {
+      var gap = window.innerWidth <= 599 ? 16 : 24;
+      trigger.style.bottom = (visible.getBoundingClientRect().height + gap) + 'px';
+    } else {
+      trigger.style.bottom = '';
+    }
+  }
+  window.addEventListener('resize', adjustComboTriggerPosition);
+
+  renderCarrinhoPersistente();
+
+  // ===== Identificação do produto que está no carrinho =====
+  // Card cujo produto (ou, no caso de card de oferta, a oferta inteira) já
+  // está em pedidoEmAndamento troca o CTA "Assinar"/"Mudar para este" por
+  // "Remover do carrinho" (.btn-outline — Mondrian Button/Primary Inverse).
+  function markCartItemsOnCards() {
+    var pedidoIds;
+    try {
+      pedidoIds = JSON.parse(sessionStorage.getItem('pedidoEmAndamento'));
+    } catch (e) {
+      pedidoIds = null;
+    }
+    if (!Array.isArray(pedidoIds) || !pedidoIds.length) return;
+
+    var cartSet = {};
+    pedidoIds.forEach(function (id) { if (PRODUCT_CATALOG[id]) cartSet[id] = true; });
+    var pedidoOfertaId = null;
+    try { pedidoOfertaId = sessionStorage.getItem('pedidoOfertaId'); } catch (e) {}
+
+    function swapToRemove(cardEl) {
+      var btn = cardEl.querySelector('.card-bottom .btn-yellow');
+      if (!btn) return;
+      btn.classList.remove('btn-yellow');
+      btn.classList.add('btn-outline');
+      btn.textContent = 'Remover do carrinho';
+    }
+
+    document.querySelectorAll('[data-produto-id]').forEach(function (cardEl) {
+      if (cartSet[cardEl.getAttribute('data-produto-id')]) swapToRemove(cardEl);
+    });
+    document.querySelectorAll('[data-oferta-id]').forEach(function (cardEl) {
+      if (pedidoOfertaId && cardEl.getAttribute('data-oferta-id') === pedidoOfertaId) swapToRemove(cardEl);
+    });
+  }
+
+  // Remove só o(s) produto(s) daquele card específico do carrinho salvo —
+  // um card de oferta remove todos os produtos da oferta de uma vez (não faz
+  // sentido manter metade de um combo com desconto). Recarrega a página pra
+  // cards, footer e barra recalcularem tudo a partir do sessionStorage novo,
+  // em vez de duplicar a lógica de re-render em cada lugar.
+  function removeFromCart(idsToRemove) {
+    var current;
+    try {
+      current = JSON.parse(sessionStorage.getItem('pedidoEmAndamento'));
+      if (!Array.isArray(current)) current = [];
+    } catch (e) {
+      current = [];
+    }
+    var remaining = current.filter(function (id) { return idsToRemove.indexOf(id) === -1; });
+    if (remaining.length) {
+      sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(remaining));
+    } else {
+      sessionStorage.removeItem('pedidoEmAndamento');
+    }
+    pruneAdicionaisTo(remaining);
+
+    var ofertaId = sessionStorage.getItem('pedidoOfertaId');
+    if (ofertaId && typeof OFERTAS_COMBINADAS !== 'undefined') {
+      var oferta = OFERTAS_COMBINADAS[ofertaId];
+      var ofertaIds = oferta ? oferta.produtos.map(function (p) { return p.id; }).slice().sort() : null;
+      var remainingSorted = remaining.slice().sort();
+      var stillMatches = ofertaIds && ofertaIds.length === remainingSorted.length &&
+        ofertaIds.every(function (id, i) { return id === remainingSorted[i]; });
+      if (!stillMatches) sessionStorage.removeItem('pedidoOfertaId');
+    }
+
+    location.reload();
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.card-bottom .btn-outline');
+    if (!btn) return;
+    var cardEl = btn.closest('[data-produto-id], [data-oferta-id]');
+    if (!cardEl) return;
+    e.preventDefault();
+    var ids = ctaProductIds(cardEl);
+    if (!ids || !ids.length) return;
+    removeFromCart(ids);
+  });
+
+  markCartItemsOnCards();
+
+  // ===== Desliga o autoplay dos carrosséis (Swiper do Mondrian) =====
+  // O componente real mdn-Swiper vem com autoplay ligado por padrão (5s,
+  // avança sozinho pra esquerda) — Eve pediu pra tirar isso, mantendo drag/
+  // clique nas setas normalmente (autoplay.stop() não desmonta o Swiper,
+  // só para o timer). Chamado em 3 pontos pra cobrir qualquer ordem de
+  // inicialização entre o script vendor (mondrian-vanilla) e este script:
+  // imediatamente (caso o vendor já tenha inicializado de forma síncrona),
+  // em DOMContentLoaded (caso dependa desse evento) e via setTimeout como
+  // rede de segurança final. Chamar de novo em um Swiper já parado é inofensivo.
+  function stopSwiperAutoplay() {
+    document.querySelectorAll('.mdn-Swiper').forEach(function (el) {
+      if (el.swiper && el.swiper.autoplay) el.swiper.autoplay.stop();
+    });
+  }
+  stopSwiperAutoplay();
+  document.addEventListener('DOMContentLoaded', stopSwiperAutoplay);
+  setTimeout(stopSwiperAutoplay, 300);
 
   // Material Design Motion: inicializa animações ao carregar
   (function(){
