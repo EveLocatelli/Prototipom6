@@ -279,6 +279,9 @@
   [data-role="action-cards-mount"]{width:100%;display:flex;flex-direction:column;gap:24px;}
   .action-card{width:100%;border:1px solid var(--gray-line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:24px;background:#fff;align-items:flex-start;}
   .action-card-tag{background:var(--green-bg);border:1px solid var(--green-bg);border-radius:4px;padding:4px 8px;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--green-text);width:fit-content;}
+  .action-card-current-plan{background:#f8f8f8;border-radius:12px;padding:12px;width:100%;}
+  .action-card-current-plan p{font-size:12px;line-height:1.3;color:var(--ink);margin:0;}
+  .action-card-current-plan strong{font-weight:700;}
   .action-card-product{display:flex;align-items:center;gap:24px;width:100%;align-self:stretch;}
   .action-card-product-name{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
   .action-card-icon{width:32px;height:32px;padding:7px;border:1px solid var(--gray-line);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;}
@@ -2217,12 +2220,19 @@
 
   function actionCardHtml(product) {
     var hasAddons = product.adicionais.length > 0;
-    var tagText = isOwnedCategory(product.categoria) ? 'Plano alterado' : 'Novo plano adicionado';
+    var isOwned = isOwnedCategory(product.categoria);
+    var tagText = isOwned ? 'Plano alterado' : 'Novo plano adicionado';
+    // Quando é troca de plano dentro de uma categoria já possuída, mostra o
+    // valor do plano atual (antes da troca) — Figma node 13214:5307. Some em
+    // silêncio se a posse ativa não tem valor/produto configurado pra essa
+    // categoria (currentCategoriaPreco retorna null).
+    var currentPrice = isOwned ? currentCategoriaPreco(product.categoria) : null;
     var discountedPrice = bundleDiscount ? bundleDiscount.perProduct[product.id] : undefined;
     var hasDiscount = discountedPrice !== undefined;
     var displayPrice = hasDiscount ? discountedPrice : product.preco;
     return '<div class="action-card" data-action-card data-base-price="' + displayPrice + '">' +
       '<span class="action-card-tag">' + tagText + '</span>' +
+      (currentPrice !== null ? '<div class="action-card-current-plan"><p><strong>Valor do plano atual:</strong> R$ ' + formatBRL(currentPrice) + '/mês</p></div>' : '') +
       '<div class="action-card-product">' +
         '<div class="action-card-product-name"><div class="action-card-icon">' + iconHtml(product.icone) + '</div><p class="action-card-name">' + product.nome + '</p></div>' +
         '<img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal(\'' + product.id + '\')">' +
