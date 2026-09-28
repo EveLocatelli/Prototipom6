@@ -347,6 +347,47 @@
   .action-card-vermais{text-align:center;font-size:16px;font-weight:400;color:var(--red);cursor:pointer;width:100%;}
   .action-card-vermais:hover{text-decoration:underline;}
 
+  /* ===== Upsell — produto de menor valor entre Celular/Banda Larga/TV que
+     falta na posse (Figma "Checkout exclusivo - M6", node 13214:6185).
+     Mesmo markup nos dois mounts (mobile/desktop) — só a classe
+     .upsell-actions--row muda o layout dos botões, resto já se ajusta pela
+     largura do container (mesmo padrão do resto da página). ===== */
+  .upsell-card{background:var(--red-dark);border-radius:24px;padding:32px;width:100%;box-sizing:border-box;}
+  .upsell-card-inner{display:flex;flex-direction:column;gap:24px;width:100%;}
+  .upsell-top-row{display:flex;align-items:flex-start;justify-content:space-between;width:100%;gap:8px;}
+  .upsell-tag{display:inline-flex;align-items:center;gap:4px;background:var(--red-lightest);border:1px solid var(--red-lightest);color:var(--red-dark);border-radius:4px;padding:4px 8px;font-size:12px;font-weight:500;white-space:nowrap;}
+  .upsell-tag i{font-size:16px;line-height:1;}
+  .upsell-close{width:24px;height:24px;border:none;background:none;padding:0;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .upsell-close i{font-size:24px;line-height:1;}
+  .upsell-product-row{display:flex;align-items:center;gap:8px;width:100%;}
+  .upsell-product-icon{width:32px;height:32px;border-radius:16px;background:#fff;border:1px solid var(--gray-line);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-sizing:border-box;}
+  .upsell-product-icon i{font-size:18px;color:var(--red-dark);}
+  .upsell-product-name{color:#fff;font-size:20px;font-weight:700;margin:0;}
+  .upsell-price{display:flex;flex-direction:column;align-items:flex-start;}
+  .upsell-price-was{color:#fff;font-size:12px;font-weight:700;margin:0;}
+  /* Reaproveita as classes de valor do Action Card (.price-prefix/.price-amount/
+     .price-cents/.price-suffix), só sobrescrevendo a cor pra branco no fundo
+     vermelho — evita duplicar a estrutura de "inteiro grande + centavos". */
+  .upsell-price .price-prefix,
+  .upsell-price .price-amount,
+  .upsell-price .price-cents,
+  .upsell-price .price-suffix{color:#fff;}
+  .upsell-actions{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;}
+  .upsell-actions .agendamento-btn-secondary{width:100%;}
+  .upsell-later{background:none;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer;padding:0;font-family:inherit;white-space:nowrap;}
+  .upsell-actions--row{flex-direction:row;gap:16px;}
+  .upsell-actions--row .agendamento-btn-secondary{flex:1;width:auto;}
+  .upsell-actions--row .upsell-later{font-size:16px;}
+  /* Os dois mounts vivem em .checkout-left (não mais um deles na sidebar
+     direita) — mesmo breakpoint de sempre (1024px) alterna qual aparece,
+     igual .order-summary-mobile/.order-summary-desktop logo abaixo. */
+  .upsell-mount-mobile{display:block;}
+  .upsell-mount-desktop{display:none;}
+  @media (min-width:1024px){
+    .upsell-mount-mobile{display:none;}
+    .upsell-mount-desktop{display:block;}
+  }
+
   .order-details{display:flex;flex-direction:column;gap:4px;font-size:14px;}
   .order-detail-row{display:flex;justify-content:space-between;align-items:center;}
   [data-role="desconto-multi-value"]{color:var(--green-text);font-weight:700;}
@@ -521,10 +562,24 @@
   <div class="checkout-container">
     <div class="checkout-left">
 
+      <!-- Upsell — mesmo componente do mount mobile mais abaixo, só que na
+           posição de topo que a versão desktop ocupa (acima de "Ver
+           detalhes do produto", nunca dentro da sidebar de resumo à
+           direita — ver [[upsell_checkout]]). Os dois mounts alternam por
+           CSS no mesmo breakpoint de .order-summary-mobile/-desktop. -->
+      <div class="upsell-mount-desktop" data-role="upsell-mount" data-variant="desktop" hidden></div>
+
       <div class="order-summary order-summary-mobile">
         <h2 class="order-summary-title">Resumo do seu pedido</h2>
         <div data-role="action-cards-mount"></div>
       </div>
+
+      <!-- Upsell (mobile) — fica FORA do card branco "Resumo do pedido"
+           (não é aninhado nele, é seu próprio card vermelho), direto como
+           filho de .checkout-left pra herdar o gap:16px e a largura cheia
+           da coluna — nesting dentro do card branco antes causava o
+           componente renderizar encolhido/quebrado no mobile real. -->
+      <div class="upsell-mount-mobile" data-role="upsell-mount" data-variant="mobile" hidden></div>
 
       <div class="detalhes-container">
         <div class="detalhes-header" onclick="toggleDetalhes(this)">
@@ -955,6 +1010,32 @@
         </div>
       </div>
 
+      <!-- Ativação do serviço: pedidos formados só por produtos digitais
+           (installType 'ativacao' — streamings avulsos como HBO Max/Netflix/
+           Amazon Prime, Telecine, Globoplay etc., ver Carrossel de
+           Adicionais). Não há nada físico pra entregar nem visita técnica,
+           só uma ativação no sistema. SUBSTITUI Agendamento/Entrega/
+           Atualização do plano, nunca soma — mesma regra de prioridade de
+           sempre (Técnico > Entrega > Atualização do plano > Ativação do
+           serviço, ver installType acima): só aparece quando nenhum produto
+           do pedido exige técnico nem é 'auto'. -->
+      <div class="agendamento-container" id="ativacaoServicoContainer" hidden>
+        <div>
+          <h3 class="agendamento-title">Ativação do serviço</h3>
+          <p class="agendamento-subtitle">Seu serviço será ativado automaticamente após a confirmação do pedido.</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-celular-5g"></i>Como funciona</p>
+          <p class="agendamento-value">Você receberá as instruções de ativação por e-mail e SMS.</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo de ativação</p>
+          <p class="agendamento-value">Até 24 horas</p>
+        </div>
+      </div>
+
       <!-- Permanece no seu plano: produtos que o usuário já possui
            (internet/celular/telefone) e que essa compra não altera —
            ver CURRENT_OWNED_PRODUCTS no script. Some inteiro quando o
@@ -1094,7 +1175,12 @@
   var products = pedidoIds.map(function (id) { return PRODUCT_CATALOG[id]; }).filter(Boolean);
   if (!products.length) products = [PRODUCT_CATALOG[DEFAULT_PEDIDO[0]]];
 
-  var installType = products.some(function (p) { return p.installType === 'tecnico'; }) ? 'tecnico' : 'auto';
+  // Prioridade Técnico > Entrega (auto) > Ativação (digital, sem instalação
+  // nem entrega física — streamings avulsos do Carrossel de Adicionais):
+  // 'ativacao' só quando o pedido não tem NENHUM produto técnico ou 'auto'.
+  var installType = products.some(function (p) { return p.installType === 'tecnico'; }) ? 'tecnico'
+    : products.some(function (p) { return p.installType === 'auto'; }) ? 'auto'
+    : 'ativacao';
   var hasMobilePlan = products.some(function (p) { return p.categoria === 'celular'; });
 
   // ===== Persistência dos adicionais escolhidos =====
@@ -1630,6 +1716,7 @@
     document.getElementById('agendamentoContainer').hidden = locked || installType !== 'tecnico';
     document.getElementById('entregaContainer').hidden = locked || installType !== 'auto' || !hasPhysicalDelivery;
     document.getElementById('atualizacaoPlanoContainer').hidden = locked || !showAtualizacaoPlano;
+    document.getElementById('ativacaoServicoContainer').hidden = locked || installType !== 'ativacao';
 
     // Prévia trancada (título a 30%) enquanto locked; some assim que o real
     // aparece logo depois dela (ver comentário no HTML).
@@ -2261,6 +2348,99 @@
     });
   }
 
+  // ===== Upsell — oferece o produto de menor valor entre Celular/Banda
+  // Larga/TV que a posse ainda não possui (nem já está neste pedido).
+  // Figma "Checkout exclusivo - M6", node 13214:6185. Regra de negócio
+  // (Eve, 2026-09-28): elegibilidade é sobre POSSE (mesma fonte que
+  // OWNED_CATEGORIES/isOwnedCategory acima), não sobre o pedido em si —
+  // mas um produto da categoria já presente NESTE pedido também conta como
+  // "possuído" pro cálculo, senão o componente ofereceria de novo algo que
+  // o cliente já está comprando agora mesmo (caso não coberto pelas regras
+  // da Eve porque ela descreveu só em termos de posse — extensão de bom
+  // senso, avisar se não for o esperado).
+  // Prioridade quando falta mais de 1 categoria: Banda Larga > Celular > TV
+  // — decorre da tabela que a Eve passou (ver [[upsell_checkout]] na
+  // memória do projeto pra a dedução completa, caso a regra precise mudar).
+  var UPSELL_PRIORITY = ['internet', 'celular', 'tv'];
+  var upsellDismissed = false;
+
+  function computeUpsellTarget() {
+    var possuiEfetivo = {};
+    OWNED_CATEGORIES.forEach(function (c) { possuiEfetivo[c] = true; });
+    products.forEach(function (p) { possuiEfetivo[p.categoria] = true; });
+    var faltando = UPSELL_PRIORITY.filter(function (c) { return !possuiEfetivo[c]; });
+    if (!faltando.length) return null;
+    var categoria = faltando[0];
+    var candidatos = Object.keys(PRODUCT_CATALOG)
+      .map(function (id) { return PRODUCT_CATALOG[id]; })
+      .filter(function (p) { return p.categoria === categoria; })
+      .sort(function (a, b) { return a.preco - b.preco; });
+    return candidatos.length ? candidatos[0] : null;
+  }
+
+  // Mesma regra de desconto por categoria de sempre (CATEGORY_DISCOUNTS,
+  // ver acima) — como o alvo do upsell nunca é uma categoria já presente no
+  // pedido (ver possuiEfetivo acima), adicioná-lo sempre resulta em 2+
+  // categorias distintas no carrinho, então o desconto da categoria alvo
+  // (se ela tiver uma, ver CATEGORY_DISCOUNTS — Internet nunca tem) sempre
+  // se aplica quando exibido, sem precisar checar de novo aqui.
+  function upsellCardHtml(product, rowActions) {
+    var desconto = CATEGORY_DISCOUNTS[product.categoria] || 0;
+    var precoFinal = desconto ? Math.round((product.preco - desconto) * 100) / 100 : product.preco;
+    var info = CATEGORIA_INFO[product.categoria] || {};
+    return '<div class="upsell-card">' +
+      '<div class="upsell-card-inner">' +
+        '<div class="upsell-top-row">' +
+          '<span class="upsell-tag"><i class="mdn-Icon-mais"></i>Aproveite e inclua</span>' +
+          '<button type="button" class="upsell-close" aria-label="Fechar" onclick="dismissUpsell()"><i class="mdn-Icon-circulo-fechar"></i></button>' +
+        '</div>' +
+        '<div class="upsell-product-row">' +
+          '<div class="upsell-product-icon">' + iconHtml(info.icon) + '</div>' +
+          '<p class="upsell-product-name">' + product.nome + '</p>' +
+        '</div>' +
+        '<div class="upsell-price">' +
+          (desconto ? '<p class="upsell-price-was">De R$ ' + formatBRL(product.preco) + ' por:</p>' : '') +
+          '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(precoFinal) + '<span class="price-suffix">/mês</span></div>' +
+        '</div>' +
+        '<div class="upsell-actions' + (rowActions ? ' upsell-actions--row' : '') + '">' +
+          '<button type="button" class="agendamento-btn agendamento-btn-secondary" onclick="addUpsellToOrder(\'' + product.id + '\')">Adicionar ao pedido</button>' +
+          '<button type="button" class="upsell-later" onclick="dismissUpsell()">Agora não</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderUpsell() {
+    var mounts = document.querySelectorAll('[data-role="upsell-mount"]');
+    if (!mounts.length) return;
+    var target = upsellDismissed ? null : computeUpsellTarget();
+    mounts.forEach(function (mount) {
+      if (!target) { mount.hidden = true; mount.innerHTML = ''; return; }
+      mount.hidden = false;
+      mount.innerHTML = upsellCardHtml(target, mount.dataset.variant === 'desktop');
+    });
+  }
+
+  // "Agora não" e o X fazem a mesma coisa: escondem o componente só nesta
+  // visualização da página (estado em memória, não persiste em storage —
+  // um reload por outro motivo, ex. remover produto, deixa o upsell
+  // reaparecer, o que é o esperado pra um aviso dispensável, não uma
+  // preferência permanente).
+  function dismissUpsell() {
+    upsellDismissed = true;
+    renderUpsell();
+  }
+
+  // "Adicionar ao pedido": funde o produto no pedido e recarrega — mesmo
+  // padrão já usado por confirmRemoveProduct() (reload em vez de tentar
+  // atualizar ao vivo cada peça dependente de `products`: Action Cards,
+  // installType, Agendamento/Entrega/Atualização/Ativação, totais, etc.).
+  function addUpsellToOrder(produtoId) {
+    var novos = pedidoIds.concat([produtoId]);
+    try { sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(novos)); } catch (e) {}
+    window.location.reload();
+  }
+
   function toggleFooter() {
     var info = document.querySelector('.footer-expanded-info');
     var icon = document.getElementById('footerToggleIcon');
@@ -2349,7 +2529,12 @@
       }).filter(Boolean);
       var extra = selectedItems.reduce(function (sum, item) { return sum + item.preco; }, 0);
 
-      orderProducts.push({ name: inst.product.nome, icon: icon, price: basePrice });
+      // id/categoria (2026-09-28): antes o pedido salvo só tinha
+      // name/icon/price — o upsell da tela de conclusão (ver
+      // [[upsell_conclusao]]) precisa saber a categoria de cada produto já
+      // comprado pra calcular quais categorias ainda faltam, sem precisar
+      // adivinhar pelo nome.
+      orderProducts.push({ id: inst.product.id, categoria: inst.product.categoria, name: inst.product.nome, icon: icon, price: basePrice });
       selectedItems.forEach(function (item) { addons.push({ name: item.name, price: item.preco }); });
       total += basePrice + extra;
     });
@@ -2382,6 +2567,7 @@
   renderStreamingsServicos();
   renderTermos();
   renderActionCards();
+  renderUpsell();
   renderPermanece();
   initConfigMovel();
   initCadastroPrePago();

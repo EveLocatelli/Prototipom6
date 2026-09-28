@@ -20,6 +20,7 @@
     --gray-dark:#525252;
     --gray-line:#dbdbdb;
     --bg-page:#f8f8f8;
+    --teal-dark:#005c66;
   }
 
   /* Breakpoints responsivos */
@@ -308,6 +309,88 @@
   .termos-item-icon:active{transform:scale(0.9);}
   .termos-item-icon i{font-size:16px;line-height:1;color:#fff;}
 
+  /* ===== Upsell "Complemente seu plano" (Figma "Tela de Conclusão - M6",
+     node 12969:24129) — oferta o mais barato entre Celular, Banda Larga e
+     TV que ainda falta (posse + o que acabou de ser comprado), até 3 cards.
+     Reaproveita as classes de picker de data/período de checkout.html
+     (agendamento-periods, agendamento-period, agendamento-radio,
+     agendamento-calendar, agendamento-day, agendamento-actions,
+     agendamento-btn, mesmos nomes, sem conflito aqui — este arquivo não
+     tinha essas classes) pro estado "Confirme sua instalação". Ver
+     [[upsell_conclusao]]. ===== */
+  .uc-card{background:var(--red-dark);border-radius:24px;padding:32px;width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:24px;color:#fff;margin-top:24px;}
+  .uc-header{display:flex;flex-direction:column;gap:8px;}
+  .uc-header-row{display:flex;align-items:center;gap:4px;}
+  .uc-header-row i{font-size:24px;line-height:1;flex-shrink:0;}
+  .uc-title{font-family:'AMX', sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff;}
+  .uc-subtitle{font-size:16px;font-weight:400;margin:0;color:#fff;}
+  .uc-products{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+  .uc-products::-webkit-scrollbar{display:none;}
+  .uc-product-card{flex:0 0 149px;background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;position:relative;box-sizing:border-box;}
+  .uc-product-card.active{border-color:var(--red);}
+  .uc-product-icon{font-size:24px;line-height:1;color:var(--ink);display:block;}
+  .uc-product-title{display:flex;flex-direction:column;width:100%;}
+  .uc-product-cat{font-size:12px;font-weight:500;margin:0;color:var(--gray-dark);}
+  .uc-product-name{font-size:16px;font-weight:700;margin:0;color:var(--ink);}
+  .uc-product-price{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+  .uc-product-price .cents-suffix{font-size:12px;}
+  .uc-checkbox-wrap{position:absolute;top:9px;right:11px;width:24px;height:24px;}
+  .uc-checkbox{appearance:none;-webkit-appearance:none;margin:0;width:24px;height:24px;border:1px solid var(--gray-line);border-radius:4px;background:#fff;cursor:pointer;position:absolute;inset:0;}
+  .uc-checkbox:checked{background:var(--red);border-color:var(--red);}
+  .uc-checkbox-check{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;pointer-events:none;opacity:0;}
+  .uc-checkbox:checked + .uc-checkbox-check{opacity:1;}
+  .uc-divider{height:1px;width:100%;background:var(--gray-line);flex-shrink:0;}
+  .uc-footer{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .uc-price-block{display:flex;flex-direction:column;}
+  .uc-price-label{font-size:12px;font-weight:700;margin:0;color:#fff;}
+  .uc-price-value{font-size:16px;font-weight:700;margin:0;color:#fff;}
+  .uc-price-value .big{font-size:24px;font-family:'AMX', sans-serif;font-weight:700;}
+  .uc-btn-yellow{background:var(--yellow, #ffc722);border:1px solid var(--yellow, #ffc722);border-radius:500px;height:48px;padding:8px 32px;font-size:16px;font-weight:500;color:var(--ink);cursor:pointer;width:100%;font-family:inherit;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .uc-btn-yellow:hover{filter:brightness(0.95);}
+  .uc-btn-yellow:active{transform:scale(0.98);}
+  .uc-btn-yellow:disabled{opacity:0.5;cursor:not-allowed;}
+  .uc-link{background:none;border:none;color:var(--ink);font-size:16px;font-weight:500;cursor:pointer;padding:0;font-family:inherit;text-align:center;width:100%;}
+  .uc-done{display:flex;align-items:center;gap:8px;}
+  .uc-done i{font-size:24px;line-height:1;color:#fff;flex-shrink:0;}
+  .uc-done-title{font-family:'AMX', sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff;}
+  .uc-done-details{display:flex;flex-direction:column;gap:0;}
+  .uc-done-details p{margin:0;font-size:16px;font-weight:700;color:#fff;}
+
+  /* Card agora vive dentro de .summary-col (438px no desktop, mesma
+     largura do Resumo do pedido — nunca mais largo que isso), então os
+     produtos continuam em carrossel horizontal com scroll em QUALQUER
+     breakpoint (3 cards de 149px não cabem lado a lado em 438px) — sem
+     override de "desktop vira grid" que fazia sentido só quando o card
+     era full-width. */
+
+  /* Estado "Confirme sua instalação": container próprio com fundo BRANCO
+     (Figma "Container agendamento") — reaproveita as classes de picker de
+     data/período de checkout.html quase 1:1 (mesmas cores dark-on-white do
+     arquivo original, sem override nenhum, já que agora ficam dentro de um
+     container branco, não mais direto no card vermelho). */
+  .uc-white-box{background:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:32px;width:100%;box-sizing:border-box;color:var(--ink);}
+  .uc-wb-section{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .uc-wb-label{display:flex;align-items:flex-end;gap:8px;font-size:16px;font-weight:700;color:var(--ink);margin:0;}
+  .uc-wb-label i{font-size:24px;line-height:1;}
+  .uc-wb-value{font-size:16px;font-weight:400;color:var(--ink);margin:0;}
+  .agendamento-periods{display:flex;gap:24px;flex-wrap:wrap;width:100%;}
+  .agendamento-period{display:flex;flex-direction:column;gap:8px;background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);}
+  .agendamento-period-heading{display:flex;align-items:center;gap:16px;font-size:20px;font-weight:500;}
+  .agendamento-period-radio{display:flex;align-items:end;gap:16px;font-size:16px;font-weight:400;color:var(--ink);}
+  .agendamento-radio{width:24px;height:24px;flex-shrink:0;border:2px solid var(--gray-line);border-radius:50%;background:#fff;position:relative;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .agendamento-radio.active::after{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--teal-dark);}
+  .agendamento-calendar-row{display:flex;align-items:center;gap:8px;width:100%;min-width:0;}
+  .agendamento-calendar{display:flex;gap:8px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;}
+  .agendamento-calendar::-webkit-scrollbar{display:none;}
+  .agendamento-day{flex:0 0 auto;padding:24px 16px;border-radius:8px;border:1px solid var(--gray-line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-family:'Roboto', sans-serif;font-weight:500;font-size:20px;color:var(--ink);white-space:nowrap;transition:background 0.2s cubic-bezier(0.2,0,0,1), color 0.2s cubic-bezier(0.2,0,0,1);}
+  .agendamento-day span{display:block;line-height:1.3;}
+  .agendamento-day.selected{background:var(--red-dark);border-color:var(--red-dark);color:#fff;}
+  .agendamento-actions{display:flex;flex-direction:column;gap:16px;width:100%;align-items:center;}
+  .agendamento-btn{height:48px;width:100%;border-radius:500px;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;transition:filter 0.2s cubic-bezier(0.2,0,0,1), background 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .agendamento-btn:active{transform:scale(0.98);}
+  .agendamento-btn-primary{background:var(--yellow, #ffc722);border:1px solid var(--yellow, #ffc722);color:var(--ink);}
+  .agendamento-btn-primary:hover{filter:brightness(0.95);}
+
   /* ===== Mobile-only header adjustments (confirmado no frame Figma
      "Conclusao Box Mobile": sem ícones de acessibilidade e "Sair" só ícone) ===== */
   .topbar-exit-label{display:inline;}
@@ -515,6 +598,13 @@
             <p class="summary-total-note">ajustado à sua fatura</p>
           </div>
         </div>
+
+        <!-- Upsell "Complemente seu plano" — encaixado logo abaixo do
+             Resumo do pedido, dentro de .summary-col, mesma largura desse
+             componente em qualquer breakpoint (438px desktop / 100% mobile,
+             ambos herdados da coluna). Figma "Tela de Conclusão - M6",
+             node 12969:25231. Ver [[upsell_conclusao]]. -->
+        <div class="uc-card" id="ucCard" hidden></div>
       </div>
 
       <!-- Avisos -->
@@ -594,6 +684,29 @@
           </div>
         </div>
 
+        <!-- Ativação do serviço — pedidos formados só por produtos digitais
+             (installType 'ativacao': streamings avulsos do Carrossel de
+             Adicionais, sem nada físico pra receber nem visita técnica).
+             SUBSTITUI os 3 cards acima, nunca soma — mesma regra de
+             prioridade de checkout.html (Técnico > Entrega > Atualização do
+             plano > Ativação do serviço). -->
+        <div class="agendamento-card" id="ativacaoServicoCard" hidden>
+          <div class="info-card-copy">
+            <p class="agendamento-card-title">Ativação do serviço</p>
+            <p class="info-card-desc">Seu serviço será ativado automaticamente após a confirmação do pedido.</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-celular-5g"></i>Como funciona</p>
+            <p class="agendamento-block-value">Você receberá as instruções de ativação por e-mail e SMS.</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo de ativação</p>
+            <p class="agendamento-block-value">Até 24 horas</p>
+          </div>
+        </div>
+
         <!-- Ative os seus streamings -->
         <div class="info-card">
           <div class="info-card-copy">
@@ -650,6 +763,8 @@
 
 <!-- Componente real Mondrian Footer, variante "Public Simple"
      (https://mondrian.claro.com.br/snippets/vanilla/index.html?path=/story/componentes-web-footer--public-simple) -->
+<script src="product-catalog.js"></script>
+
 <footer class="mdn-Footer mdn-Footer--default mdn-Footer--signature mdn-Footer--simple" role="contentinfo">
   <div class="mdn-Container">
     <div class="mdn-Footer-content">
@@ -806,6 +921,14 @@
     const showAtualizacaoPlano = !!order.hasCelularPlanChange && !isTecnico && !hasPhysicalDelivery;
     document.getElementById('atualizacaoPlanoCard').hidden = !showAtualizacaoPlano;
 
+    // Ativação do serviço — pedido inteiro é 'ativacao' (só produtos
+    // digitais, nenhum técnico/entrega física envolvido). Não depende de
+    // hasPhysicalDelivery/hasCelularPlanChange: um plano de Celular sempre
+    // tem installType 'auto', então um pedido só chega a 'ativacao' quando
+    // não há nenhum produto de categoria possuída/física no meio.
+    const showAtivacaoServico = order.installType === 'ativacao';
+    document.getElementById('ativacaoServicoCard').hidden = !showAtivacaoServico;
+
     if (isTecnico) {
       document.getElementById('step2Title').textContent = 'Instalação';
       document.getElementById('step2Desc').innerHTML = 'O técnico chegará à sua casa no <strong>dia agendado para fazer a instalação</strong>. Você poderá <strong>acompanhar tudo pelo app</strong>.';
@@ -815,6 +938,9 @@
       // útil") fica em negrito, diferente dos outros dois ramos.
       document.getElementById('step2Title').textContent = 'Atualização do plano';
       document.getElementById('step2Desc').innerHTML = 'Seu novo plano será atualizado em nosso sistema no prazo de até <strong>24 horas</strong>.';
+    } else if (showAtivacaoServico) {
+      document.getElementById('step2Title').textContent = 'Ativação';
+      document.getElementById('step2Desc').innerHTML = 'Seu serviço <strong>será ativado</strong> em nosso sistema no prazo de até <strong>24 horas</strong>.';
     } else {
       document.getElementById('step2Title').textContent = 'Entrega';
       document.getElementById('step2Desc').innerHTML = 'Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.';
@@ -865,6 +991,320 @@
       periodEl.textContent = p.label + ' - ' + p.summaryRange;
     }
   }
+
+  // ===== Upsell "Complemente seu plano" (Figma "Tela de Conclusão - M6",
+  // node 12969:24129) — ver [[upsell_conclusao]] na memória do projeto.
+  // Mesma lógica de prioridade do upsell do checkout.html ([[upsell_checkout]]:
+  // Banda Larga > Celular > TV), mas aqui SEM cortar em "só a 1ª categoria
+  // faltante" — mostra até 3 cards, um por categoria que falta (posse + o
+  // que já está em order.products), cada um o mais barato daquela
+  // categoria. Escopo combinado com a Eve: só Agendamento/Entrega/Ativação
+  // são replicados aqui — Config Móvel, cadastro Pré-pago, "Atualização do
+  // plano"/"Permanece no seu plano" ficam de fora por agora.
+  var UC_CATEGORIA_INFO = {
+    internet: { label: 'Internet', icon: 'mdn-Icon-wifi' },
+    celular: { label: 'Celular', icon: 'mdn-Icon-celular-5g' },
+    tv: { label: 'TV', icon: 'mdn-Icon-tv' },
+  };
+  var UC_PRIORITY = ['internet', 'celular', 'tv'];
+  // Mesma regra de checkout.html (CATEGORY_DISCOUNTS) — duplicada aqui
+  // porque o projeto não usa módulos JS, cada arquivo é autocontido.
+  var UC_CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
+
+  // Mesmo mecanismo de getPosseCheckoutCfg() em checkout.html, só os campos
+  // que este componente precisa (categoriasPossui).
+  function getPosseUpsellCategorias() {
+    if (typeof POSSE_CONFIGS === 'undefined') return [];
+    var lista = Object.keys(POSSE_CONFIGS).map(function (id) { return POSSE_CONFIGS[id]; })
+      .sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+    var defaultCfg = lista.length ? lista[0] : null;
+    var posseId = sessionStorage.getItem('posseAtiva');
+    var cfg = (posseId && POSSE_CONFIGS[posseId]) || defaultCfg;
+    if (!cfg) return [];
+    return (cfg.categoriasPossui && cfg.categoriasPossui.length) ? cfg.categoriasPossui : (defaultCfg ? defaultCfg.categoriasPossui || [] : []);
+  }
+
+  function ucIconClass(product) {
+    return (product.icone && product.icone.kind === 'mdn' && product.icone.class) || 'mdn-Icon-mais';
+  }
+
+  // "Já possui" = posse ATUAL + categoria de cada produto que já está em
+  // order.products (a compra que acabou de ser feita) — mesma extensão de
+  // bom senso do upsell do checkout, agora explicitamente pedida pela Eve
+  // ("a posse atual do cliente + o produto que ele acabou de contratar").
+  function computeUpsellCandidates(order) {
+    if (typeof PRODUCT_CATALOG === 'undefined') return [];
+    var possuiEfetivo = {};
+    getPosseUpsellCategorias().forEach(function (c) { possuiEfetivo[c] = true; });
+    (order.products || []).forEach(function (p) {
+      var categoria = p.categoria || (p.id && PRODUCT_CATALOG[p.id] && PRODUCT_CATALOG[p.id].categoria);
+      if (categoria) possuiEfetivo[categoria] = true;
+    });
+    var faltando = UC_PRIORITY.filter(function (c) { return !possuiEfetivo[c]; });
+    return faltando.map(function (categoria) {
+      var candidatos = Object.keys(PRODUCT_CATALOG).map(function (id) { return PRODUCT_CATALOG[id]; })
+        .filter(function (p) { return p.categoria === categoria; })
+        .sort(function (a, b) { return a.preco - b.preco; });
+      return candidatos[0];
+    }).filter(Boolean);
+  }
+
+  // ===== Estado do componente =====
+  var ucCandidates = [];
+  var ucSelected = {};
+  var ucStep = 'offer'; // 'offer' -> 'confirm' (só se algum selecionado for técnico) -> 'done'
+  var ucFormOpen = false;
+  var ucDoneProducts = [];
+  var UC_WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  var UC_WEEKDAYS_FULL = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  var UC_PERIODS = {
+    manha: { label: 'Manhã', range: 'Das 08:00 — Até 12:00', icon: 'mdn-Icon-sol' },
+    tarde: { label: 'Tarde', range: 'Das 12:00 — Até 18:00', icon: 'mdn-Icon-sol-se-pondo' },
+  };
+  var UC_DAYS_COUNT = 14;
+
+  function ucBuildDays() {
+    var days = [];
+    var today = new Date();
+    for (var i = 1; i <= UC_DAYS_COUNT; i++) days.push(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i));
+    return days;
+  }
+  var ucDays = ucBuildDays();
+
+  // Se já existe uma visita técnica confirmada (pedido original já era
+  // 'tecnico'), a sugestão parte dessa mesma data/período — 1 única visita
+  // pra vários produtos técnicos, mesma regra de sempre (ver
+  // [[combo_install_type_rule]]). Sem nada salvo, sugere o 1º dia
+  // disponível + Manhã, mesmo default do Agendamento no checkout.
+  function ucLoadExistingAgendamento() {
+    try {
+      var saved = JSON.parse(localStorage.getItem('agendamentoConfirmado'));
+      if (saved && saved.date && saved.period) {
+        var d = new Date(saved.date);
+        if (!isNaN(d.getTime())) return { period: saved.period, date: d };
+      }
+    } catch (e) {}
+    return null;
+  }
+  var ucExisting = ucLoadExistingAgendamento();
+  var ucDraft = { period: (ucExisting && ucExisting.period) || 'manha', date: (ucExisting && ucExisting.date) || ucDays[0] };
+
+  function ucFormatDayMonth(d) { return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0'); }
+
+  function ucProductCardHtml(product) {
+    var info = UC_CATEGORIA_INFO[product.categoria] || {};
+    var checked = !!ucSelected[product.id];
+    return '<label class="uc-product-card' + (checked ? ' active' : '') + '">' +
+      '<i class="' + (info.icon || '') + ' uc-product-icon"></i>' +
+      '<div class="uc-product-title">' +
+        '<p class="uc-product-cat">' + (info.label || '') + '</p>' +
+        '<p class="uc-product-name">' + product.nome + '</p>' +
+      '</div>' +
+      '<p class="uc-product-price">R$ ' + formatPriceBRL(product.preco) + '<span class="cents-suffix">/mês</span></p>' +
+      '<span class="uc-checkbox-wrap">' +
+        '<input type="checkbox" class="uc-checkbox" ' + (checked ? 'checked' : '') + ' onchange="toggleUcProduct(\'' + product.id + '\')">' +
+        '<i class="mdn-Icon-check uc-checkbox-check"></i>' +
+      '</span>' +
+    '</label>';
+  }
+
+  function ucSelectedList() { return ucCandidates.filter(function (p) { return ucSelected[p.id]; }); }
+  function ucSelectedTotal() { return ucSelectedList().reduce(function (sum, p) { return sum + p.preco; }, 0); }
+
+  function renderUpsellConclusao() {
+    var card = document.getElementById('ucCard');
+    if (!ucCandidates.length) { card.hidden = true; return; }
+    card.hidden = false;
+
+    if (ucStep === 'done') {
+      var doneNomes = ucDoneProducts.map(function (p) { return p.nome; }).join(', ');
+      var doneTotal = ucDoneProducts.reduce(function (s, p) { return s + p.preco; }, 0);
+      card.innerHTML =
+        '<div class="uc-done">' +
+          '<i class="mdn-Icon-check-circulo"></i>' +
+          '<p class="uc-done-title">Pedido atualizado</p>' +
+        '</div>' +
+        '<div class="uc-done-details">' +
+          '<p>' + doneNomes + '</p>' +
+          '<p>+ R$ ' + formatPriceBRL(doneTotal) + '/mês</p>' +
+        '</div>';
+      return;
+    }
+
+    if (ucStep === 'confirm') {
+      var precisaTecnico = ucSelectedList().some(function (p) { return p.installType === 'tecnico'; });
+      if (!precisaTecnico) { finalizeUcOrder(); return; }
+
+      var headerHtml =
+        '<div class="uc-header">' +
+          '<div class="uc-header-row"><i class="mdn-Icon-instalacao"></i><p class="uc-title">Confirme sua instalação</p></div>' +
+          '<p class="uc-subtitle">Este pedido requer instalação. Ajuste a data e o período, se preferir.</p>' +
+        '</div>';
+      var enderecoHtml =
+        '<div class="uc-wb-section">' +
+          '<p class="uc-wb-label"><i class="mdn-Icon-casa"></i>Endereço de instalação</p>' +
+          '<p class="uc-wb-value">R. Nome da Rua, 0000<br>Cidade - UF</p>' +
+        '</div>';
+
+      if (!ucFormOpen) {
+        card.innerHTML = headerHtml +
+          '<div class="uc-white-box">' +
+            enderecoHtml +
+            '<div class="uc-wb-section">' +
+              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Sugestão de agendamento</p>' +
+              '<p class="uc-wb-value"><strong>Data:</strong> ' + ucFormatDayMonth(ucDraft.date) + ' - ' + UC_WEEKDAYS_FULL[ucDraft.date.getDay()] + '</p>' +
+              '<p class="uc-wb-value"><strong>Período:</strong> ' + UC_PERIODS[ucDraft.period].label + ' - ' + UC_PERIODS[ucDraft.period].range + '</p>' +
+            '</div>' +
+            '<div class="agendamento-actions">' +
+              '<button type="button" class="agendamento-btn agendamento-btn-primary" onclick="ucConfirmAgendamento()">Confirmar agendamento</button>' +
+              '<button type="button" class="uc-link" onclick="ucFormOpen=true;renderUpsellConclusao();">Alterar</button>' +
+            '</div>' +
+          '</div>';
+      } else {
+        var periodsHtml = Object.keys(UC_PERIODS).map(function (key) {
+          var p = UC_PERIODS[key];
+          var active = ucDraft.period === key;
+          return '<button type="button" class="agendamento-period" onclick="ucSelectPeriod(\'' + key + '\')">' +
+            '<span class="agendamento-period-heading"><i class="' + p.icon + '"></i><span>' + p.label + '</span></span>' +
+            '<span class="agendamento-period-radio"><span class="agendamento-radio' + (active ? ' active' : '') + '"></span><span>' + p.range + '</span></span>' +
+          '</button>';
+        }).join('');
+        var daysHtml = ucDays.map(function (d) {
+          var sel = d.getFullYear() === ucDraft.date.getFullYear() && d.getMonth() === ucDraft.date.getMonth() && d.getDate() === ucDraft.date.getDate();
+          return '<button type="button" class="agendamento-day' + (sel ? ' selected' : '') + '" onclick="ucSelectDay(\'' + d.toISOString() + '\')"><span>' + UC_WEEKDAYS_SHORT[d.getDay()] + '</span><span>' + ucFormatDayMonth(d) + '</span></button>';
+        }).join('');
+        card.innerHTML = headerHtml +
+          '<div class="uc-white-box">' +
+            enderecoHtml +
+            '<div class="uc-wb-section">' +
+              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Agendamento da instalação</p>' +
+              '<p class="uc-wb-value">Escolha o período e a data da visita técnica:</p>' +
+            '</div>' +
+            '<div class="agendamento-periods">' + periodsHtml + '</div>' +
+            '<div class="agendamento-calendar-row"><div class="agendamento-calendar">' + daysHtml + '</div></div>' +
+            '<div class="agendamento-actions">' +
+              '<button type="button" class="agendamento-btn agendamento-btn-primary" onclick="ucConfirmAgendamento()">Confirmar agendamento</button>' +
+              '<button type="button" class="uc-link" onclick="ucFormOpen=false;renderUpsellConclusao();">Cancelar</button>' +
+            '</div>' +
+          '</div>';
+      }
+      return;
+    }
+
+    // ucStep === 'offer'
+    var count = ucSelectedList().length;
+    var footerHtml = count > 0
+      ? '<div class="uc-divider"></div>' +
+        '<div class="uc-footer">' +
+          '<div class="uc-price-block">' +
+            '<p class="uc-price-label">' + count + (count === 1 ? ' oferta selecionada' : ' ofertas selecionadas') + '</p>' +
+            '<p class="uc-price-value">+ R$ <span class="big">' + formatPriceBRL(ucSelectedTotal()) + '</span> /mês</p>' +
+          '</div>' +
+          '<button type="button" class="uc-btn-yellow" onclick="handleUcAtualizar()">Atualizar meu pedido</button>' +
+        '</div>'
+      : '';
+    card.innerHTML =
+      '<div class="uc-header">' +
+        '<p class="uc-title">Complemente seu plano</p>' +
+        '<p class="uc-subtitle">Selecione um ou mais para incluir na sua compra.</p>' +
+      '</div>' +
+      '<div class="uc-products">' + ucCandidates.map(ucProductCardHtml).join('') + '</div>' +
+      footerHtml;
+  }
+
+  function toggleUcProduct(id) {
+    if (ucSelected[id]) delete ucSelected[id]; else ucSelected[id] = true;
+    renderUpsellConclusao();
+  }
+
+  function handleUcAtualizar() {
+    if (!ucSelectedList().length) return;
+    ucStep = 'confirm';
+    ucFormOpen = false;
+    renderUpsellConclusao();
+  }
+
+  function ucSelectPeriod(period) { ucDraft.period = period; renderUpsellConclusao(); }
+  function ucSelectDay(iso) { ucDraft.date = new Date(iso); renderUpsellConclusao(); }
+
+  function ucConfirmAgendamento() {
+    try { localStorage.setItem('agendamentoConfirmado', JSON.stringify({ period: ucDraft.period, date: ucDraft.date.toISOString() })); } catch (e) {}
+    finalizeUcOrder();
+  }
+
+  // Mesma regra de desconto por categoria de checkout.html
+  // (CATEGORY_DISCOUNTS/[[checkout_dynamic_page]]), reaplicada sobre a
+  // lista final de produtos (antigos + upsell) pro Resumo do Pedido
+  // continuar batendo com o resto da jornada. Um produto por categoria
+  // recebe o desconto fixo dessa categoria, só quando o pedido final tem
+  // 2+ categorias distintas — Internet nunca desconta (só "habilita").
+  function ucApplyCategoryDiscounts(produtos) {
+    var categoriasNoCarrinho = {};
+    produtos.forEach(function (p) { if (p.categoria) categoriasNoCarrinho[p.categoria] = true; });
+    if (Object.keys(categoriasNoCarrinho).length < 2) return produtos;
+    var jaDescontado = {};
+    return produtos.map(function (p) {
+      var desconto = (p.categoria && !jaDescontado[p.categoria]) ? (UC_CATEGORY_DISCOUNTS[p.categoria] || 0) : 0;
+      if (desconto) jaDescontado[p.categoria] = true;
+      if (!desconto) return p;
+      return Object.assign({}, p, { price: Math.round((p.price - desconto) * 100) / 100 });
+    });
+  }
+
+  // Confirma a atualização de verdade: funde os produtos selecionados no
+  // upsell com order.products, recalcula installType/hasMobilePlan/
+  // hasPhysicalDelivery/total com as MESMAS regras de checkout.html, salva
+  // de volta em sessionStorage.claroCheckoutOrder (decisão confirmada com a
+  // Eve: sobrevive a um F5) e reusa renderOrder() — já existia, cobre
+  // sozinho todo o resto do Resumo/Avisos/steps a partir do order object.
+  function finalizeUcOrder() {
+    var order = loadOrder();
+    var selecionados = ucSelectedList();
+    var novos = selecionados.map(function (p) {
+      return { id: p.id, categoria: p.categoria, name: p.nome, icon: ucIconClass(p), price: p.preco };
+    });
+    ucDoneProducts = selecionados;
+
+    var todosProdutos = (order.products || []).concat(novos);
+    todosProdutos = ucApplyCategoryDiscounts(todosProdutos);
+
+    var todosCategorias = todosProdutos.map(function (p) { return p.categoria; }).filter(Boolean);
+    var installTypes = todosProdutos.map(function (p) {
+      var full = p.id && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[p.id];
+      return full ? full.installType : null;
+    });
+    var novoInstallType = (installTypes.indexOf('tecnico') !== -1 || order.installType === 'tecnico') ? 'tecnico'
+      : (installTypes.indexOf('auto') !== -1 || order.installType === 'auto') ? 'auto'
+      : 'ativacao';
+    var novoHasMobilePlan = !!order.hasMobilePlan || todosCategorias.indexOf('celular') !== -1;
+    // Produto novo (upsell) nunca é troca de plano já possuído — as
+    // categorias ofertadas são sempre as que faltavam — então
+    // hasCelularPlanChange não muda. hasPhysicalDelivery só pode passar de
+    // false pra true (surgiu algo físico novo pra entregar), nunca o
+    // contrário.
+    var novoHasPhysicalDelivery = order.hasPhysicalDelivery !== false || selecionados.some(function (p) { return p.installType === 'auto'; });
+
+    var novoAddonsTotal = Array.isArray(order.addons) ? order.addons.reduce(function (s, a) { return s + a.price; }, 0) : 0;
+    var novoTotal = todosProdutos.reduce(function (s, p) { return s + p.price; }, 0) + novoAddonsTotal;
+
+    var novoOrder = Object.assign({}, order, {
+      products: todosProdutos,
+      installType: novoInstallType,
+      hasMobilePlan: novoHasMobilePlan,
+      hasPhysicalDelivery: novoHasPhysicalDelivery,
+      total: Math.round(novoTotal * 100) / 100,
+    });
+    try { sessionStorage.setItem('claroCheckoutOrder', JSON.stringify(novoOrder)); } catch (e) {}
+
+    ucStep = 'done';
+    renderOrder();
+    renderUpsellConclusao();
+  }
+
+  (function initUpsellConclusao() {
+    ucCandidates = computeUpsellCandidates(loadOrder());
+    renderUpsellConclusao();
+  })();
 </script>
 
 </body>

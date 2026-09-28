@@ -3098,6 +3098,873 @@ const PRODUCT_CATALOG = {
     "selos": [],
     "badgeCategoria": "Telefone fixo",
     "adicionais": []
+  },
+  "wifi-mesh-2": {
+    "id": "wifi-mesh-2",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "2 Extensores Wi-Fi Mesh",
+    "preco": 30.0,
+    "installType": "tecnico",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-casa-wifi"
+    },
+    "descricaoCurta": "2 Extensores Wi-Fi Mesh",
+    "descricaoLonga": "Mais cobertura e estabilidade para o Wi-Fi chegar a todos os cômodos da sua casa.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - 2 Extensores Wi-Fi Mesh",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Maior cobertura de sinal",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-casa-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Mais estabilidade",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-pacote-adicional"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Dual Band (2,4 e 5GHz)",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-wifi"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "ponto-ultra": {
+    "id": "ponto-ultra",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Ponto Ultra",
+    "preco": 50.0,
+    "installType": "auto",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-casa-wifi"
+    },
+    "descricaoCurta": "Ponto Ultra",
+    "descricaoLonga": "Conexão via cabo para mais velocidade, estabilidade e desempenho em dispositivos específicos.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Ponto Ultra",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Conexão mais estável",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-casa-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Qualidade de sinal",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-velocimetro-maximo"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Fácil de instalar",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-instalacao"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "smarthome-1cam": {
+    "id": "smarthome-1cam",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Smarthome - 1 câmera",
+    "preco": 9.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-video-reuniao"
+    },
+    "descricaoCurta": "Smarthome - 1 câmera",
+    "descricaoLonga": "Monitore sua casa à distância com câmeras HD, acesso pelo celular e alertas de movimento.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Smarthome - 1 câmera",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Câmeras HD ao vivo",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-video-reuniao"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Alertas de movimentação",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-notificacao"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Gravações na nuvem",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-download"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "telecine-hd-anual": {
+    "id": "telecine-hd-anual",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Telecine HD Anual",
+    "preco": 19.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv"
+    },
+    "descricaoCurta": "Telecine HD Anual",
+    "descricaoLonga": "Os melhores filmes para você assistir quando quiser, com os canais Telecine e um catálogo completo de cinema.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Telecine HD Anual",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Estreias exclusivas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-estrela"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "6 canais Telecine",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Plano anual",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "telecine-hd-mensal": {
+    "id": "telecine-hd-mensal",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Telecine HD Mensal",
+    "preco": 29.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv"
+    },
+    "descricaoCurta": "Telecine HD Mensal",
+    "descricaoLonga": "Muito cinema em alta definição, com filmes para todos os gostos e momentos.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Telecine HD Mensal",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Estreias exclusivas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-estrela"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "6 canais Telecine",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Plano mensal",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "hbo-max-anuncios-mensal": {
+    "id": "hbo-max-anuncios-mensal",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "HBO Max com Anúncios Mensal",
+    "preco": 29.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "HBO Max com Anúncios Mensal",
+    "descricaoLonga": "Filmes, séries e produções exclusivas da HBO Max com anúncios.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - HBO Max com Anúncios Mensal",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 2 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Resolução Full HD",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-4k"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Plano mensal",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "hbo-max-anuncios-anual": {
+    "id": "hbo-max-anuncios-anual",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "HBO Max com Anúncios Anual",
+    "preco": 22.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "HBO Max com Anúncios Anual",
+    "descricaoLonga": "Tenha acesso a filmes, séries e produções exclusivas da HBO Max com anúncios durante o ano todo.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - HBO Max com Anúncios Anual",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 2 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Resolução full HD",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-4k"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Plano anual",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "hbo-max-sem-anuncios-mensal": {
+    "id": "hbo-max-sem-anuncios-mensal",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "HBO Max sem Anúncios Mensal",
+    "preco": 44.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "HBO Max sem Anúncios Mensal",
+    "descricaoLonga": "Curta filmes, séries e produções exclusivas da HBO Max sem anúncios.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - HBO Max sem Anúncios Mensal",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 2 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Resolução full HD",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-4k"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Downloads para curtir offline",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-download"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "hbo-max-sem-anuncios-anual": {
+    "id": "hbo-max-sem-anuncios-anual",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "HBO Max sem Anúncios Anual",
+    "preco": 34.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "HBO Max sem Anúncios Anual",
+    "descricaoLonga": "Aproveite filmes, séries e produções exclusivas da HBO Max sem anúncios durante o ano todo.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - HBO Max sem Anúncios Anual",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 2 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Resolução full HD",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-4k"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Downloads para curtir offline",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-download"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "amazon-prime": {
+    "id": "amazon-prime",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Amazon Prime",
+    "preco": 19.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "Amazon Prime",
+    "descricaoLonga": "Filmes, séries, músicas, benefícios de compras e muito mais em uma única assinatura.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Amazon Prime",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 3 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Conteúdos Prime vídeo",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-video-reuniao"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Benefícios Amazon Prime",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-presente"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "netflix-padrao-anuncios": {
+    "id": "netflix-padrao-anuncios",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Netflix Padrão com Anúncios",
+    "preco": 20.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "Netflix Padrão com Anúncios",
+    "descricaoLonga": "Filmes e séries em Full HD, com anúncios e até 2 telas simultâneas.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Netflix Padrão com Anúncios",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 2 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Resolução Full HD",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-4k"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Com anúncios",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "netflix-padrao": {
+    "id": "netflix-padrao",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Netflix Padrão",
+    "preco": 44.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "Netflix Padrão",
+    "descricaoLonga": "Filmes e séries em Full HD, sem anúncios e com até 2 telas simultâneas.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Netflix Padrão",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 2 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Resolução Full HD",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-4k"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Sem anúncios",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "netflix-premium": {
+    "id": "netflix-premium",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Netflix Premium",
+    "preco": 59.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "Netflix Premium",
+    "descricaoLonga": "Filmes e séries em 4K e HDR, sem anúncios, com áudio espacial e até 4 telas simultâneas.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Netflix Premium",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 4 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Resolução 4k Ultra HD",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-4k"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Sem anúncios",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "apple-tv": {
+    "id": "apple-tv",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Apple TV",
+    "preco": 34.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv-wifi"
+    },
+    "descricaoCurta": "Apple TV",
+    "descricaoLonga": "Séries e filmes exclusivos Apple Originals, com novidades e lançamentos frequentes.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Apple TV",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 5 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Conteúdos premiados e aclamados",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-estrela"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Sem anúncios",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-check"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "globoplay": {
+    "id": "globoplay",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Globoplay",
+    "preco": 22.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv"
+    },
+    "descricaoCurta": "Globoplay",
+    "descricaoLonga": "Novelas, séries, filmes, realities, programas e conteúdos da Globo, além de canais ao vivo.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Globoplay",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Maior acervo de produções brasileiras",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-estrela"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Originais Globoplay incluindo novelas, séries, filmes e mais",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-video-reuniao"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Canais ao vivo",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "f1-tv-pro": {
+    "id": "f1-tv-pro",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "F1® TV Pro",
+    "preco": 44.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv"
+    },
+    "descricaoCurta": "F1® TV Pro",
+    "descricaoLonga": "Acompanhe a Fórmula 1 ao vivo, com corridas, treinos e classificação na palma da mão.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - F1® TV Pro",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "Até 6 telas simultâneas",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv-wifi"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Transmissões de F1 ao vivo",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-video-reuniao"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Todas as temporadas do Grand Prix de F1",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
+  },
+  "premiere": {
+    "id": "premiere",
+    "categoria": "adicional",
+    "categoriaLabel": "Adicional",
+    "nome": "Premiere",
+    "preco": 29.9,
+    "installType": "ativacao",
+    "subtitulo": "",
+    "icone": {
+      "kind": "mdn",
+      "class": "mdn-Icon-tv"
+    },
+    "descricaoCurta": "Premiere",
+    "descricaoLonga": "Os principais jogos do futebol brasileiro ao vivo, com conteúdo exclusivo e acesso em diferentes dispositivos.",
+    "naCaixa": "",
+    "necessarioTer": "",
+    "categoriaTermos": "Condições da oferta - Premiere",
+    "cardDestaques": [
+      {
+        "tipo": "icone",
+        "texto": "24 horas de futebol",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-tv"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Cobertura ao vivo e online",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-video-reuniao"
+        }
+      },
+      {
+        "tipo": "icone",
+        "texto": "Jogos exclusivos",
+        "icone": {
+          "kind": "mdn",
+          "class": "mdn-Icon-estrela"
+        }
+      }
+    ],
+    "beneficios": [],
+    "detalhesDestaques": [],
+    "streamings": [],
+    "servicosDigitais": [],
+    "selos": [],
+    "badgeCategoria": "Adicional",
+    "adicionais": []
   }
 };
 const OFERTAS_COMBINADAS = {

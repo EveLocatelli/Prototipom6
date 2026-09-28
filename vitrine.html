@@ -1984,6 +1984,690 @@
     </div>
   </section>
 
+  <!-- Seção Carrossel de Adicionais — upsell de streaming/serviços extras
+       (Figma node 8507:89591). Só exibido pra posses que possuem TV e/ou
+       Banda Larga (internet) — quem possui só Celular nunca vê esse
+       carrossel. Sempre o último carrossel da zona "não possui", logo antes
+       da faixa cinza "Produtos que você já possui": posicionamento e
+       filtro de itens (data-produto-id, categoria "adicional" no catálogo)
+       são resolvidos em JS, dentro de applyPosseConfig() — ver
+       ADICIONAIS_OCULTOS_TV/ADICIONAIS_SEMPRE_VISIVEIS_COM_BL logo abaixo
+       no script. Cada card vai pro checkout como qualquer outro produto
+       (data-produto-id já é pego pelo clique delegado em .btn-yellow, ver
+       [[checkout_dynamic_page]]); installType "ativacao" (novo) cobre a
+       maioria, exceto wifi-mesh-2 (tecnico, agendamento) e ponto-ultra
+       (auto, entrega). Ícones dos bullets são melhor-esforço reaproveitando
+       classes mdn-Icon-* já usadas no projeto (catálogo completo de ícones
+       não conferido um a um) — confirmar com a Eve antes de considerar
+       definitivo. -->
+  <section class="section" id="carrossel-adicionais" data-categoria="adicionais">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="mdn-Icon-pacote-adicional"></i>
+      </div>
+      <div class="section-title">
+        <h2>Adicionais</h2>
+        <p>Complete sua experiência com mais streaming e conectividade</p>
+      </div>
+    </div>
+
+    <div class="swiper mdn-Swiper mdn-Swiper--default" data-mdn-space-between="16" id="swiper-adicionais">
+      <div class="swiper-wrapper mdn-Swiper-wrapper">
+
+      <!-- Card Adicional 1 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="0">
+<div class="card" data-produto-id="wifi-mesh-2">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>2 Extensores Wi-Fi Mesh</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Maior cobertura de sinal</span>
+            <i class="mdn-Icon-casa-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Mais estabilidade</span>
+            <i class="mdn-Icon-pacote-adicional mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Dual Band (2,4 e 5GHz)</span>
+            <i class="mdn-Icon-wifi mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">30</span><span class="cents">,00</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 2 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="1">
+<div class="card" data-produto-id="ponto-ultra">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Ponto Ultra</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Conexão mais estável</span>
+            <i class="mdn-Icon-casa-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Qualidade de sinal</span>
+            <i class="mdn-Icon-velocimetro-maximo mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Fácil de instalar</span>
+            <i class="mdn-Icon-instalacao mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Por apenas<br>3x de</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">50</span><span class="cents">,00</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 3 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="2">
+<div class="card" data-produto-id="smarthome-1cam">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Smarthome - 1 câmera</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Câmeras HD ao vivo</span>
+            <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Alertas de movimentação</span>
+            <i class="mdn-Icon-notificacao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Gravações na nuvem</span>
+            <i class="mdn-Icon-download mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">9</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 4 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="3">
+<div class="card" data-produto-id="telecine-hd-anual">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Telecine HD Anual</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Estreias exclusivas</span>
+            <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">6 canais Telecine</span>
+            <i class="mdn-Icon-tv mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Plano anual</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">19</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 5 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="4">
+<div class="card" data-produto-id="telecine-hd-mensal">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Telecine HD Mensal</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Estreias exclusivas</span>
+            <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">6 canais Telecine</span>
+            <i class="mdn-Icon-tv mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Plano mensal</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">29</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 6 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="5">
+<div class="card" data-produto-id="hbo-max-anuncios-mensal">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>HBO Max com Anúncios Mensal</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 2 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Resolução Full HD</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Plano mensal</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">29</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 7 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="6">
+<div class="card" data-produto-id="hbo-max-anuncios-anual">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>HBO Max com Anúncios Anual</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 2 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Resolução full HD</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Plano anual</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">22</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 8 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="7">
+<div class="card" data-produto-id="hbo-max-sem-anuncios-mensal">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>HBO Max sem Anúncios Mensal</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 2 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Resolução full HD</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Downloads para curtir offline</span>
+            <i class="mdn-Icon-download mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">44</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 9 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="8">
+<div class="card" data-produto-id="hbo-max-sem-anuncios-anual">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>HBO Max sem Anúncios Anual</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 2 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Resolução full HD</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Downloads para curtir offline</span>
+            <i class="mdn-Icon-download mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">34</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 10 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="9">
+<div class="card" data-produto-id="amazon-prime">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Amazon Prime</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 3 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Conteúdos Prime vídeo</span>
+            <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Benefícios Amazon Prime</span>
+            <i class="mdn-Icon-presente mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">19</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 11 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="10">
+<div class="card" data-produto-id="netflix-padrao-anuncios">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Netflix Padrão com Anúncios</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 2 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Resolução Full HD</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Com anúncios</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">20</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 12 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="11">
+<div class="card" data-produto-id="netflix-padrao">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Netflix Padrão</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 2 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Resolução Full HD</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Sem anúncios</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">44</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 13 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="12">
+<div class="card" data-produto-id="netflix-premium">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Netflix Premium</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 4 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Resolução 4k Ultra HD</span>
+            <i class="mdn-Icon-4k mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Sem anúncios</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">59</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 14 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="13">
+<div class="card" data-produto-id="apple-tv">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Apple TV</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 5 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Conteúdos premiados e aclamados</span>
+            <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Sem anúncios</span>
+            <i class="mdn-Icon-check mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">34</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 15 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="14">
+<div class="card" data-produto-id="globoplay">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Globoplay</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Maior acervo de produções brasileiras</span>
+            <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Originais Globoplay incluindo novelas, séries, filmes e mais</span>
+            <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Canais ao vivo</span>
+            <i class="mdn-Icon-tv mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">22</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 16 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="15">
+<div class="card" data-produto-id="f1-tv-pro">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>F1® TV Pro</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">Até 6 telas simultâneas</span>
+            <i class="mdn-Icon-tv-wifi mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Transmissões de F1 ao vivo</span>
+            <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Todas as temporadas do Grand Prix de F1</span>
+            <i class="mdn-Icon-tv mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">44</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      <!-- Card Adicional 17 -->
+      <div class="swiper-slide mdn-Swiper-slide" data-swiper-slide-index="16">
+<div class="card" data-produto-id="premiere">
+        <div class="card-top">
+          <div class="card-tags-row">
+            <div class="tags-group"></div>
+            <div class="context-badge">Adicional</div>
+          </div>
+          <div class="card-title-block">
+            <h3>Premiere</h3>
+          </div>
+        </div>
+        <div class="card-middle">
+          <div class="card-simple-item">
+            <span class="label">24 horas de futebol</span>
+            <i class="mdn-Icon-tv mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Cobertura ao vivo e online</span>
+            <i class="mdn-Icon-video-reuniao mdn-Icon--sm"></i>
+          </div>
+          <div class="card-simple-item">
+            <span class="label">Jogos exclusivos</span>
+            <i class="mdn-Icon-estrela mdn-Icon--sm"></i>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="price-row">
+            <span class="price-label">Valor mensal</span>
+            <div class="price-value">
+              <div class="amount"><span class="prefix">R$</span><span class="big">29</span><span class="cents">,90</span></div>
+            </div>
+          </div>
+          <button class="btn-yellow">Assinar</button>
+        </div>
+      </div>
+        </div>
+
+      </div>
+    <div class="mdn-Swiper-pagination-custom">
+      <div class="mdn-Swiper-button-prev mdn-Swiper-button-prev-7"><i aria-hidden="true" class="mdn-Icon-esquerda mdn-Icon--lg"></i></div>
+      <div class="mdn-Swiper-button-next mdn-Swiper-button-next-7"><i aria-hidden="true" class="mdn-Icon-direita mdn-Icon--lg"></i></div>
+    </div>
+    </div>
+  </section>
+
   <!-- Corpo · Meus Planos -->
   <div class="plans-body">
    <div class="plans-body-inner">
@@ -3571,6 +4255,45 @@
     }
   }
 
+  // ===== Carrossel de Adicionais =====
+  // Regra de negócio (Eve, 2026-09-28), não vem da planilha — fixa no
+  // código, mesmo padrão de "Melhores ofertas" sempre primeira: exibido só
+  // pra posses que possuem TV e/ou Banda Larga (categoria "internet"); quem
+  // possui só Celular nunca vê o carrossel. Quando exibido, é sempre o
+  // último carrossel da zona "não possui" (aplicado em applyPosseConfig(),
+  // depois do loop de ordemSecoes — ver mais abaixo).
+  //
+  // Itens ocultados quando a posse possui TV (ela já inclui esses
+  // streamings/serviços no pacote). "HBO Max com Anúncios" cobre as duas
+  // variantes de cadência (mensal/anual) — só a versão SEM anúncios
+  // continua como upsell válido pra quem já tem TV.
+  var ADICIONAIS_OCULTOS_TV = [
+    'wifi-mesh-2', 'ponto-ultra',
+    'hbo-max-anuncios-mensal', 'hbo-max-anuncios-anual',
+    'amazon-prime', 'netflix-padrao-anuncios', 'apple-tv', 'globoplay'
+  ];
+  // Exceção explícita: quem possui Banda Larga sempre vê Wi-Fi Mesh e Ponto
+  // Ultra, mesmo que a posse também possua TV (a regra de TV sozinha
+  // esconderia os dois) — por isso essa lista é aplicada DEPOIS da de TV,
+  // removendo esses ids do conjunto oculto quando ownedSet.internet é true.
+  var ADICIONAIS_SEMPRE_VISIVEIS_COM_BL = ['wifi-mesh-2', 'ponto-ultra'];
+  // Ordem de exibição default (mesma ordem do Figma/HTML estático).
+  var TODOS_ADICIONAIS_IDS = [
+    'wifi-mesh-2', 'ponto-ultra', 'smarthome-1cam',
+    'telecine-hd-anual', 'telecine-hd-mensal',
+    'hbo-max-anuncios-mensal', 'hbo-max-anuncios-anual',
+    'hbo-max-sem-anuncios-mensal', 'hbo-max-sem-anuncios-anual',
+    'amazon-prime', 'netflix-padrao-anuncios', 'netflix-padrao', 'netflix-premium',
+    'apple-tv', 'globoplay', 'f1-tv-pro', 'premiere'
+  ];
+
+  // 2026-09-28: os 17 Adicionais viraram SKUs reais em PRODUCT_CATALOG
+  // (categoria "adicional", ver catalogo-produtos-TEMPLATE.xlsx) pra poder
+  // ir pro checkout — os cards agora usam data-produto-id como qualquer
+  // outro produto, então o filtro reaproveita filterSwiperByProdutoId
+  // direto (chamado logo abaixo, dentro de applyPosseConfig()); não existe
+  // mais uma função separada só pra esse carrossel.
+
   // A posse "padrão"/referência (usada quando nada foi selecionado ainda e
   // como fonte de fallback pra posses incompletas) não é mais um id fixo no
   // código — é sempre a posse com menor "Ordem no seletor" na planilha. Hoje
@@ -3705,6 +4428,29 @@
         filterSwiperByProdutoId(swiperId, idsDestaCategoria);
       }
     });
+
+    // Carrossel de Adicionais: roda DEPOIS do loop acima de propósito, pra
+    // ficar garantidamente a última seção antes de plansBody (o loop já
+    // deixou todas as seções "não possuídas" nessa mesma posição, uma antes
+    // da outra — entrar por último aqui garante a posição final).
+    var adicionaisSection = document.getElementById('carrossel-adicionais');
+    if (adicionaisSection) {
+      var mostraAdicionais = !!(ownedSet.tv || ownedSet.internet);
+      adicionaisSection.hidden = !mostraAdicionais;
+      if (mostraAdicionais && plansBody) {
+        naoPossuiContainer.insertBefore(adicionaisSection, plansBody);
+        var ocultosSet = {};
+        if (ownedSet.tv) {
+          ADICIONAIS_OCULTOS_TV.forEach(function (id) { ocultosSet[id] = true; });
+        }
+        if (ownedSet.internet) {
+          ocultosSet['globoplay'] = true;
+          ADICIONAIS_SEMPRE_VISIVEIS_COM_BL.forEach(function (id) { delete ocultosSet[id]; });
+        }
+        var idsVisiveis = TODOS_ADICIONAIS_IDS.filter(function (id) { return !ocultosSet[id]; });
+        filterSwiperByProdutoId('swiper-adicionais', idsVisiveis);
+      }
+    }
 
     updateCtaLabels(ownedSet);
 
