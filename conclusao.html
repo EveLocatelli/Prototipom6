@@ -197,11 +197,15 @@
     border-radius:0 0 10px 10px;
     padding:0 24px 24px;
   }
-  .summary-total-label{font-size:12px;font-weight:700;margin:0;}
+  .summary-total{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
+  .summary-total-label{font-size:12px;font-weight:700;margin:0;white-space:nowrap;}
+  .summary-total-price{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;max-width:200px;}
   .summary-total-value{display:flex;align-items:flex-end;gap:4px;}
   .summary-total-value .prefix,
   .summary-total-value .suffix{font-size:16px;font-weight:700;}
   .summary-total-value .amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .summary-total-value .total-cents{font-size:16px;font-family:'Roboto',sans-serif;}
+  .summary-total-value .suffix{margin-left:-4px;}
   .summary-total-note{font-size:12px;font-weight:400;margin:4px 0 0;}
 
   /* Cartões da coluna "Avisos" (agendamento + informativos) */
@@ -589,13 +593,17 @@
           </div>
 
           <div class="summary-card-bottom">
-            <p class="summary-total-label">Total do seu pedido</p>
-            <div class="summary-total-value">
-              <span class="prefix">R$</span>
-              <span class="amount" id="summaryTotalPrice">139,90</span>
-              <span class="suffix">/mês</span>
+            <div class="summary-total">
+              <p class="summary-total-label">Total do seu pedido</p>
+              <div class="summary-total-price">
+                <div class="summary-total-value">
+                  <span class="prefix">R$</span>
+                  <span class="amount" id="summaryTotalPrice">139,90</span>
+                  <span class="suffix">/mês</span>
+                </div>
+                <p class="summary-total-note">ajustado à sua fatura</p>
+              </div>
             </div>
-            <p class="summary-total-note">ajustado à sua fatura</p>
           </div>
         </div>
 
@@ -620,17 +628,16 @@
         <div class="agendamento-card" id="entregaAutoCard">
           <div class="info-card-copy">
             <p class="agendamento-card-title">Entrega do pedido</p>
-            <p class="info-card-desc">Confira o prazo de entrega do seu aparelho.</p>
           </div>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço de entrega</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço</p>
             <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
           </div>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo de entrega</p>
-            <p class="agendamento-block-value">3 dias úteis</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+            <p class="agendamento-block-value">Em até 3 dias úteis</p>
           </div>
         </div>
 
@@ -641,12 +648,12 @@
           <p class="agendamento-card-title">Agendamento da instalação</p>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço de instalação</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço</p>
             <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
           </div>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Agendamento da instalação</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Data e período</p>
             <div class="agendamento-row">
               <p class="agendamento-row-label">Data:</p>
               <p class="agendamento-row-value" data-role="agendamento-date">—</p>
@@ -674,13 +681,13 @@
           </div>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-documento"></i>Contrato de ativação</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-documento"></i>Contrato</p>
             <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
           </div>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo para atualização</p>
-            <p class="agendamento-block-value">24 horas</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+            <p class="agendamento-block-value">Em até 24 horas</p>
           </div>
         </div>
 
@@ -702,8 +709,8 @@
           </div>
 
           <div class="agendamento-block">
-            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo de ativação</p>
-            <p class="agendamento-block-value">Até 24 horas</p>
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+            <p class="agendamento-block-value">Em até 24 horas</p>
           </div>
         </div>
 
@@ -882,7 +889,12 @@
         </div>
       </div>
     `).join('');
-    document.getElementById('summaryTotalPrice').textContent = formatPriceBRL(order.total);
+    // Centavos em texto menor, junto do "/mês" (Figma node 13104:18711).
+    const totalStr = formatPriceBRL(order.total);
+    const totalComma = totalStr.lastIndexOf(',');
+    document.getElementById('summaryTotalPrice').innerHTML = totalComma === -1
+      ? totalStr
+      : totalStr.slice(0, totalComma) + '<span class="total-cents">' + totalStr.slice(totalComma) + '</span>';
 
     const addonsEl = document.getElementById('summaryAddons');
     const addons = Array.isArray(order.addons) ? order.addons : [];
@@ -940,7 +952,7 @@
       document.getElementById('step2Desc').innerHTML = 'Seu novo plano será atualizado em nosso sistema no prazo de até <strong>24 horas</strong>.';
     } else if (showAtivacaoServico) {
       document.getElementById('step2Title').textContent = 'Ativação';
-      document.getElementById('step2Desc').innerHTML = 'Seu serviço <strong>será ativado</strong> em nosso sistema no prazo de até <strong>24 horas</strong>.';
+      document.getElementById('step2Desc').innerHTML = 'Seu plano <strong>será atualizado no sistema</strong> no prazo de até <strong>24 horas</strong>.';
     } else {
       document.getElementById('step2Title').textContent = 'Entrega';
       document.getElementById('step2Desc').innerHTML = 'Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.';
@@ -1142,7 +1154,7 @@
         '</div>';
       var enderecoHtml =
         '<div class="uc-wb-section">' +
-          '<p class="uc-wb-label"><i class="mdn-Icon-casa"></i>Endereço de instalação</p>' +
+          '<p class="uc-wb-label"><i class="mdn-Icon-casa"></i>Endereço</p>' +
           '<p class="uc-wb-value">R. Nome da Rua, 0000<br>Cidade - UF</p>' +
         '</div>';
 
@@ -1151,7 +1163,7 @@
           '<div class="uc-white-box">' +
             enderecoHtml +
             '<div class="uc-wb-section">' +
-              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Sugestão de agendamento</p>' +
+              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Data e período</p>' +
               '<p class="uc-wb-value"><strong>Data:</strong> ' + ucFormatDayMonth(ucDraft.date) + ' - ' + UC_WEEKDAYS_FULL[ucDraft.date.getDay()] + '</p>' +
               '<p class="uc-wb-value"><strong>Período:</strong> ' + UC_PERIODS[ucDraft.period].label + ' - ' + UC_PERIODS[ucDraft.period].range + '</p>' +
             '</div>' +
@@ -1177,7 +1189,7 @@
           '<div class="uc-white-box">' +
             enderecoHtml +
             '<div class="uc-wb-section">' +
-              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Agendamento da instalação</p>' +
+              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Data e período</p>' +
               '<p class="uc-wb-value">Escolha o período e a data da visita técnica:</p>' +
             '</div>' +
             '<div class="agendamento-periods">' + periodsHtml + '</div>' +

@@ -290,18 +290,19 @@
   .action-card-delete{width:16px;height:16px;flex-shrink:0;cursor:pointer;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
   .action-card-delete:active{transform:scale(0.9);}
   .action-card-divider{width:100%;height:1px;background:var(--gray-line);align-self:stretch;}
-  .action-card-price-label{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
-  .action-card-price-was{font-size:12px;font-weight:500;color:var(--gray-dark);margin:4px 0 0;}
+  .action-card-price-row{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
+  .action-card-price-label{font-size:12px;font-weight:700;color:var(--ink);margin:0;white-space:nowrap;}
+  .action-card-price-was{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
   .action-card-price-was s{text-decoration:line-through;}
-  .action-card-price{display:flex;flex-direction:column;align-items:flex-start;gap:0;width:fit-content;max-width:200px;}
+  .action-card-price{display:flex;flex-direction:column;align-items:flex-start;gap:0;width:fit-content;max-width:200px;flex-shrink:0;}
   .action-card-price-inner{display:flex;align-items:flex-end;gap:4px;}
   .price-prefix{font-size:16px;font-weight:700;color:var(--ink);}
   .price-amount-group{display:flex;align-items:flex-end;}
   .price-amount{font-size:24px;font-weight:700;font-family:'AMX';color:var(--ink);}
   .price-cents{font-size:16px;font-weight:700;color:var(--ink);}
-  .total-cents{font-size:16px;}
-  .footer-price-cents{font-size:16px;}
-  .price-suffix{font-size:16px;font-weight:700;color:var(--ink);}
+  .total-cents{font-size:16px;font-family:'Roboto', sans-serif;}
+  .footer-price-cents{font-size:16px;font-family:'Roboto', sans-serif;}
+  .price-suffix{font-size:16px;font-weight:700;color:var(--ink);margin-left:-4px;}
   .action-card-link{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;align-self:stretch;font-size:16px;font-weight:400;color:var(--red);text-decoration:none;margin:0;cursor:pointer;transition:opacity 0.2s cubic-bezier(0.2,0,0,1);}
   .action-card-link:active{opacity:0.7;}
   .action-card-link i{font-size:16px;line-height:1;color:var(--red);}
@@ -399,8 +400,9 @@
   .order-detail-value{font-weight:400;text-align:right;}
   .order-divider{height:1px;background:var(--gray-line);}
 
-  .order-total{display:flex;flex-direction:column;gap:4px;}
-  .order-total-label{font-size:12px;font-weight:700;color:var(--gray-dark);margin:0;}
+  .order-total{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
+  .order-total-label{font-size:12px;font-weight:700;color:var(--gray-dark);margin:0;white-space:nowrap;}
+  .order-total-price{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;}
   .order-total-value{display:flex;align-items:flex-end;gap:4px;}
   .total-prefix{font-size:16px;font-weight:700;}
   .total-amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
@@ -417,13 +419,14 @@
   .checkout-footer-toggle{width:24px;height:24px;flex-shrink:0;border:none;background:none;padding:0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
   .checkout-footer-toggle:active{transform:scale(0.9);}
   .checkout-footer-toggle i{font-size:24px;line-height:1;}
-  .footer-total-text{flex:1;min-width:0;}
-  .footer-cart-text{color:#fff;font-size:16px;font-weight:400;margin:0;}
-  .footer-price{color:#fff;display:flex;align-items:baseline;gap:2px;margin:4px 0 0;}
-  .footer-price-amount{font-size:24px;font-weight:700;font-family:'AMX';}
-  .footer-price-prefix{font-size:16px;}
+  .footer-total-text{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .footer-cart-text{color:#fff;font-size:12px;font-weight:400;margin:0;white-space:nowrap;}
+  .footer-price-group{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;max-width:200px;}
+  .footer-price{color:#fff;display:flex;align-items:flex-end;gap:0;margin:0;}
+  .footer-price-amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .footer-price-prefix{font-size:16px;font-family:Roboto,sans-serif;}
   .footer-price-suffix{font-size:16px;font-weight:700;}
-  .footer-adjusted{color:#fff;font-size:12px;font-weight:400;margin:0;}
+  .footer-adjusted{color:#fff;font-size:12px;font-weight:400;margin:4px 0 0;}
 
   .footer-expanded-info{display:flex;flex-direction:column;gap:12px;width:100%;}
   .footer-expanded-info[hidden]{display:none;}
@@ -928,13 +931,13 @@
         </div>
 
         <div class="agendamento-section">
-          <p class="agendamento-label"><i class="mdn-Icon-documento"></i>Contrato de ativação</p>
+          <p class="agendamento-label"><i class="mdn-Icon-documento"></i>Contrato</p>
           <p class="agendamento-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
         </div>
 
         <div class="agendamento-section">
-          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo para atualização</p>
-          <p class="agendamento-value">24 horas</p>
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+          <p class="agendamento-value">Em até 24 horas</p>
         </div>
       </div>
 
@@ -948,12 +951,12 @@
         </div>
 
         <div class="agendamento-section">
-          <p class="agendamento-label"><i class="mdn-Icon-casa"></i>Endereço de instalação</p>
+          <p class="agendamento-label"><i class="mdn-Icon-casa"></i>Endereço</p>
           <p class="agendamento-value" data-role="agendamento-endereco-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
         </div>
 
         <div class="agendamento-section">
-          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Agendamento da instalação</p>
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Data e período</p>
           <div data-role="agendamento-summary">
             <p class="agendamento-summary-row"><strong>Data:</strong> <span data-role="agendamento-summary-date"></span></p>
             <p class="agendamento-summary-row"><strong>Período:</strong> <span data-role="agendamento-summary-period"></span></p>
@@ -996,17 +999,16 @@
       <div class="agendamento-container" id="entregaContainer" hidden>
         <div>
           <h3 class="agendamento-title">Entrega do pedido</h3>
-          <p class="agendamento-subtitle">Confira o prazo de entrega do seu pedido.</p>
         </div>
 
         <div class="agendamento-section">
-          <p class="agendamento-label"><i class="mdn-Icon-casa"></i>Endereço de entrega</p>
+          <p class="agendamento-label"><i class="mdn-Icon-casa"></i>Endereço</p>
           <p class="agendamento-value" data-role="entrega-endereco-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
         </div>
 
         <div class="agendamento-section">
-          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo de entrega</p>
-          <p class="agendamento-value">3 dias úteis</p>
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+          <p class="agendamento-value">Em até 3 dias úteis</p>
         </div>
       </div>
 
@@ -1031,8 +1033,8 @@
         </div>
 
         <div class="agendamento-section">
-          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo de ativação</p>
-          <p class="agendamento-value">Até 24 horas</p>
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+          <p class="agendamento-value">Em até 24 horas</p>
         </div>
       </div>
 
@@ -1100,12 +1102,14 @@
 
         <div class="order-total">
           <p class="order-total-label">Total do seu carrinho</p>
-          <div class="order-total-value">
-            <span class="total-prefix">R$</span>
-            <span class="total-amount">0,00</span>
-            <span class="total-suffix">/mês</span>
+          <div class="order-total-price">
+            <div class="order-total-value">
+              <span class="total-prefix">R$</span>
+              <span class="total-amount">0,00</span>
+              <span class="total-suffix">/mês</span>
+            </div>
+            <p class="order-adjusted">ajustado à sua fatura</p>
           </div>
-          <p class="order-adjusted">ajustado à sua fatura</p>
         </div>
 
         <button type="button" class="btn-sale" id="finalizarBtnDesktop" onclick="finalizarPedido('conclusao.html')">Concluir pedido</button>
@@ -1133,11 +1137,13 @@
     </button>
     <div class="footer-total-text">
       <p class="footer-cart-text">Total do seu carrinho:</p>
-      <div class="footer-price">
-        <span class="footer-price-amount"><span class="footer-price-prefix">R$</span> 0,00</span>
-        <span class="footer-price-suffix">/ mês</span>
+      <div class="footer-price-group">
+        <div class="footer-price">
+          <span class="footer-price-amount"><span class="footer-price-prefix">R$</span> 0,00</span>
+          <span class="footer-price-suffix">/mês</span>
+        </div>
+        <p class="footer-adjusted">ajustado à sua fatura</p>
       </div>
-      <p class="footer-adjusted">ajustado à sua fatura</p>
     </div>
   </div>
 
@@ -2326,9 +2332,11 @@
       '</div>' +
       '<div class="action-card-selected-list" data-role="selected-list" hidden></div>' +
       '<div class="action-card-divider"></div>' +
-      '<div class="action-card-price"><p class="action-card-price-label">Valor do plano</p>' +
-        (hasDiscount ? '<p class="action-card-price-was">De <s>R$ ' + formatBRL(product.preco) + '</s></p>' : '') +
-        '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(displayPrice) + '<span class="price-suffix">/mês</span></div>' +
+      '<div class="action-card-price-row"><p class="action-card-price-label">' + (isOwned ? 'Valor do novo plano' : 'Valor do plano') + '</p>' +
+        '<div class="action-card-price">' +
+          (hasDiscount ? '<p class="action-card-price-was">De <s>R$ ' + formatBRL(product.preco) + '</s> por:</p>' : '') +
+          '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(displayPrice) + '<span class="price-suffix">/mês</span></div>' +
+        '</div>' +
       '</div>' +
       (hasAddons ?
         '<div class="action-card-link" data-role="toggle"><span data-role="toggle-text">Incluir adicionais</span><i class="mdn-Icon-baixo mdn-Icon--md action-card-toggle-icon" data-role="toggle-icon"></i></div>' +
