@@ -29,6 +29,8 @@
   }
   *{box-sizing:border-box;}
   [hidden]{display:none !important;}
+  /* Botões/inputs não herdam a fonte do body por padrão (caem em Arial do navegador) — força Roboto/AMX do Mondrian */
+  button,input,select,textarea{font-family:inherit;}
   body{
     margin:0;
     font-family: 'Roboto', sans-serif;
