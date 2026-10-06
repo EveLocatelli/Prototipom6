@@ -837,83 +837,7 @@
           </div>
         </div>
 
-        <!-- Formulário: aberto ao clicar "Alterar". -->
-        <div data-role="config-movel-form" hidden style="display:flex;flex-direction:column;gap:16px;width:100%">
-
-          <div class="config-movel-option" data-role="config-movel-novo-card" onclick="selectConfigMovelNumero('novo')">
-            <div class="config-movel-option-head">
-              <p class="config-movel-option-title">Quero um novo número</p>
-              <span class="config-movel-check"><i class="mdn-Icon-check-circulo"></i></span>
-            </div>
-            <div class="config-movel-divider"></div>
-            <p class="config-movel-hint" data-role="config-movel-novo-hint">Escolha como quer receber seu novo número:</p>
-            <p class="config-movel-hint" data-role="config-movel-novo-collapsed-hint" hidden>Escolha entre chip físico, entregue no seu endereço, ou eSIM, com ativação imediata.</p>
-            <div data-role="config-movel-novo-chips-slot" style="width:100%">
-              <div id="configMovelChipGroup" class="config-movel-chip-group">
-                <div class="config-movel-chip-card" data-role="config-movel-chip-fisico" onclick="event.stopPropagation(); selectConfigMovelChip('fisico')">
-                  <div class="config-movel-chip-head">
-                    <span class="agendamento-radio" data-role="config-movel-radio-fisico"></span>
-                    <div class="config-movel-chip-text">
-                      <p class="config-movel-chip-title">Chip comum (físico)</p>
-                      <p class="config-movel-chip-sub"><strong>Entregue pelo técnico</strong> na instalação da banda larga</p>
-                    </div>
-                  </div>
-                  <div class="config-movel-divider-thin" data-role="config-movel-chip-fisico-extra">
-                    <div class="config-movel-chip-info">
-                      <span class="config-movel-icon-pill"><i class="mdn-Icon-chip"></i></span>
-                      <p>Um chip físico enviado ao seu endereço e é usado <strong>direto no seu aparelho</strong>.</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="config-movel-chip-card" data-role="config-movel-chip-esim" onclick="event.stopPropagation(); selectConfigMovelChip('esim')">
-                  <span class="config-movel-tag"><i class="mdn-Icon-circulo-exclamacao"></i>Verifique a compatibilidade</span>
-                  <div class="config-movel-chip-head">
-                    <span class="agendamento-radio" data-role="config-movel-radio-esim"></span>
-                    <div class="config-movel-chip-text">
-                      <p class="config-movel-chip-title">eSIM (chip virtual)</p>
-                      <p class="config-movel-chip-sub"><strong>Enviado por e-mail</strong> após a aprovação do pedido.</p>
-                    </div>
-                  </div>
-                  <div class="config-movel-divider-thin" data-role="config-movel-chip-esim-extra" hidden>
-                    <div class="config-movel-chip-info"><span class="config-movel-icon-pill"><i class="mdn-Icon-cpu"></i></span><p>É um chip virtual que funciona somente em <strong>aparelhos compatíveis com essa tecnologia</strong> e que substitui o chip físico.</p></div>
-                    <div class="config-movel-chip-info"><span class="config-movel-icon-pill"><i class="mdn-Icon-qr-code"></i></span><p>A ativação é feita via <strong>QR Code</strong> e o código é enviado no seu e-mail após a aprovação do pedido.</p></div>
-                    <div class="config-movel-chip-info"><span class="config-movel-icon-pill"><i class="mdn-Icon-celular-triangulo-exclamacao"></i></span><p>Antes de seguir, verifique se seu <strong>aparelho é compatível</strong> com a tecnologia eSIM.</p></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="config-movel-option" data-role="config-movel-manter-card" onclick="selectConfigMovelNumero('manter')">
-            <div class="config-movel-option-head">
-              <p class="config-movel-option-title">Manter meu número atual</p>
-              <span class="config-movel-check"><i class="mdn-Icon-check-circulo"></i></span>
-            </div>
-            <div class="config-movel-divider"></div>
-            <p class="config-movel-hint">Mantenha seu número atual e aproveite os benefícios do novo plano escolhido.</p>
-            <div data-role="config-movel-manter-fields" hidden style="display:flex;flex-direction:column;gap:16px;width:100%" onclick="event.stopPropagation()">
-              <div>
-                <p class="config-movel-field-label">Número do titular do plano</p>
-              </div>
-              <input type="tel" inputmode="numeric" class="config-movel-input" placeholder="DDD + Celular" maxlength="11" data-role="config-movel-numero-input">
-              <div class="config-movel-select-wrap">
-                <select class="config-movel-input" data-role="config-movel-operadora-select">
-                  <option value="">Operadora atual</option>
-                  <option value="Claro">Claro</option>
-                  <option value="Oi">Oi</option>
-                  <option value="Tim">Tim</option>
-                  <option value="Vivo">Vivo</option>
-                </select>
-                <i class="mdn-Icon-baixo"></i>
-              </div>
-              <div class="config-movel-divider"></div>
-              <p class="config-movel-hint">Escolha como quer receber seu novo número:</p>
-              <div data-role="config-movel-manter-chips-slot" style="width:100%"></div>
-            </div>
-          </div>
-        </div>
-
-        <button type="button" class="agendamento-btn agendamento-btn-primary" data-role="config-movel-primary-btn" onclick="handleConfigMovelPrimary()">Alterar</button>
+        <button type="button" class="agendamento-btn agendamento-btn-primary" data-role="config-movel-primary-btn" onclick="alterarConfigMovel()">Alterar</button>
       </div>
 
       <!-- Atualização do plano: só aparece quando o pedido inclui um plano de
@@ -1351,6 +1275,14 @@
   // (agendamentoState/handleAgendamentoPrimary) — resumo por padrão, form
   // some ao clicar "Alterar", "Continuar" confirma e recolhe de novo. =====
   var hasNewCelularLine = products.some(function (p) { return p.categoria === 'celular' && !isOwnedCategory('celular'); });
+  // Escolha de número/chip feita na tela intermediária config-movel.html
+  // (válida só pro mesmo conjunto de produtos). Sem ela, vai pra lá antes.
+  var configMovelSalvo = null;
+  try {
+    var _cm = JSON.parse(sessionStorage.getItem('configMovelEscolha'));
+    if (_cm && _cm.pedido === pedidoIds.slice().sort().join('|')) configMovelSalvo = _cm;
+  } catch (e) {}
+  if (hasNewCelularLine && !configMovelSalvo) window.location.replace('config-movel.html');
 
   // ===== Atualização do plano: aparece quando o pedido inclui um plano de
   // Celular cuja categoria JÁ é possuída por essa posse (troca de plano, não
@@ -1391,7 +1323,6 @@
   };
   var configMovelState = {
     confirmed: { numeroOption: 'novo', chipType: 'fisico', numero: '', operadora: '' },
-    draft: { numeroOption: 'novo', chipType: 'fisico', numero: '', operadora: '' },
   };
   function formatConfigMovelNumero(digits) {
     if (!digits) return '';
@@ -1411,98 +1342,19 @@
     document.querySelector('[data-role="config-movel-summary-chip-title"]').textContent = CONFIG_MOVEL_CHIP_LABEL[s.chipType];
     document.querySelector('[data-role="config-movel-summary-chip-desc"]').textContent = CONFIG_MOVEL_CHIP_DESC[s.chipType];
   }
-  function updateConfigMovelChipUI() {
-    var d = configMovelState.draft;
-    document.querySelector('[data-role="config-movel-chip-fisico"]').classList.toggle('selected', d.chipType === 'fisico');
-    document.querySelector('[data-role="config-movel-chip-esim"]').classList.toggle('selected', d.chipType === 'esim');
-    document.querySelector('[data-role="config-movel-radio-fisico"]').classList.toggle('active', d.chipType === 'fisico');
-    document.querySelector('[data-role="config-movel-radio-esim"]').classList.toggle('active', d.chipType === 'esim');
-    document.querySelector('[data-role="config-movel-chip-fisico-extra"]').hidden = d.chipType !== 'fisico';
-    document.querySelector('[data-role="config-movel-chip-esim-extra"]').hidden = d.chipType !== 'esim';
-  }
-  function updateConfigMovelContinueButton() {
-    var btn = document.querySelector('[data-role="config-movel-primary-btn"]');
-    if (btn.textContent.trim() !== 'Continuar') return;
-    var d = configMovelState.draft;
-    var enabled = d.numeroOption !== 'manter' || (d.numero.length > 0 && !!d.operadora);
-    btn.disabled = !enabled;
-    btn.classList.toggle('disabled', !enabled);
-  }
-  function updateConfigMovelUI() {
-    var d = configMovelState.draft;
-    var isManter = d.numeroOption === 'manter';
-    document.querySelector('[data-role="config-movel-novo-card"]').classList.toggle('selected', !isManter);
-    document.querySelector('[data-role="config-movel-manter-card"]').classList.toggle('selected', isManter);
-    document.querySelector('[data-role="config-movel-novo-hint"]').hidden = isManter;
-    document.querySelector('[data-role="config-movel-novo-collapsed-hint"]').hidden = !isManter;
-    document.querySelector('[data-role="config-movel-manter-fields"]').hidden = !isManter;
-    var chipGroupEl = document.getElementById('configMovelChipGroup');
-    var target = document.querySelector(isManter ? '[data-role="config-movel-manter-chips-slot"]' : '[data-role="config-movel-novo-chips-slot"]');
-    if (chipGroupEl.parentElement !== target) target.appendChild(chipGroupEl);
-    updateConfigMovelChipUI();
-    updateConfigMovelContinueButton();
-  }
-  function selectConfigMovelNumero(option) {
-    configMovelState.draft.numeroOption = option;
-    updateConfigMovelUI();
-  }
-  function selectConfigMovelChip(type) {
-    configMovelState.draft.chipType = type;
-    updateConfigMovelChipUI();
-    updateConfigMovelContinueButton();
-  }
-  function openConfigMovelForm() {
-    configMovelState.draft = {
-      numeroOption: configMovelState.confirmed.numeroOption,
-      chipType: configMovelState.confirmed.chipType,
-      numero: configMovelState.confirmed.numero,
-      operadora: configMovelState.confirmed.operadora,
-    };
-    document.querySelector('[data-role="config-movel-summary"]').hidden = true;
-    document.querySelector('[data-role="config-movel-form"]').hidden = false;
-    document.querySelector('[data-role="config-movel-numero-input"]').value = configMovelState.draft.numero;
-    document.querySelector('[data-role="config-movel-operadora-select"]').value = configMovelState.draft.operadora;
-    document.querySelector('[data-role="config-movel-primary-btn"]').textContent = 'Continuar';
-    updateConfigMovelUI();
-  }
-  function closeConfigMovelForm() {
-    document.querySelector('[data-role="config-movel-summary"]').hidden = false;
-    document.querySelector('[data-role="config-movel-form"]').hidden = true;
-    var btn = document.querySelector('[data-role="config-movel-primary-btn"]');
-    btn.textContent = 'Alterar';
-    btn.disabled = false;
-    btn.classList.remove('disabled');
-  }
-  function confirmConfigMovel() {
-    if (document.querySelector('[data-role="config-movel-primary-btn"]').disabled) return;
-    configMovelState.confirmed = {
-      numeroOption: configMovelState.draft.numeroOption,
-      chipType: configMovelState.draft.chipType,
-      numero: configMovelState.draft.numero,
-      operadora: configMovelState.draft.operadora,
-    };
-    renderConfigMovelSummary();
-    closeConfigMovelForm();
-  }
-  function handleConfigMovelPrimary() {
-    var formOpen = !document.querySelector('[data-role="config-movel-form"]').hidden;
-    if (formOpen) confirmConfigMovel(); else openConfigMovelForm();
-  }
+  // As escolhas (número + chip) são feitas na tela intermediária
+  // config-movel.html; aqui só o resumo. "Alterar" volta pra lá.
+  function alterarConfigMovel() { window.location.href = 'config-movel.html?voltar=checkout'; }
   function initConfigMovel() {
     if (!hasNewCelularLine) return;
+    if (configMovelSalvo) {
+      configMovelState.confirmed = {
+        numeroOption: configMovelSalvo.numeroOption, chipType: configMovelSalvo.chipType,
+        numero: configMovelSalvo.numero || '', operadora: configMovelSalvo.operadora || '',
+      };
+    }
     document.getElementById('configMovelContainer').hidden = false;
     renderConfigMovelSummary();
-    var numeroInput = document.querySelector('[data-role="config-movel-numero-input"]');
-    numeroInput.addEventListener('input', function (e) {
-      var digits = e.target.value.replace(/\D/g, '').slice(0, 11);
-      e.target.value = digits;
-      configMovelState.draft.numero = digits;
-      updateConfigMovelContinueButton();
-    });
-    document.querySelector('[data-role="config-movel-operadora-select"]').addEventListener('change', function (e) {
-      configMovelState.draft.operadora = e.target.value;
-      updateConfigMovelContinueButton();
-    });
   }
 
   // ===== Cadastro complementar (Pré-pago comprando Internet/TV) — ver
@@ -2569,6 +2421,7 @@
 
     try { sessionStorage.removeItem('pedidoEmAndamento'); } catch (e) {}
     try { sessionStorage.removeItem('pedidoAdicionais'); } catch (e) {}
+    try { sessionStorage.removeItem('configMovelEscolha'); } catch (e) {}
     window.location.href = destino;
   }
 
