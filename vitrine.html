@@ -4279,6 +4279,9 @@
   // esconderia os dois) — por isso essa lista é aplicada DEPOIS da de TV,
   // removendo esses ids do conjunto oculto quando ownedSet.internet é true.
   var ADICIONAIS_SEMPRE_VISIVEIS_COM_BL = ['wifi-mesh-2', 'ponto-ultra'];
+  // Adicionais duplicados no fim do carrossel do produto principal: a lista
+  // por categoria vem da aba Adicionais_Produto_Principal da planilha
+  // (ADICIONAIS_NO_PRODUTO_PRINCIPAL, gerado em product-catalog.js).
   // Ordem de exibição default (mesma ordem do Figma/HTML estático).
   var TODOS_ADICIONAIS_IDS = [
     'wifi-mesh-2', 'ponto-ultra', 'smarthome-1cam',
@@ -4429,6 +4432,35 @@
         });
         filterSwiperByProdutoId(swiperId, idsDestaCategoria);
       }
+    });
+
+    // Adicionais do produto principal (Eve, 2026-10-09): quem já possui
+    // Banda Larga/TV vê, no fim do carrossel de planos daquela categoria,
+    // uma cópia dos adicionais relacionados a ela. O carrossel "Adicionais"
+    // continua existindo normalmente — isto só duplica os cards. Clona
+    // ANTES do filtro de #swiper-adicionais (abaixo), que remove slides do
+    // DOM (ex.: Ponto Ultra some pra posse só-TV) e depois do loop de
+    // seções (cujo filtro de produtosCarrossel apagaria os clones).
+    var adicionaisPrincipal = typeof ADICIONAIS_NO_PRODUTO_PRINCIPAL !== 'undefined' ? ADICIONAIS_NO_PRODUTO_PRINCIPAL : {};
+    Object.keys(adicionaisPrincipal).forEach(function (categoria) {
+      if (!ownedSet[categoria] || !SWIPER_ID_POR_CATEGORIA[categoria]) return;
+      var destino = document.querySelector('#' + SWIPER_ID_POR_CATEGORIA[categoria] + ' .swiper-wrapper');
+      var origem = document.querySelector('#swiper-adicionais .swiper-wrapper');
+      if (!destino || !origem) return;
+      adicionaisPrincipal[categoria].forEach(function (id) {
+        var card = origem.querySelector('.card[data-produto-id="' + id + '"]');
+        var slide = card && card.closest('.swiper-slide');
+        if (!slide) return;
+        var copia = slide.cloneNode(true);
+        copia.removeAttribute('data-swiper-slide-index');
+        // O card "Ainda não encontrou o produto desejado?" (.card-cta)
+        // deve ser sempre o último — os adicionais entram antes dele.
+        var ctaSlide = destino.querySelector('.card-cta');
+        ctaSlide = ctaSlide && ctaSlide.closest('.swiper-slide');
+        if (ctaSlide) destino.insertBefore(copia, ctaSlide); else destino.appendChild(copia);
+      });
+      var swiperDestino = document.getElementById(SWIPER_ID_POR_CATEGORIA[categoria]);
+      if (swiperDestino && swiperDestino.swiper) swiperDestino.swiper.update();
     });
 
     // Carrossel de Adicionais: roda DEPOIS do loop acima de propósito, pra

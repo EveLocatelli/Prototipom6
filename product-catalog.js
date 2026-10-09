@@ -4959,3 +4959,20 @@ const POSSE_CONFIGS = {
     "exibirCombo": true
   }
 };
+const ADICIONAIS_NO_PRODUTO_PRINCIPAL = {
+  "internet": [
+    "wifi-mesh-2",
+    "ponto-ultra",
+    "smarthome-1cam"
+  ],
+  "tv": [
+    "telecine-hd-anual",
+    "telecine-hd-mensal",
+    "hbo-max-sem-anuncios-mensal",
+    "hbo-max-sem-anuncios-anual",
+    "netflix-padrao",
+    "netflix-premium",
+    "f1-tv-pro",
+    "premiere"
+  ]
+};
