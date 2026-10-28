@@ -1159,7 +1159,6 @@
         <div class="order-details">
           <div class="order-detail-row"><span class="order-detail-label">Taxa de Adesão</span><span class="order-detail-value">Grátis</span></div>
           <div class="order-detail-row" data-role="instalacao-row"><span class="order-detail-label">Instalação</span><span class="order-detail-value">Grátis</span></div>
-          <div class="order-detail-row" data-role="pontos-row" hidden><span class="order-detail-label" data-role="pontos-label">Pontos adicionais</span><span class="order-detail-value" data-role="pontos-value"></span></div>
           <div data-role="promo-rows" style="display:contents"></div>
           <div class="order-detail-row" data-role="desconto-multi-row" hidden><span class="order-detail-label">Desconto Multi</span><span class="order-detail-value" data-role="desconto-multi-value"></span></div>
         </div>
@@ -1192,7 +1191,6 @@
     <div class="footer-taxas">
       <div class="footer-taxa-row"><p class="footer-taxa-label">Taxa de Adesão</p><p class="footer-taxa-value">Grátis</p></div>
       <div class="footer-taxa-row" data-role="instalacao-row-mobile"><p class="footer-taxa-label">Instalação</p><p class="footer-taxa-value">Grátis</p></div>
-      <div class="footer-taxa-row" data-role="pontos-row" hidden><p class="footer-taxa-label" data-role="pontos-label">Pontos adicionais</p><p class="footer-taxa-value" data-role="pontos-value"></p></div>
       <div data-role="promo-rows" data-mobile style="display:contents"></div>
       <div class="footer-taxa-row" data-role="desconto-multi-row" hidden><p class="footer-taxa-label">Desconto Multi</p><p class="footer-taxa-value" data-role="desconto-multi-value"></p></div>
     </div>
@@ -2550,14 +2548,6 @@
     // Anual = valor mensal (R$ 10 mais barato que o mensal): entra no total mensal.
     // Total = preço de hoje (promocional); as fases futuras saem de cartPhases().
     var ph = cartPhases(cartItems());
-    var pa = pontosAtivos();
-    document.querySelectorAll('[data-role="pontos-row"]').forEach(function (row) {
-      row.hidden = !pa;
-      if (pa) {
-        row.querySelector('[data-role="pontos-label"]').textContent = 'Pontos adicionais (' + PONTOS_ADICIONAIS.qtd + ')';
-        row.querySelector('[data-role="pontos-value"]').textContent = 'R$ ' + formatBRL(PONTOS_ADICIONAIS.valorNovo) + '/mês';
-      }
-    });
     var total = ph.now;
     renderPromoCart(ph);
     document.querySelectorAll('.footer-price-amount').forEach(function (el) { el.innerHTML = '<span class="footer-price-prefix">R$</span> ' + splitCentsHtml(total, 'footer-price-cents'); });
