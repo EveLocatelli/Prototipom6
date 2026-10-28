@@ -1249,6 +1249,7 @@
 
 <script src="product-catalog.js"></script>
 <script src="adicionais-teste.js"></script>
+<script src="posse-extras-teste.js"></script>
 <script>
   // ===== Resolução do pedido a partir do sessionStorage =====
   // Gravado por detalhes.html (startCheckout, 1 produto) ou pelo "Monte seu
@@ -1409,33 +1410,20 @@
       categoriasPossui: fallbackList('categoriasPossui'),
       categoriaAtual: fallbackMap('categoriaAtual'),
       categoriaAtualValor: fallbackMap('categoriaAtualValor'),
+      pontosAdicionais: cfg.pontosAdicionais || null,   // sem herança: só a posse que os tem
     };
   }
   var POSSE_CHECKOUT_CFG = getPosseCheckoutCfg();
   // ===== Pontos adicionais de TV (reajuste compulsório na troca do plano de TV) =====
   // Posse com TV + N pontos adicionais: ao contratar um novo plano de TV os pontos
   // acompanham o plano novo e passam a custar o valor novo (sem opção de remover).
-  // Dado de posse esperado: pontosAdicionais { qtd, valorAtual } (valorAtual = total/mês
-  // dos pontos hoje). Valor novo = qtd × "Ponto adicional TV" (placeholder — regra real
-  // baseada no valor da TV principal ainda não existe). Demo no protótipo: ?pontos=2
-  // (usa TV antiga + valores de exemplo, pois nenhuma posse da planilha tem pontos ainda).
-  var PONTOS_DEMO = /[?&]pontos=(\d+)/.exec(location.search);
-  // ?pontos=N também vale vindo da vitrine-teste (guardado na sessão); ?pontos=0 desliga.
-  try {
-    if (PONTOS_DEMO) sessionStorage.setItem('pontosDemo', PONTOS_DEMO[1]);
-    else if (sessionStorage.getItem('pontosDemo')) PONTOS_DEMO = [null, sessionStorage.getItem('pontosDemo')];
-    if (PONTOS_DEMO && parseInt(PONTOS_DEMO[1], 10) === 0) PONTOS_DEMO = null;
-  } catch (e) {}
+  // Dado de posse: pontosAdicionais { qtd, valorAtual } (valorAtual = total/mês dos pontos
+  // hoje) — hoje só a Posse TV, definido em posse-extras-teste.js. Valor novo = qtd × "Ponto
+  // adicional TV" (placeholder — a regra real, baseada no valor da TV principal, não existe).
   var PONTOS_ADICIONAIS = null;
   var MAX_PONTOS_TV = 3;
   (function () {
-    var raw = POSSE_CHECKOUT_CFG.pontosAdicionais || null;
-    if (PONTOS_DEMO) {
-      var q = parseInt(PONTOS_DEMO[1], 10) || 2;
-      raw = { qtd: q, valorAtual: Math.round(36.01 * q * 100) / 100 };
-      if (POSSE_CHECKOUT_CFG.categoriasPossui.indexOf('tv') === -1) POSSE_CHECKOUT_CFG.categoriasPossui.push('tv');
-      if (!POSSE_CHECKOUT_CFG.categoriaAtual.tv) POSSE_CHECKOUT_CFG.categoriaAtual.tv = 'tv-box-cabo';
-    }
+    var raw = POSSE_CHECKOUT_CFG.pontosAdicionais;
     if (raw && raw.qtd > 0) {
       var unit = 69.9;
       (window.ADICIONAIS_TESTE || []).some(function (a) { if (a.nome === '1 Ponto adicional TV') { unit = a.preco; return true; } });
