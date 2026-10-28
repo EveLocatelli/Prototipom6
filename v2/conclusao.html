@@ -209,6 +209,10 @@
   .summary-total-value .total-cents{font-size:16px;font-family:'Roboto',sans-serif;}
   .summary-total-value .suffix{margin-left:-4px;}
   .summary-total-was{font-size:12px;font-weight:700;margin:0;}
+  .summary-addons-title{font-family:'AMX',sans-serif;font-size:16px;font-weight:700;margin:0;color:var(--ink);}
+  .summary-addons-total{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;padding-top:8px;border-top:1px solid var(--gray-line);}
+  .summary-addons-total p{margin:0;}
+  .summary-addons-total-note{margin:-4px 0 0;font-size:12px;color:var(--gray-dark);text-align:right;}
   .summary-addon-price-col{display:flex;flex-direction:column;align-items:flex-end;}
   .summary-addon-note{font-size:12px;font-weight:400;margin:0;color:var(--gray-dark);text-align:right;white-space:nowrap;}
   .summary-total-note{font-size:12px;font-weight:400;margin:4px 0 0;}
@@ -945,18 +949,45 @@
       ? totalStr
       : totalStr.slice(0, totalComma) + '<span class="total-cents">' + totalStr.slice(totalComma) + '</span>';
 
-    const addonsEl = document.getElementById('summaryAddons');
-    const addons = Array.isArray(order.addons) ? order.addons : [];
-    if (addons.length) {
-      addonsEl.innerHTML = addons.map(addon => `
-        <div class="summary-addon-row">
-          <p class="summary-addon-name">${addon.name}</p>
-          <div class="summary-addon-price-col">
-            <p class="summary-addon-price">R$ ${formatPriceBRL(addon.price)} / mês</p>
-            ${addon.promo ? `<p class="summary-addon-note">${promoAfterText(addon.promo.meses, addon.promo.apos, false)}</p>` : ''}
-          </div>
+    // Pontos adicionais de TV (acompanham o plano de TV) ficam junto dos produtos; os demais
+    // adicionais viram um grupo "Adicionais" com total mensal — mesmo desenho do resumo do checkout.
+    const allAddons = Array.isArray(order.addons) ? order.addons : [];
+    const pontos = allAddons.filter(a => a.grupo === 'pontos');
+    const addons = allAddons.filter(a => a.grupo !== 'pontos');
+    productsEl.innerHTML += pontos.map(a => `
+      <div class="summary-product-block">
+        <div class="summary-product">
+          <div class="summary-product-icon"><i class="mdn-Icon-tv"></i></div>
+          <p class="summary-product-name">${a.name}</p>
         </div>
-      `).join('');
+        <div class="summary-price">
+          <span class="prefix">R$</span>
+          <span class="amount">${formatPriceBRL(a.price)}</span>
+          <span class="suffix">/mês</span>
+        </div>
+      </div>
+    `).join('');
+    const addonsEl = document.getElementById('summaryAddons');
+    if (addons.length) {
+      const addonsMonthly = Math.round(addons.reduce((s, a) => s + a.price, 0) * 100) / 100;
+      const addonPh = cartPhases(addons.map(a => ({ preco: a.price, promo: a.promo || null })));
+      addonsEl.innerHTML = `
+        <p class="summary-addons-title">Adicionais</p>
+        ${addons.map(addon => `
+          <div class="summary-addon-row">
+            <p class="summary-addon-name">+ ${addon.name}</p>
+            <div class="summary-addon-price-col">
+              <p class="summary-addon-price">R$ ${formatPriceBRL(addon.price)}/mês</p>
+              ${addon.promo ? `<p class="summary-addon-note">${promoAfterText(addon.promo.meses, addon.promo.apos, false)}</p>` : ''}
+            </div>
+          </div>
+        `).join('')}
+        <div class="summary-addons-total">
+          <p>Total mensal de adicionais</p>
+          <p>R$ ${formatPriceBRL(addonsMonthly)}/mês</p>
+        </div>
+        ${addonPh.phases.map(ph => `<p class="summary-addons-total-note">${promoAfterText(ph.meses, ph.total, true)}</p>`).join('')}
+      `;
       addonsEl.hidden = false;
     } else {
       addonsEl.hidden = true;

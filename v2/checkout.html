@@ -395,7 +395,9 @@
   .addons-summary-title{font-size:16px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
   .addons-summary-line{display:flex;align-items:center;gap:8px;width:100%;font-size:14px;color:var(--ink);}
   .addons-summary-line-name{flex:1;min-width:0;font-weight:500;}
-  .addons-summary-line-price{white-space:nowrap;font-weight:400;}
+  .addons-summary-line-price{white-space:nowrap;font-weight:400;display:flex;flex-direction:column;align-items:flex-end;}
+  .addons-summary-line-note{font-size:12px;color:var(--gray-dark);}
+  .addons-summary-total-note{margin:-4px 0 0;font-size:12px;color:var(--gray-dark);text-align:right;}
   .addons-summary-remove{width:16px;height:16px;flex-shrink:0;cursor:pointer;border:none;background:none;padding:0;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
   .addons-summary-remove:active{transform:scale(0.9);}
   .addons-summary-remove img{width:100%;height:100%;display:block;}
@@ -2686,7 +2688,8 @@
       monthly += it.preco;
       var line = document.createElement('div');
       line.className = 'addons-summary-line';
-      line.innerHTML = '<span class="addons-summary-line-name">+ ' + it.name + '</span><span class="addons-summary-line-price">R$ ' + formatBRL(it.preco) + '/mês</span>';
+      line.innerHTML = '<span class="addons-summary-line-name">+ ' + it.name + '</span><span class="addons-summary-line-price">R$ ' + formatBRL(it.preco) + '/mês' +
+        (it.promo ? '<small class="addons-summary-line-note">' + promoAfterText(it.promo.meses, it.promo.apos, false) + '</small>' : '') + '</span>';
       var del = document.createElement('button');
       del.type = 'button';
       del.className = 'addons-summary-remove';
@@ -2703,6 +2706,14 @@
       card.appendChild(tot);
     }
     if (monthly > 0) totalRow('Total mensal de adicionais', monthly, '/mês');
+    // Com promoções por prazo: o total dos adicionais em cada fase ("Após 1 mês, R$ X/mês").
+    var addonPh = cartPhases(addonState.selected.map(function (id) { var o = ADDON_POOL.byId[id]; return { preco: o.preco, promo: o.promo || null }; }));
+    addonPh.phases.forEach(function (ph) {
+      var note = document.createElement('p');
+      note.className = 'addons-summary-total-note';
+      note.textContent = promoAfterText(ph.meses, ph.total, true);
+      card.appendChild(note);
+    });
     el.appendChild(card);
   }
 
@@ -3069,7 +3080,7 @@
       total += item.preco;
     });
     if (pontosAtivos()) {
-      addons.push({ name: PONTOS_ADICIONAIS.qtd + (PONTOS_ADICIONAIS.qtd === 1 ? ' ponto adicional de TV' : ' pontos adicionais de TV'), price: PONTOS_ADICIONAIS.valorNovo, periodo: 'mensal' });
+      addons.push({ grupo: 'pontos', name: PONTOS_ADICIONAIS.qtd + (PONTOS_ADICIONAIS.qtd === 1 ? ' ponto adicional de TV' : ' pontos adicionais de TV'), price: PONTOS_ADICIONAIS.valorNovo, periodo: 'mensal' });
       total += PONTOS_ADICIONAIS.valorNovo;
     }
     total = Math.round(total * 100) / 100;
