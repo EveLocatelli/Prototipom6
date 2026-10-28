@@ -212,7 +212,6 @@
   .summary-addons-title{font-family:'AMX',sans-serif;font-size:16px;font-weight:700;margin:0;color:var(--ink);}
   .summary-addons-total{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;padding-top:8px;border-top:1px solid var(--gray-line);}
   .summary-addons-total p{margin:0;}
-  .summary-addons-total-note{margin:-4px 0 0;font-size:12px;color:var(--gray-dark);text-align:right;}
   .summary-addon-price-col{display:flex;flex-direction:column;align-items:flex-end;}
   .summary-addon-note{font-size:12px;font-weight:400;margin:0;color:var(--gray-dark);text-align:right;white-space:nowrap;}
   .summary-total-note{font-size:12px;font-weight:400;margin:4px 0 0;}
@@ -970,7 +969,6 @@
     const addonsEl = document.getElementById('summaryAddons');
     if (addons.length) {
       const addonsMonthly = Math.round(addons.reduce((s, a) => s + a.price, 0) * 100) / 100;
-      const addonPh = cartPhases(addons.map(a => ({ preco: a.price, promo: a.promo || null })));
       addonsEl.innerHTML = `
         <p class="summary-addons-title">Adicionais</p>
         ${addons.map(addon => `
@@ -986,7 +984,6 @@
           <p>Total mensal de adicionais</p>
           <p>R$ ${formatPriceBRL(addonsMonthly)}/mês</p>
         </div>
-        ${addonPh.phases.map(ph => `<p class="summary-addons-total-note">${promoAfterText(ph.meses, ph.total, true)}</p>`).join('')}
       `;
       addonsEl.hidden = false;
     } else {
