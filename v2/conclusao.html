@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conclusão · Simulador M6</title>
+
+<!-- Mondrian via CDN -->
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/tokens/claro-tokens-3.0.0.custom-properties.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/icons/mondrian-icons-latest.css">
+
+<style>
+  :root{
+    --red-dark:#b41e13;
+    --red:#da291c;
+    --yellow:#ffc722;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --bg-page:#f8f8f8;
+    --teal-dark:#005c66;
+  }
+
+  /* Breakpoints responsivos */
+  /* Mobile: 360px (Figma) · Desktop: 1440px (Figma) */
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  /* Botões/inputs não herdam a fonte do body por padrão (caem em Arial do navegador) — força Roboto/AMX do Mondrian */
+  button,input,select,textarea{font-family:inherit;}
+  body{
+    margin:0;
+    font-family:'Roboto', sans-serif;
+    background:var(--bg-page);
+    color:var(--ink);
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Topbar (mesmo componente de checkout-box.html / vitrine.html) ===== */
+  .topbar-inner{
+    width:100%;
+    max-width:1440px;
+    margin:0 auto;
+    padding:0 80px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar-utility{background:var(--red-dark);height:46px;display:flex;}
+  .topbar-utility .topbar-inner{height:100%;}
+  .topbar-location{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+  .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-a11y{display:flex;align-items:center;gap:16px;}
+  .topbar-a11y i{font-size:16px;line-height:1;}
+
+  .topbar-brand{background:var(--red);height:70px;display:flex;}
+  .topbar-brand .topbar-inner{height:100%;}
+  .brand-logo img{height:38px;display:block;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .topbar-actions i{font-size:24px;line-height:1;}
+  .topbar-exit{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+
+  /* ===== Section wrapper (cada bloco do Figma é uma "body" full-bleed com
+     conteúdo centralizado max-width 1440 + padding lateral 88px) ===== */
+  .section-row{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    padding:24px 88px;
+    box-sizing:border-box;
+  }
+
+  /* ===== Message container ("Pronto, Rodrigo!") ===== */
+  .conclusion-message{
+    width:100%;
+    max-width:1074px;
+    background:#fff;
+    border-radius:24px;
+    padding:32px;
+    display:flex;
+    align-items:center;
+    gap:32px;
+  }
+  .conclusion-illustration{width:399px;flex-shrink:0;}
+  .conclusion-illustration img{width:100%;display:block;}
+  .conclusion-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;color:var(--ink);}
+  .conclusion-title{
+    font-family:'AMX', sans-serif;
+    font-weight:700;
+    font-size:24px;
+    margin:0;
+  }
+  .conclusion-subtext{display:flex;flex-direction:column;gap:8px;}
+  .conclusion-subtext p{margin:0;}
+  .conclusion-subtext p:first-child{font-size:16px;font-weight:700;}
+  .conclusion-subtext p:last-child{font-size:14px;font-weight:400;}
+
+  /* ===== Steps ("Como vai funcionar agora?") ===== */
+  .steps-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:24px;
+    width:100%;
+  }
+  .steps-title{
+    font-size:24px;
+    font-weight:700;
+    text-align:center;
+    max-width:328px;
+    margin:0;
+  }
+  .steps-bullets{
+    display:flex;
+    gap:32px;
+    justify-content:center;
+    width:100%;
+  }
+  .step-bullet{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+    width:244px;
+  }
+  .step-icon{width:24px;height:24px;flex-shrink:0;}
+  .step-icon i{font-size:24px;line-height:1;color:var(--red);}
+  .step-copy{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    text-align:center;
+    width:100%;
+  }
+  .step-ol{
+    font-size:20px;
+    font-weight:700;
+    margin:0;
+    padding-left:0;
+    list-style-type:decimal;
+    list-style-position:inside;
+  }
+  .step-desc{font-size:14px;font-weight:400;margin:0;}
+
+  /* ===== Colunas: Resumo do pedido + Avisos ===== */
+  .conclusion-columns{display:flex;gap:32px;justify-content:center;width:100%;flex-wrap:wrap;}
+  .summary-col{width:438px;}
+  .avisos-col{width:360px;display:flex;flex-direction:column;gap:16px;}
+
+  /* Resumo do pedido (cartão estilo "ticket") */
+  .summary-card{width:100%;display:flex;flex-direction:column;}
+  .summary-card-top{
+    background:#fff;
+    border-radius:10px 10px 0 0;
+    padding:24px 24px 0;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .summary-card-heading{font-size:20px;font-weight:700;margin:0;}
+  /* Um .summary-product-block por produto do pedido — só 1 nos produtos de
+     TV, 2+ em checkouts com bundle (ex.: Internet + Celular). */
+  .summary-products{display:flex;flex-direction:column;gap:16px;}
+  .summary-product-block{display:flex;flex-direction:column;gap:8px;}
+  .summary-product-block + .summary-product-block{padding-top:16px;border-top:1px solid var(--gray-line);}
+  .summary-product{display:flex;align-items:center;gap:8px;}
+  .summary-product-icon{
+    width:32px;height:32px;flex-shrink:0;
+    border:1px solid var(--gray-line);
+    border-radius:16px;
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .summary-product-icon i{font-size:18px;line-height:1;}
+  .summary-product-name{font-size:20px;font-weight:700;margin:0;}
+  .summary-price{display:flex;align-items:flex-end;gap:4px;}
+  .summary-price .prefix,
+  .summary-price .suffix{font-size:16px;font-weight:700;}
+  .summary-price .amount{font-size:24px;font-weight:700;font-family:'AMX';}
+  .summary-divider{border-top:1px dashed var(--gray-line);width:100%;}
+  /* Adicionais selecionados no checkout — mesma info que o Action Card
+     mostrava lá, só que sem botão de remover (aqui o pedido já foi feito). */
+  .summary-addons{display:flex;flex-direction:column;gap:8px;}
+  .summary-addons[hidden]{display:none;}
+  .summary-addon-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .summary-addon-name{font-size:14px;font-weight:500;margin:0;color:var(--ink);}
+  .summary-addon-price{font-size:14px;font-weight:400;margin:0;color:var(--gray-dark);text-align:right;white-space:nowrap;}
+  .summary-fees{display:flex;flex-direction:column;gap:4px;font-size:14px;}
+  .summary-fee-row{display:flex;justify-content:space-between;gap:8px;}
+  .summary-fee-label{font-weight:700;margin:0;}
+  .summary-fee-value{font-weight:400;margin:0;text-align:right;}
+  .summary-card-ticket{width:100%;height:33px;display:block;}
+  .summary-card-ticket img{width:100%;height:100%;display:block;}
+  .summary-card-bottom{
+    background:#fff;
+    border-radius:0 0 10px 10px;
+    padding:0 24px 24px;
+  }
+  .summary-total{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
+  .summary-total-label{font-size:12px;font-weight:700;margin:0;white-space:nowrap;}
+  .summary-total-price{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;max-width:200px;}
+  .summary-total-value{display:flex;align-items:flex-end;gap:4px;}
+  .summary-total-value .prefix,
+  .summary-total-value .suffix{font-size:16px;font-weight:700;}
+  .summary-total-value .amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .summary-total-value .total-cents{font-size:16px;font-family:'Roboto',sans-serif;}
+  .summary-total-value .suffix{margin-left:-4px;}
+  .summary-total-note{font-size:12px;font-weight:400;margin:4px 0 0;}
+
+  /* Cartões da coluna "Avisos" (agendamento + informativos) */
+  .agendamento-card,
+  .info-card{
+    width:100%;
+    background:#fff;
+    border-radius:12px;
+    padding:32px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+  }
+  .agendamento-card-title,
+  .info-card-title{
+    font-family:'AMX', sans-serif;
+    font-weight:700;
+    font-size:20px;
+    margin:0;
+  }
+  .agendamento-block{display:flex;flex-direction:column;gap:8px;}
+  .agendamento-block-label{
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+    font-size:16px;
+    font-weight:700;
+    margin:0;
+  }
+  .agendamento-block-label i{font-size:24px;line-height:1;}
+  .agendamento-block-value{font-size:16px;font-weight:400;margin:0;}
+  .agendamento-row{display:flex;gap:8px;font-size:16px;}
+  .agendamento-row-label{font-weight:700;white-space:nowrap;margin:0;}
+  .agendamento-row-value{font-weight:400;margin:0;flex:1;}
+  .agendamento-row{display:flex;gap:8px;font-size:16px;}
+  .agendamento-row-label{font-weight:700;white-space:nowrap;margin:0;}
+  .agendamento-row-value{font-weight:400;margin:0;flex:1;}
+
+  .info-card-copy{display:flex;flex-direction:column;gap:8px;}
+  .info-card-desc{font-size:16px;font-weight:400;margin:0;}
+
+  .btn-primary{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:40px;
+    padding:8px 24px;
+    border-radius:500px;
+    background:var(--red);
+    color:#fff;
+    border:none;
+    font-size:16px;
+    font-weight:500;
+    font-family:inherit;
+    text-decoration:none;
+    cursor:pointer;
+    width:100%;
+    transition:filter 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .btn-primary:hover{filter:brightness(0.95);}
+  .btn-primary:active{transform:scale(0.98);}
+
+  /* ===== Termos Container (expandível — mesmo componente de checkout-box.html) ===== */
+  .termos-container{width:100%;max-width:1074px;border-radius:12px;}
+  .termos-header{
+    display:flex;
+    align-items:center;
+    gap:24px;
+    padding:24px;
+    background:#fff;
+    border-radius:12px;
+    cursor:pointer;
+    user-select:none;
+    transition:box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+  .termos-header:hover{box-shadow:0 8px 16px rgba(0, 0, 0, 0.12);}
+  .termos-header.open{border-radius:12px 12px 0 0;}
+  .termos-header-text{display:flex;flex:1;min-width:0;align-items:center;gap:16px;}
+  .termos-icon-wrapper{
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;color:var(--ink);line-height:1;
+  }
+  .termos-text{flex:1;font-size:16px;font-weight:500;margin:0;}
+  .termos-toggle-icon{
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;color:var(--ink);line-height:1;
+    transition:transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    background:none;border:none;padding:0;cursor:pointer;
+  }
+  .termos-header.open .termos-toggle-icon{transform:rotate(180deg);}
+  .termos-content{display:none;padding:24px;background:#fff;border-radius:0 0 12px 12px;}
+  .termos-content.open{display:flex;flex-direction:column;gap:8px;animation:content-fade 0.3s cubic-bezier(0, 0, 0.2, 1);}
+  .termos-item{
+    display:flex;align-items:center;gap:16px;padding:24px;
+    border:1px solid var(--gray-line);border-radius:12px;background:#fff;
+  }
+  .termos-item-title{flex:1;min-width:0;font-size:16px;font-weight:400;margin:0;}
+  .termos-item-icon{
+    width:32px;height:32px;flex-shrink:0;border:none;border-radius:50%;
+    background:var(--red);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;padding:0;transition:transform 0.15s cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .termos-item-icon:active{transform:scale(0.9);}
+  .termos-item-icon i{font-size:16px;line-height:1;color:#fff;}
+
+  /* ===== Upsell "Complemente seu plano" (Figma "Tela de Conclusão - M6",
+     node 12969:24129) — oferta o mais barato entre Celular, Banda Larga e
+     TV que ainda falta (posse + o que acabou de ser comprado), até 3 cards.
+     Reaproveita as classes de picker de data/período de checkout.html
+     (agendamento-periods, agendamento-period, agendamento-radio,
+     agendamento-calendar, agendamento-day, agendamento-actions,
+     agendamento-btn, mesmos nomes, sem conflito aqui — este arquivo não
+     tinha essas classes) pro estado "Confirme sua instalação". Ver
+     [[upsell_conclusao]]. ===== */
+  .uc-card{background:var(--red-dark);border-radius:24px;padding:32px;width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:24px;color:#fff;margin-top:24px;}
+  .uc-header{display:flex;flex-direction:column;gap:8px;}
+  .uc-header-row{display:flex;align-items:center;gap:4px;}
+  .uc-header-row i{font-size:24px;line-height:1;flex-shrink:0;}
+  .uc-title{font-family:'AMX', sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff;}
+  .uc-subtitle{font-size:16px;font-weight:400;margin:0;color:#fff;}
+  .uc-products{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+  .uc-products::-webkit-scrollbar{display:none;}
+  .uc-product-card{flex:0 0 149px;background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;position:relative;box-sizing:border-box;}
+  .uc-product-card.active{border-color:var(--red);}
+  .uc-product-icon{font-size:24px;line-height:1;color:var(--ink);display:block;}
+  .uc-product-title{display:flex;flex-direction:column;width:100%;}
+  .uc-product-cat{font-size:12px;font-weight:500;margin:0;color:var(--gray-dark);}
+  .uc-product-name{font-size:16px;font-weight:700;margin:0;color:var(--ink);}
+  .uc-product-price{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+  .uc-product-price .cents-suffix{font-size:12px;}
+  .uc-checkbox-wrap{position:absolute;top:9px;right:11px;width:24px;height:24px;}
+  .uc-checkbox{appearance:none;-webkit-appearance:none;margin:0;width:24px;height:24px;border:1px solid var(--gray-line);border-radius:4px;background:#fff;cursor:pointer;position:absolute;inset:0;}
+  .uc-checkbox:checked{background:var(--red);border-color:var(--red);}
+  .uc-checkbox-check{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;pointer-events:none;opacity:0;}
+  .uc-checkbox:checked + .uc-checkbox-check{opacity:1;}
+  .uc-divider{height:1px;width:100%;background:var(--gray-line);flex-shrink:0;}
+  .uc-footer{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .uc-price-block{display:flex;flex-direction:column;}
+  .uc-price-label{font-size:12px;font-weight:700;margin:0;color:#fff;}
+  .uc-price-value{font-size:16px;font-weight:700;margin:0;color:#fff;}
+  .uc-price-value .big{font-size:24px;font-family:'AMX', sans-serif;font-weight:700;}
+  .uc-btn-yellow{background:var(--yellow, #ffc722);border:1px solid var(--yellow, #ffc722);border-radius:500px;height:48px;padding:8px 32px;font-size:16px;font-weight:500;color:var(--ink);cursor:pointer;width:100%;font-family:inherit;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .uc-btn-yellow:hover{filter:brightness(0.95);}
+  .uc-btn-yellow:active{transform:scale(0.98);}
+  .uc-btn-yellow:disabled{opacity:0.5;cursor:not-allowed;}
+  .uc-link{background:none;border:none;color:var(--ink);font-size:16px;font-weight:500;cursor:pointer;padding:0;font-family:inherit;text-align:center;width:100%;}
+  .uc-done{display:flex;align-items:center;gap:8px;}
+  .uc-done i{font-size:24px;line-height:1;color:#fff;flex-shrink:0;}
+  .uc-done-title{font-family:'AMX', sans-serif;font-weight:700;font-size:20px;margin:0;color:#fff;}
+  .uc-done-details{display:flex;flex-direction:column;gap:0;}
+  .uc-done-details p{margin:0;font-size:16px;font-weight:700;color:#fff;}
+
+  /* Card agora vive dentro de .summary-col (438px no desktop, mesma
+     largura do Resumo do pedido — nunca mais largo que isso), então os
+     produtos continuam em carrossel horizontal com scroll em QUALQUER
+     breakpoint (3 cards de 149px não cabem lado a lado em 438px) — sem
+     override de "desktop vira grid" que fazia sentido só quando o card
+     era full-width. */
+
+  /* Estado "Confirme sua instalação": container próprio com fundo BRANCO
+     (Figma "Container agendamento") — reaproveita as classes de picker de
+     data/período de checkout.html quase 1:1 (mesmas cores dark-on-white do
+     arquivo original, sem override nenhum, já que agora ficam dentro de um
+     container branco, não mais direto no card vermelho). */
+  .uc-white-box{background:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:32px;width:100%;box-sizing:border-box;color:var(--ink);}
+  .uc-wb-section{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .uc-wb-label{display:flex;align-items:flex-end;gap:8px;font-size:16px;font-weight:700;color:var(--ink);margin:0;}
+  .uc-wb-label i{font-size:24px;line-height:1;}
+  .uc-wb-value{font-size:16px;font-weight:400;color:var(--ink);margin:0;}
+  .agendamento-periods{display:flex;gap:24px;flex-wrap:wrap;width:100%;}
+  .agendamento-period{display:flex;flex-direction:column;gap:8px;background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);}
+  .agendamento-period-heading{display:flex;align-items:center;gap:16px;font-size:20px;font-weight:500;}
+  .agendamento-period-radio{display:flex;align-items:end;gap:16px;font-size:16px;font-weight:400;color:var(--ink);}
+  .agendamento-radio{width:24px;height:24px;flex-shrink:0;border:2px solid var(--gray-line);border-radius:50%;background:#fff;position:relative;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .agendamento-radio.active::after{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--teal-dark);}
+  .agendamento-calendar-row{display:flex;align-items:center;gap:8px;width:100%;min-width:0;}
+  .agendamento-calendar{display:flex;gap:8px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;}
+  .agendamento-calendar::-webkit-scrollbar{display:none;}
+  .agendamento-day{flex:0 0 auto;padding:24px 16px;border-radius:8px;border:1px solid var(--gray-line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-family:'Roboto', sans-serif;font-weight:500;font-size:20px;color:var(--ink);white-space:nowrap;transition:background 0.2s cubic-bezier(0.2,0,0,1), color 0.2s cubic-bezier(0.2,0,0,1);}
+  .agendamento-day span{display:block;line-height:1.3;}
+  .agendamento-day.selected{background:var(--red-dark);border-color:var(--red-dark);color:#fff;}
+  .agendamento-actions{display:flex;flex-direction:column;gap:16px;width:100%;align-items:center;}
+  .agendamento-btn{height:48px;width:100%;border-radius:500px;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;transition:filter 0.2s cubic-bezier(0.2,0,0,1), background 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .agendamento-btn:active{transform:scale(0.98);}
+  .agendamento-btn-primary{background:var(--yellow, #ffc722);border:1px solid var(--yellow, #ffc722);color:var(--ink);}
+  .agendamento-btn-primary:hover{filter:brightness(0.95);}
+
+  /* ===== Mobile-only header adjustments (confirmado no frame Figma
+     "Conclusao Box Mobile": sem ícones de acessibilidade e "Sair" só ícone) ===== */
+  .topbar-exit-label{display:inline;}
+
+  /* ===== MATERIAL DESIGN MOTION ===== */
+  @keyframes fade-in {
+    from { opacity:0; transform:translateY(8px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes slide-up {
+    from { opacity:0; transform:translateY(16px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes content-fade {
+    from { opacity:0; }
+    to { opacity:1; }
+  }
+  .conclusion-message{animation:fade-in 0.5s cubic-bezier(0, 0, 0.2, 1);}
+  .steps-wrap,
+  .summary-col,
+  .agendamento-card,
+  .info-card,
+  .termos-container{
+    opacity:0;
+    animation:slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
+  }
+  .steps-wrap{animation-delay:40ms;}
+  .summary-col{animation-delay:80ms;}
+  .agendamento-card{animation-delay:120ms;}
+  .avisos-col .info-card:nth-of-type(1){animation-delay:160ms;}
+  .avisos-col .info-card:nth-of-type(2){animation-delay:200ms;}
+  .termos-container{animation-delay:240ms;}
+
+  /* ===== Media Queries ===== */
+  @media (max-width:1300px){
+    .topbar-inner{padding:0 24px;}
+    .section-row{padding:24px;}
+  }
+
+  /* Mobile: 599px breakpoint (Figma mobile: 360px) */
+  @media (max-width:599px){
+    .topbar-inner{padding:0 16px;}
+    .section-row{padding:16px;}
+    .section-row:first-of-type{padding-top:24px;}
+
+    /* Header mobile: sem ícones de acessibilidade, "Sair" só com ícone */
+    .topbar-a11y{display:none;}
+    .topbar-exit-label{display:none;}
+
+    .conclusion-message{
+      flex-direction:column;
+      align-items:stretch;
+      padding:32px 16px;
+      border-radius:24px;
+      gap:32px;
+    }
+    .conclusion-illustration{width:100%;}
+
+    .steps-bullets{flex-direction:column;align-items:center;gap:32px;}
+    .step-bullet{width:100%;max-width:328px;}
+
+    .conclusion-columns{flex-direction:column;align-items:stretch;}
+    .summary-col,
+    .avisos-col{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar-utility">
+    <div class="topbar-inner">
+      <div class="topbar-location">
+        <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
+        <span>Nome da Rua</span>
+        <i class="mdn-Icon-seta-baixo-preenchida mdn-Icon--sm mdn-Icon--inverse"></i>
+      </div>
+      <div class="topbar-a11y">
+        <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
+        <i class="mdn-Icon-libras mdn-Icon--sm mdn-Icon--inverse" title="Libras"></i>
+        <i class="mdn-Icon-alto-contraste mdn-Icon--sm mdn-Icon--inverse" title="Contraste"></i>
+        <i class="mdn-Icon-tamanho-diminuir mdn-Icon--sm mdn-Icon--inverse" title="Diminuir fonte"></i>
+        <i class="mdn-Icon-tamanho-aumentar mdn-Icon--sm mdn-Icon--inverse" title="Aumentar fonte"></i>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-brand">
+    <div class="topbar-inner">
+      <a href="vitrine.html" class="brand-logo">
+        <img src="https://mondrian.claro.com.br/brands/horizontal/inverse/minha-claro.svg" alt="MinhaClaro">
+      </a>
+      <div class="topbar-actions">
+        <i class="mdn-Icon-notificacao mdn-Icon--md mdn-Icon--inverse" title="Notificações"></i>
+        <a href="vitrine.html" class="topbar-exit">
+          <i class="mdn-Icon-sair mdn-Icon--md mdn-Icon--inverse"></i>
+          <span class="topbar-exit-label">Sair</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Message container -->
+  <div class="section-row">
+    <div class="conclusion-message">
+      <div class="conclusion-illustration">
+        <img src="assets/conclusao/img-conclusao-desktop.svg" alt="">
+      </div>
+      <div class="conclusion-text">
+        <p class="conclusion-title">Pronto, Rodrigo!</p>
+        <div class="conclusion-subtext">
+          <p>Seu pedido já está em análise.</p>
+          <p>Fique tranquilo, você irá receber um e-mail e SMS assim que concluirmos essa etapa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Como vai funcionar agora? -->
+  <div class="section-row">
+    <div class="steps-wrap">
+      <p class="steps-title">Como vai funcionar agora?</p>
+      <div class="steps-bullets">
+        <div class="step-bullet">
+          <div class="step-icon"><i class="mdn-Icon-e-mail"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="1"><li>Confirmação</li></ol>
+            <p class="step-desc">Vamos te enviar um <strong>e-mail</strong> e <strong>SMS</strong> confirmando seu agendamento.</p>
+          </div>
+        </div>
+        <div class="step-bullet">
+          <div class="step-icon"><i class="mdn-Icon-calendario"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="2"><li id="step2Title">Entrega</li></ol>
+            <p class="step-desc" id="step2Desc">Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.</p>
+          </div>
+        </div>
+        <div class="step-bullet">
+          <div class="step-icon"><i class="mdn-Icon-documento"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="3"><li>Fatura</li></ol>
+            <p class="step-desc">A fatura será <strong>proporcional</strong>, a contar do <strong>dia em que seu plano for ativado</strong> até a <strong>data de vencimento</strong>.</p>
+          </div>
+        </div>
+        <!-- Só aparece quando o pedido inclui um plano móvel (order.hasMobilePlan) — toggle em renderOrder() -->
+        <div class="step-bullet" id="step4MobileActivation" hidden>
+          <div class="step-icon"><i class="mdn-Icon-chip"></i></div>
+          <div class="step-copy">
+            <ol class="step-ol" start="4"><li>Ativação da linha móvel</li></ol>
+            <p class="step-desc"><strong>Após a entrega do seu chip ou envio do seu eSim, sua linha precisará ser ativada</strong>. Ligue de qualquer telefone para o número 10621. Selecione a opção 4. Informe os 4 últimos dígitos do seu novo chip.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumo do pedido + Avisos -->
+  <div class="section-row">
+    <div class="conclusion-columns">
+
+      <!-- Resumo do pedido -->
+      <div class="summary-col">
+        <div class="summary-card">
+          <div class="summary-card-top">
+            <p class="summary-card-heading">Resumo do pedido</p>
+
+            <!-- Produtos do pedido — um .summary-product-block por item,
+                 preenchido por renderOrder() a partir de order.products -->
+            <div class="summary-products" id="summaryProducts"></div>
+
+            <!-- Adicionais incluídos no checkout — preenchido por renderOrder(), oculto quando não há nenhum -->
+            <div class="summary-addons" id="summaryAddons" hidden></div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-fees">
+              <div class="summary-fee-row">
+                <p class="summary-fee-label">Fidelidade</p>
+                <p class="summary-fee-value">12 meses</p>
+              </div>
+              <div class="summary-fee-row">
+                <p class="summary-fee-label">Taxa de Adesão</p>
+                <p class="summary-fee-value">Grátis</p>
+              </div>
+              <div class="summary-fee-row" id="instalacaoFeeRow">
+                <p class="summary-fee-label">Instalação</p>
+                <p class="summary-fee-value">Grátis</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card-ticket">
+            <img src="assets/conclusao/ticket-edge-desktop.svg" alt="">
+          </div>
+
+          <div class="summary-card-bottom">
+            <div class="summary-total">
+              <p class="summary-total-label">Total do seu pedido</p>
+              <div class="summary-total-price">
+                <div class="summary-total-value">
+                  <span class="prefix">R$</span>
+                  <span class="amount" id="summaryTotalPrice">139,90</span>
+                  <span class="suffix">/mês</span>
+                </div>
+                <p class="summary-total-note">ajustado à sua fatura</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upsell "Complemente seu plano" — encaixado logo abaixo do
+             Resumo do pedido, dentro de .summary-col, mesma largura desse
+             componente em qualquer breakpoint (438px desktop / 100% mobile,
+             ambos herdados da coluna). Figma "Tela de Conclusão - M6",
+             node 12969:25231. Ver [[upsell_conclusao]]. -->
+        <div class="uc-card" id="ucCard" hidden></div>
+      </div>
+
+      <!-- Avisos -->
+      <div class="avisos-col">
+
+        <!-- Entrega do pedido — produtos autoinstaláveis (Box/Soundbox): só
+             entrega, sem visita técnica. Alternado com o card de agendamento
+             abaixo via renderOrder(), a partir de order.installType. Some
+             também quando order.hasPhysicalDelivery é false (pedido 'auto'
+             que é só troca de plano de Celular já possuído, nada físico pra
+             entregar — o card "Atualização do plano" abaixo cobre esse
+             caso). -->
+        <div class="agendamento-card" id="entregaAutoCard">
+          <div class="info-card-copy">
+            <p class="agendamento-card-title">Entrega do pedido</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço</p>
+            <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+            <p class="agendamento-block-value">Em até 3 dias úteis</p>
+          </div>
+        </div>
+
+        <!-- Agendamento da instalação — produtos "Cabo" (Box Cabo/Soundbox
+             Cabo): visita de Técnico Claro. Data/período herdados do
+             checkout (ver renderAgendamentoFromStorage). -->
+        <div class="agendamento-card" id="entregaTecnicoCard" hidden>
+          <p class="agendamento-card-title">Agendamento da instalação</p>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-casa"></i>Endereço</p>
+            <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Data e período</p>
+            <div class="agendamento-row">
+              <p class="agendamento-row-label">Data:</p>
+              <p class="agendamento-row-value" data-role="agendamento-date">—</p>
+            </div>
+            <div class="agendamento-row">
+              <p class="agendamento-row-label">Período:</p>
+              <p class="agendamento-row-value" data-role="agendamento-period">—</p>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary">Adicionar ao meu calendário</button>
+        </div>
+
+        <!-- Atualização do plano — plano de Celular cuja categoria já é
+             possuída (troca de plano, usuário já tem número Claro, não há
+             nada físico pra receber): ver showAtualizacaoPlano, mesmo
+             critério de checkout.html. SUBSTITUI os dois cards acima, nunca
+             soma — escondido sempre que o pedido tiver qualquer produto que
+             exija Entrega ou Agendamento (Figma "Checkout exclusivo - M6",
+             node 13297:4426). -->
+        <div class="agendamento-card" id="atualizacaoPlanoCard" hidden>
+          <div class="info-card-copy">
+            <p class="agendamento-card-title">Atualização do plano</p>
+            <p class="info-card-desc">Seu novo plano será atualizado em nosso sistema.</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-documento"></i>Contrato</p>
+            <p class="agendamento-block-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+            <p class="agendamento-block-value">Em até 24 horas</p>
+          </div>
+        </div>
+
+        <!-- Ativação do serviço — pedidos formados só por produtos digitais
+             (installType 'ativacao': streamings avulsos do Carrossel de
+             Adicionais, sem nada físico pra receber nem visita técnica).
+             SUBSTITUI os 3 cards acima, nunca soma — mesma regra de
+             prioridade de checkout.html (Técnico > Entrega > Atualização do
+             plano > Ativação do serviço). -->
+        <div class="agendamento-card" id="ativacaoServicoCard" hidden>
+          <div class="info-card-copy">
+            <p class="agendamento-card-title">Ativação do serviço</p>
+            <p class="info-card-desc">Seu serviço será ativado automaticamente após a confirmação do pedido.</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-celular-5g"></i>Como funciona</p>
+            <p class="agendamento-block-value">Você receberá as instruções de ativação por e-mail e SMS.</p>
+          </div>
+
+          <div class="agendamento-block">
+            <p class="agendamento-block-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+            <p class="agendamento-block-value">Em até 24 horas</p>
+          </div>
+        </div>
+
+        <!-- Ative os seus streamings -->
+        <div class="info-card">
+          <div class="info-card-copy">
+            <p class="info-card-title">Ative os seus streamings</p>
+            <p class="info-card-desc">Saiba como ativar os streamings incluídos no seu plano.</p>
+          </div>
+          <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/ativar-streamings" target="_blank">Saiba mais</a>
+        </div>
+
+        <!-- Autoinstalação — some para produtos "Cabo" (o card de agendamento
+             acima já cobre a instalação técnica, sem precisar repetir o aviso). -->
+        <div class="info-card" id="autoinstalacaoCard">
+          <div class="info-card-copy">
+            <p class="info-card-title" id="installCardTitle">Autoinstalação Box Claro tv+</p>
+            <p class="info-card-desc">É fácil, rápido e não precisa de um técnico Claro. Quando receber o seu aparelho em casa, siga os passos e pronto!</p>
+          </div>
+          <a class="btn-primary" href="https://www.claro.com.br/claro-tv-mais/box#instalacao" target="_blank">Saiba mais</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Termos Container (expandível) -->
+  <div class="section-row">
+    <div class="termos-container">
+      <div class="termos-header" onclick="toggleTermos(this)">
+        <div class="termos-header-text">
+          <div class="termos-icon-wrapper"><i class="mdn-Icon-documento mdn-Icon--md"></i></div>
+          <p class="termos-text">Condições da oferta e termo de adesão</p>
+        </div>
+        <button type="button" class="termos-toggle-icon" aria-label="Expandir">
+          <i class="mdn-Icon-baixo mdn-Icon--md"></i>
+        </button>
+      </div>
+      <div class="termos-content">
+        <div class="termos-item">
+          <p class="termos-item-title">Condições de oferta - TV</p>
+          <button type="button" class="termos-item-icon" aria-label="Ver condições de oferta - TV">
+            <i class="mdn-Icon-olho"></i>
+          </button>
+        </div>
+        <div class="termos-item">
+          <p class="termos-item-title">Termo de Adesão</p>
+          <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão">
+            <i class="mdn-Icon-olho"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Componente real Mondrian Footer, variante "Public Simple"
+     (https://mondrian.claro.com.br/snippets/vanilla/index.html?path=/story/componentes-web-footer--public-simple) -->
+<script src="product-catalog.js"></script>
+
+<footer class="mdn-Footer mdn-Footer--default mdn-Footer--signature mdn-Footer--simple" role="contentinfo">
+  <div class="mdn-Container">
+    <div class="mdn-Footer-content">
+      <div class="mdn-Footer-disclaimer">
+        <ul class="mdn-Footer-list">
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Política de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Portal de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-librasLink" href="#" title="Libras">
+              <i class="mdn-Icon-libras mdn-Icon--sm" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">
+          <strong>© 2026 Claro. Todos os direitos reservados <span class="mdn-Text-dash">- </span>
+            <br>CNPJ: 40.432.544/0001-47 <span class="mdn-Text-dash">- </span>
+            <br>Rua Henri Dunant, 780 - São Paulo - SP
+          </strong>
+        </p>
+      </div>
+      <div class="mdn-Footer-logo">
+        <img class="mdn-Footer-logo-image" src="https://mondrian.claro.com.br/brands/nosvg/assinatura-claro.png" alt="Claro">
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Toggle Termos (mesmo comportamento de checkout-box.html)
+  function toggleTermos(headerEl) {
+    const contentEl = headerEl.nextElementSibling;
+    contentEl.classList.toggle('open');
+    headerEl.classList.toggle('open');
+  }
+
+  // Troca a ilustração da mensagem de conclusão pela versão mobile abaixo
+  // de 599px (o Figma usa um recorte/proporção diferente por breakpoint).
+  function swapConclusionIllustration() {
+    const img = document.querySelector('.conclusion-illustration img');
+    if (!img) return;
+    img.src = window.matchMedia('(max-width: 599px)').matches
+      ? 'assets/conclusao/img-conclusao-mobile.svg'
+      : 'assets/conclusao/img-conclusao-desktop.svg';
+  }
+  swapConclusionIllustration();
+  window.addEventListener('resize', swapConclusionIllustration);
+
+  // Troca o grafismo de "borda de ticket" do Resumo do pedido pela versão
+  // mobile (largura fixa 328 vs 438 no desktop).
+  function swapTicketEdge() {
+    const img = document.querySelector('.summary-card-ticket img');
+    if (!img) return;
+    img.src = window.matchMedia('(max-width: 599px)').matches
+      ? 'assets/conclusao/ticket-edge-mobile.svg'
+      : 'assets/conclusao/ticket-edge-desktop.svg';
+  }
+  swapTicketEdge();
+  window.addEventListener('resize', swapTicketEdge);
+
+  // ===== Resumo do pedido dinâmico =====
+  // Lê o pedido gravado pelo checkout (ver finalizarPedido() em
+  // checkout-box.html e variantes) em vez de ter uma página de conclusão fixa
+  // por produto. Sem dado salvo (ex.: acesso direto a esta URL), cai no
+  // pedido padrão abaixo em vez de deixar a tela quebrada.
+  const DEFAULT_ORDER = {
+    // Lista de produtos do pedido — 1 item nos produtos de TV (Box, Box Cabo,
+    // Soundbox, Soundbox Cabo), 2+ em checkouts com bundle (ex.: Internet +
+    // Celular em checkout-600mega-100gb.html). O resumo do pedido renderiza
+    // um bloco por item da lista.
+    products: [
+      { name: 'Claro tv+ Box', icon: 'mdn-Icon-tv', price: 139.90 },
+    ],
+    shortName: 'Box',
+    installType: 'auto',
+    hasMobilePlan: false, // true → mostra o passo 4 "Ativação da linha móvel"
+    hasCelularPlanChange: false, // true → mostra o card "Atualização do plano"
+    hasPhysicalDelivery: true, // false → esconde Entrega/Autoinstalação (só troca de plano de Celular já possuído)
+    total: 139.90,
+    addons: [],
+  };
+
+  function loadOrder() {
+    try {
+      const raw = sessionStorage.getItem('claroCheckoutOrder');
+      if (!raw) return DEFAULT_ORDER;
+      return Object.assign({}, DEFAULT_ORDER, JSON.parse(raw));
+    } catch (e) {
+      return DEFAULT_ORDER;
+    }
+  }
+
+  function formatPriceBRL(value) {
+    return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function renderOrder() {
+    const order = loadOrder();
+
+    const productsEl = document.getElementById('summaryProducts');
+    const products = Array.isArray(order.products) && order.products.length ? order.products : DEFAULT_ORDER.products;
+    productsEl.innerHTML = products.map(p => `
+      <div class="summary-product-block">
+        <div class="summary-product">
+          <div class="summary-product-icon"><i class="${p.icon}"></i></div>
+          <p class="summary-product-name">${p.name}</p>
+        </div>
+        <div class="summary-price">
+          <span class="prefix">R$</span>
+          <span class="amount">${formatPriceBRL(p.price)}</span>
+          <span class="suffix">/mês</span>
+        </div>
+      </div>
+    `).join('');
+    // Centavos em texto menor, junto do "/mês" (Figma node 13104:18711).
+    const totalStr = formatPriceBRL(order.total);
+    const totalComma = totalStr.lastIndexOf(',');
+    document.getElementById('summaryTotalPrice').innerHTML = totalComma === -1
+      ? totalStr
+      : totalStr.slice(0, totalComma) + '<span class="total-cents">' + totalStr.slice(totalComma) + '</span>';
+
+    const addonsEl = document.getElementById('summaryAddons');
+    const addons = Array.isArray(order.addons) ? order.addons : [];
+    if (addons.length) {
+      addonsEl.innerHTML = addons.map(addon => `
+        <div class="summary-addon-row">
+          <p class="summary-addon-name">${addon.name}</p>
+          <p class="summary-addon-price">R$ ${formatPriceBRL(addon.price)} / mês</p>
+        </div>
+      `).join('');
+      addonsEl.hidden = false;
+    } else {
+      addonsEl.hidden = true;
+      addonsEl.innerHTML = '';
+    }
+
+    // Entrega (Box/Soundbox) vs. Agendamento da instalação (Box Cabo/Soundbox
+    // Cabo): dois cards prontos no HTML, só alterna qual fica visível. O card
+    // de autoinstalação some pros produtos "Cabo" — o de agendamento, com
+    // data/período reais, já cobre esse aviso.
+    const isTecnico = order.installType === 'tecnico';
+    // hasPhysicalDelivery pode faltar em pedidos salvos antes desse campo
+    // existir — default true (comportamento antigo, sempre mostrava Entrega).
+    const hasPhysicalDelivery = order.hasPhysicalDelivery !== false;
+    // "Instalação: Grátis" no resumo só faz sentido pra pedidos com
+    // instalação técnica de verdade — Celular e TV Box/Soundbox sem cabo
+    // (installType 'auto') não têm instalação nenhuma.
+    document.getElementById('instalacaoFeeRow').hidden = !isTecnico;
+    document.getElementById('entregaAutoCard').hidden = isTecnico || !hasPhysicalDelivery;
+    document.getElementById('entregaTecnicoCard').hidden = !isTecnico;
+    document.getElementById('autoinstalacaoCard').hidden = isTecnico || !hasPhysicalDelivery;
+    document.getElementById('installCardTitle').textContent = `Autoinstalação ${order.shortName} Claro tv+`;
+    // Atualização do plano — SUBSTITUI Entrega/Agendamento, nunca soma: só
+    // aparece quando não há instalação técnica nem entrega física alguma no
+    // pedido (mesma condição do step2 "Atualização" abaixo).
+    const showAtualizacaoPlano = !!order.hasCelularPlanChange && !isTecnico && !hasPhysicalDelivery;
+    document.getElementById('atualizacaoPlanoCard').hidden = !showAtualizacaoPlano;
+
+    // Ativação do serviço — pedido inteiro é 'ativacao' (só produtos
+    // digitais, nenhum técnico/entrega física envolvido). Não depende de
+    // hasPhysicalDelivery/hasCelularPlanChange: um plano de Celular sempre
+    // tem installType 'auto', então um pedido só chega a 'ativacao' quando
+    // não há nenhum produto de categoria possuída/física no meio.
+    const showAtivacaoServico = order.installType === 'ativacao';
+    document.getElementById('ativacaoServicoCard').hidden = !showAtivacaoServico;
+
+    if (isTecnico) {
+      document.getElementById('step2Title').textContent = 'Instalação';
+      document.getElementById('step2Desc').innerHTML = 'O técnico chegará à sua casa no <strong>dia agendado para fazer a instalação</strong>. Você poderá <strong>acompanhar tudo pelo app</strong>.';
+    } else if (showAtualizacaoPlano) {
+      // Figma "Tela de Conclusão - M6", node 13025:9279 ("Bullet -
+      // Confirmação" / passo 2 "Atualização do plano") — só o prazo ("1 dia
+      // útil") fica em negrito, diferente dos outros dois ramos.
+      document.getElementById('step2Title').textContent = 'Atualização do plano';
+      document.getElementById('step2Desc').innerHTML = 'Seu novo plano será atualizado em nosso sistema no prazo de até <strong>24 horas</strong>.';
+    } else if (showAtivacaoServico) {
+      document.getElementById('step2Title').textContent = 'Ativação';
+      document.getElementById('step2Desc').innerHTML = 'Seu plano <strong>será atualizado no sistema</strong> no prazo de até <strong>24 horas</strong>.';
+    } else {
+      document.getElementById('step2Title').textContent = 'Entrega';
+      document.getElementById('step2Desc').innerHTML = 'Seu aparelho <strong>será entregue</strong> na sua casa no <strong>prazo de até 3 dias úteis</strong>.';
+    }
+
+    // Passo 4 "Ativação da linha móvel" — só em pedidos com plano de celular
+    // (ex.: checkout-600mega-100gb.html), nunca nos produtos de TV puros. E
+    // nunca quando é troca de plano de Celular já possuído
+    // (order.hasCelularPlanChange) — esse passo fala de receber/ativar um
+    // chip ou eSim novo, o que não existe numa troca de plano no número que
+    // o cliente já tem (mesma regra que esconde Entrega/mostra "Atualização
+    // do plano" acima).
+    document.getElementById('step4MobileActivation').hidden = !order.hasMobilePlan || !!order.hasCelularPlanChange;
+
+    if (isTecnico) renderAgendamentoFromStorage();
+  }
+  renderOrder();
+
+  // Herda a data/período escolhidos no Agendamento da instalação do
+  // checkout (salvos em localStorage antes do redirect pelo botão
+  // "Concluir pedido" em checkout-box-cabo.html / checkout-soundbox-cabo.html
+  // — mesmo mecanismo de checkout-600mega-100gb.html). Sem nada salvo (ex.:
+  // acesso direto a esta página), mantém o texto padrão "—" dos spans.
+  function renderAgendamentoFromStorage() {
+    const WEEKDAYS_FULL = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    const PERIODS = {
+      manha: { label: 'Manhã', summaryRange: 'Das 08:00 até 12:00' },
+      tarde: { label: 'Tarde', summaryRange: 'Das 12:00 até 18:00' },
+    };
+    let saved;
+    try {
+      saved = JSON.parse(localStorage.getItem('agendamentoConfirmado'));
+    } catch (e) {
+      saved = null;
+    }
+    if (!saved || !saved.date || !saved.period || !PERIODS[saved.period]) return;
+
+    const date = new Date(saved.date);
+    if (isNaN(date.getTime())) return;
+
+    const dateEl = document.querySelector('[data-role="agendamento-date"]');
+    const periodEl = document.querySelector('[data-role="agendamento-period"]');
+    if (dateEl) {
+      dateEl.textContent = String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0') + ' - ' + WEEKDAYS_FULL[date.getDay()];
+    }
+    if (periodEl) {
+      const p = PERIODS[saved.period];
+      periodEl.textContent = p.label + ' - ' + p.summaryRange;
+    }
+  }
+
+  // ===== Upsell "Complemente seu plano" (Figma "Tela de Conclusão - M6",
+  // node 12969:24129) — ver [[upsell_conclusao]] na memória do projeto.
+  // Mesma lógica de prioridade do upsell do checkout.html ([[upsell_checkout]]:
+  // Banda Larga > Celular > TV), mas aqui SEM cortar em "só a 1ª categoria
+  // faltante" — mostra até 3 cards, um por categoria que falta (posse + o
+  // que já está em order.products), cada um o mais barato daquela
+  // categoria. Escopo combinado com a Eve: só Agendamento/Entrega/Ativação
+  // são replicados aqui — Config Móvel, cadastro Pré-pago, "Atualização do
+  // plano"/"Permanece no seu plano" ficam de fora por agora.
+  var UC_CATEGORIA_INFO = {
+    internet: { label: 'Internet', icon: 'mdn-Icon-wifi' },
+    celular: { label: 'Celular', icon: 'mdn-Icon-celular-5g' },
+    tv: { label: 'TV', icon: 'mdn-Icon-tv' },
+  };
+  var UC_PRIORITY = ['internet', 'celular', 'tv'];
+  // Mesma regra de checkout.html (CATEGORY_DISCOUNTS) — duplicada aqui
+  // porque o projeto não usa módulos JS, cada arquivo é autocontido.
+  var UC_CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
+
+  // Mesmo mecanismo de getPosseCheckoutCfg() em checkout.html, só os campos
+  // que este componente precisa (categoriasPossui).
+  function getPosseUpsellCategorias() {
+    if (typeof POSSE_CONFIGS === 'undefined') return [];
+    var lista = Object.keys(POSSE_CONFIGS).map(function (id) { return POSSE_CONFIGS[id]; })
+      .sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+    var defaultCfg = lista.length ? lista[0] : null;
+    var posseId = sessionStorage.getItem('posseAtiva');
+    var cfg = (posseId && POSSE_CONFIGS[posseId]) || defaultCfg;
+    if (!cfg) return [];
+    return (cfg.categoriasPossui && cfg.categoriasPossui.length) ? cfg.categoriasPossui : (defaultCfg ? defaultCfg.categoriasPossui || [] : []);
+  }
+
+  function ucIconClass(product) {
+    return (product.icone && product.icone.kind === 'mdn' && product.icone.class) || 'mdn-Icon-mais';
+  }
+
+  // "Já possui" = posse ATUAL + categoria de cada produto que já está em
+  // order.products (a compra que acabou de ser feita) — mesma extensão de
+  // bom senso do upsell do checkout, agora explicitamente pedida pela Eve
+  // ("a posse atual do cliente + o produto que ele acabou de contratar").
+  function computeUpsellCandidates(order) {
+    if (typeof PRODUCT_CATALOG === 'undefined') return [];
+    var possuiEfetivo = {};
+    getPosseUpsellCategorias().forEach(function (c) { possuiEfetivo[c] = true; });
+    (order.products || []).forEach(function (p) {
+      var categoria = p.categoria || (p.id && PRODUCT_CATALOG[p.id] && PRODUCT_CATALOG[p.id].categoria);
+      if (categoria) possuiEfetivo[categoria] = true;
+    });
+    var faltando = UC_PRIORITY.filter(function (c) { return !possuiEfetivo[c]; });
+    return faltando.map(function (categoria) {
+      var candidatos = Object.keys(PRODUCT_CATALOG).map(function (id) { return PRODUCT_CATALOG[id]; })
+        .filter(function (p) { return p.categoria === categoria; })
+        .sort(function (a, b) { return a.preco - b.preco; });
+      return candidatos[0];
+    }).filter(Boolean);
+  }
+
+  // ===== Estado do componente =====
+  var ucCandidates = [];
+  var ucSelected = {};
+  var ucStep = 'offer'; // 'offer' -> 'confirm' (só se algum selecionado for técnico) -> 'done'
+  var ucFormOpen = false;
+  var ucDoneProducts = [];
+  var UC_WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  var UC_WEEKDAYS_FULL = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  var UC_PERIODS = {
+    manha: { label: 'Manhã', range: 'Das 08:00 — Até 12:00', icon: 'mdn-Icon-sol' },
+    tarde: { label: 'Tarde', range: 'Das 12:00 — Até 18:00', icon: 'mdn-Icon-sol-se-pondo' },
+  };
+  var UC_DAYS_COUNT = 14;
+
+  function ucBuildDays() {
+    var days = [];
+    var today = new Date();
+    for (var i = 1; i <= UC_DAYS_COUNT; i++) days.push(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i));
+    return days;
+  }
+  var ucDays = ucBuildDays();
+
+  // Se já existe uma visita técnica confirmada (pedido original já era
+  // 'tecnico'), a sugestão parte dessa mesma data/período — 1 única visita
+  // pra vários produtos técnicos, mesma regra de sempre (ver
+  // [[combo_install_type_rule]]). Sem nada salvo, sugere o 1º dia
+  // disponível + Manhã, mesmo default do Agendamento no checkout.
+  function ucLoadExistingAgendamento() {
+    try {
+      var saved = JSON.parse(localStorage.getItem('agendamentoConfirmado'));
+      if (saved && saved.date && saved.period) {
+        var d = new Date(saved.date);
+        if (!isNaN(d.getTime())) return { period: saved.period, date: d };
+      }
+    } catch (e) {}
+    return null;
+  }
+  var ucExisting = ucLoadExistingAgendamento();
+  var ucDraft = { period: (ucExisting && ucExisting.period) || 'manha', date: (ucExisting && ucExisting.date) || ucDays[0] };
+
+  function ucFormatDayMonth(d) { return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0'); }
+
+  function ucProductCardHtml(product) {
+    var info = UC_CATEGORIA_INFO[product.categoria] || {};
+    var checked = !!ucSelected[product.id];
+    return '<label class="uc-product-card' + (checked ? ' active' : '') + '">' +
+      '<i class="' + (info.icon || '') + ' uc-product-icon"></i>' +
+      '<div class="uc-product-title">' +
+        '<p class="uc-product-cat">' + (info.label || '') + '</p>' +
+        '<p class="uc-product-name">' + product.nome + '</p>' +
+      '</div>' +
+      '<p class="uc-product-price">R$ ' + formatPriceBRL(product.preco) + '<span class="cents-suffix">/mês</span></p>' +
+      '<span class="uc-checkbox-wrap">' +
+        '<input type="checkbox" class="uc-checkbox" ' + (checked ? 'checked' : '') + ' onchange="toggleUcProduct(\'' + product.id + '\')">' +
+        '<i class="mdn-Icon-check uc-checkbox-check"></i>' +
+      '</span>' +
+    '</label>';
+  }
+
+  function ucSelectedList() { return ucCandidates.filter(function (p) { return ucSelected[p.id]; }); }
+  function ucSelectedTotal() { return ucSelectedList().reduce(function (sum, p) { return sum + p.preco; }, 0); }
+
+  function renderUpsellConclusao() {
+    var card = document.getElementById('ucCard');
+    if (!ucCandidates.length) { card.hidden = true; return; }
+    card.hidden = false;
+
+    if (ucStep === 'done') {
+      var doneNomes = ucDoneProducts.map(function (p) { return p.nome; }).join(', ');
+      var doneTotal = ucDoneProducts.reduce(function (s, p) { return s + p.preco; }, 0);
+      card.innerHTML =
+        '<div class="uc-done">' +
+          '<i class="mdn-Icon-check-circulo"></i>' +
+          '<p class="uc-done-title">Pedido atualizado</p>' +
+        '</div>' +
+        '<div class="uc-done-details">' +
+          '<p>' + doneNomes + '</p>' +
+          '<p>+ R$ ' + formatPriceBRL(doneTotal) + '/mês</p>' +
+        '</div>';
+      return;
+    }
+
+    if (ucStep === 'confirm') {
+      var precisaTecnico = ucSelectedList().some(function (p) { return p.installType === 'tecnico'; });
+      if (!precisaTecnico) { finalizeUcOrder(); return; }
+
+      var headerHtml =
+        '<div class="uc-header">' +
+          '<div class="uc-header-row"><i class="mdn-Icon-instalacao"></i><p class="uc-title">Confirme sua instalação</p></div>' +
+          '<p class="uc-subtitle">Este pedido requer instalação. Ajuste a data e o período, se preferir.</p>' +
+        '</div>';
+      var enderecoHtml =
+        '<div class="uc-wb-section">' +
+          '<p class="uc-wb-label"><i class="mdn-Icon-casa"></i>Endereço</p>' +
+          '<p class="uc-wb-value">R. Nome da Rua, 0000<br>Cidade - UF</p>' +
+        '</div>';
+
+      if (!ucFormOpen) {
+        card.innerHTML = headerHtml +
+          '<div class="uc-white-box">' +
+            enderecoHtml +
+            '<div class="uc-wb-section">' +
+              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Data e período</p>' +
+              '<p class="uc-wb-value"><strong>Data:</strong> ' + ucFormatDayMonth(ucDraft.date) + ' - ' + UC_WEEKDAYS_FULL[ucDraft.date.getDay()] + '</p>' +
+              '<p class="uc-wb-value"><strong>Período:</strong> ' + UC_PERIODS[ucDraft.period].label + ' - ' + UC_PERIODS[ucDraft.period].range + '</p>' +
+            '</div>' +
+            '<div class="agendamento-actions">' +
+              '<button type="button" class="agendamento-btn agendamento-btn-primary" onclick="ucConfirmAgendamento()">Confirmar agendamento</button>' +
+              '<button type="button" class="uc-link" onclick="ucFormOpen=true;renderUpsellConclusao();">Alterar</button>' +
+            '</div>' +
+          '</div>';
+      } else {
+        var periodsHtml = Object.keys(UC_PERIODS).map(function (key) {
+          var p = UC_PERIODS[key];
+          var active = ucDraft.period === key;
+          return '<button type="button" class="agendamento-period" onclick="ucSelectPeriod(\'' + key + '\')">' +
+            '<span class="agendamento-period-heading"><i class="' + p.icon + '"></i><span>' + p.label + '</span></span>' +
+            '<span class="agendamento-period-radio"><span class="agendamento-radio' + (active ? ' active' : '') + '"></span><span>' + p.range + '</span></span>' +
+          '</button>';
+        }).join('');
+        var daysHtml = ucDays.map(function (d) {
+          var sel = d.getFullYear() === ucDraft.date.getFullYear() && d.getMonth() === ucDraft.date.getMonth() && d.getDate() === ucDraft.date.getDate();
+          return '<button type="button" class="agendamento-day' + (sel ? ' selected' : '') + '" onclick="ucSelectDay(\'' + d.toISOString() + '\')"><span>' + UC_WEEKDAYS_SHORT[d.getDay()] + '</span><span>' + ucFormatDayMonth(d) + '</span></button>';
+        }).join('');
+        card.innerHTML = headerHtml +
+          '<div class="uc-white-box">' +
+            enderecoHtml +
+            '<div class="uc-wb-section">' +
+              '<p class="uc-wb-label"><i class="mdn-Icon-calendario"></i>Data e período</p>' +
+              '<p class="uc-wb-value">Escolha o período e a data da visita técnica:</p>' +
+            '</div>' +
+            '<div class="agendamento-periods">' + periodsHtml + '</div>' +
+            '<div class="agendamento-calendar-row"><div class="agendamento-calendar">' + daysHtml + '</div></div>' +
+            '<div class="agendamento-actions">' +
+              '<button type="button" class="agendamento-btn agendamento-btn-primary" onclick="ucConfirmAgendamento()">Confirmar agendamento</button>' +
+              '<button type="button" class="uc-link" onclick="ucFormOpen=false;renderUpsellConclusao();">Cancelar</button>' +
+            '</div>' +
+          '</div>';
+      }
+      return;
+    }
+
+    // ucStep === 'offer'
+    var count = ucSelectedList().length;
+    var footerHtml = count > 0
+      ? '<div class="uc-divider"></div>' +
+        '<div class="uc-footer">' +
+          '<div class="uc-price-block">' +
+            '<p class="uc-price-label">' + count + (count === 1 ? ' oferta selecionada' : ' ofertas selecionadas') + '</p>' +
+            '<p class="uc-price-value">+ R$ <span class="big">' + formatPriceBRL(ucSelectedTotal()) + '</span> /mês</p>' +
+          '</div>' +
+          '<button type="button" class="uc-btn-yellow" onclick="handleUcAtualizar()">Atualizar meu pedido</button>' +
+        '</div>'
+      : '';
+    card.innerHTML =
+      '<div class="uc-header">' +
+        '<p class="uc-title">Complemente seu plano</p>' +
+        '<p class="uc-subtitle">Selecione um ou mais para incluir na sua compra.</p>' +
+      '</div>' +
+      '<div class="uc-products">' + ucCandidates.map(ucProductCardHtml).join('') + '</div>' +
+      footerHtml;
+  }
+
+  function toggleUcProduct(id) {
+    if (ucSelected[id]) delete ucSelected[id]; else ucSelected[id] = true;
+    renderUpsellConclusao();
+  }
+
+  function handleUcAtualizar() {
+    if (!ucSelectedList().length) return;
+    ucStep = 'confirm';
+    ucFormOpen = false;
+    renderUpsellConclusao();
+  }
+
+  function ucSelectPeriod(period) { ucDraft.period = period; renderUpsellConclusao(); }
+  function ucSelectDay(iso) { ucDraft.date = new Date(iso); renderUpsellConclusao(); }
+
+  function ucConfirmAgendamento() {
+    try { localStorage.setItem('agendamentoConfirmado', JSON.stringify({ period: ucDraft.period, date: ucDraft.date.toISOString() })); } catch (e) {}
+    finalizeUcOrder();
+  }
+
+  // Mesma regra de desconto por categoria de checkout.html
+  // (CATEGORY_DISCOUNTS/[[checkout_dynamic_page]]), reaplicada sobre a
+  // lista final de produtos (antigos + upsell) pro Resumo do Pedido
+  // continuar batendo com o resto da jornada. Um produto por categoria
+  // recebe o desconto fixo dessa categoria, só quando o pedido final tem
+  // 2+ categorias distintas — Internet nunca desconta (só "habilita").
+  function ucApplyCategoryDiscounts(produtos) {
+    var categoriasNoCarrinho = {};
+    produtos.forEach(function (p) { if (p.categoria) categoriasNoCarrinho[p.categoria] = true; });
+    if (Object.keys(categoriasNoCarrinho).length < 2) return produtos;
+    var jaDescontado = {};
+    return produtos.map(function (p) {
+      var desconto = (p.categoria && !jaDescontado[p.categoria]) ? (UC_CATEGORY_DISCOUNTS[p.categoria] || 0) : 0;
+      if (desconto) jaDescontado[p.categoria] = true;
+      if (!desconto) return p;
+      return Object.assign({}, p, { price: Math.round((p.price - desconto) * 100) / 100 });
+    });
+  }
+
+  // Confirma a atualização de verdade: funde os produtos selecionados no
+  // upsell com order.products, recalcula installType/hasMobilePlan/
+  // hasPhysicalDelivery/total com as MESMAS regras de checkout.html, salva
+  // de volta em sessionStorage.claroCheckoutOrder (decisão confirmada com a
+  // Eve: sobrevive a um F5) e reusa renderOrder() — já existia, cobre
+  // sozinho todo o resto do Resumo/Avisos/steps a partir do order object.
+  function finalizeUcOrder() {
+    var order = loadOrder();
+    var selecionados = ucSelectedList();
+    var novos = selecionados.map(function (p) {
+      return { id: p.id, categoria: p.categoria, name: p.nome, icon: ucIconClass(p), price: p.preco };
+    });
+    ucDoneProducts = selecionados;
+
+    var todosProdutos = (order.products || []).concat(novos);
+    todosProdutos = ucApplyCategoryDiscounts(todosProdutos);
+
+    var todosCategorias = todosProdutos.map(function (p) { return p.categoria; }).filter(Boolean);
+    var installTypes = todosProdutos.map(function (p) {
+      var full = p.id && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[p.id];
+      return full ? full.installType : null;
+    });
+    var novoInstallType = (installTypes.indexOf('tecnico') !== -1 || order.installType === 'tecnico') ? 'tecnico'
+      : (installTypes.indexOf('auto') !== -1 || order.installType === 'auto') ? 'auto'
+      : 'ativacao';
+    var novoHasMobilePlan = !!order.hasMobilePlan || todosCategorias.indexOf('celular') !== -1;
+    // Produto novo (upsell) nunca é troca de plano já possuído — as
+    // categorias ofertadas são sempre as que faltavam — então
+    // hasCelularPlanChange não muda. hasPhysicalDelivery só pode passar de
+    // false pra true (surgiu algo físico novo pra entregar), nunca o
+    // contrário.
+    var novoHasPhysicalDelivery = order.hasPhysicalDelivery !== false || selecionados.some(function (p) { return p.installType === 'auto'; });
+
+    var novoAddonsTotal = Array.isArray(order.addons) ? order.addons.reduce(function (s, a) { return s + a.price; }, 0) : 0;
+    var novoTotal = todosProdutos.reduce(function (s, p) { return s + p.price; }, 0) + novoAddonsTotal;
+
+    var novoOrder = Object.assign({}, order, {
+      products: todosProdutos,
+      installType: novoInstallType,
+      hasMobilePlan: novoHasMobilePlan,
+      hasPhysicalDelivery: novoHasPhysicalDelivery,
+      total: Math.round(novoTotal * 100) / 100,
+    });
+    try { sessionStorage.setItem('claroCheckoutOrder', JSON.stringify(novoOrder)); } catch (e) {}
+
+    ucStep = 'done';
+    renderOrder();
+    renderUpsellConclusao();
+  }
+
+  (function initUpsellConclusao() {
+    ucCandidates = computeUpsellCandidates(loadOrder());
+    renderUpsellConclusao();
+  })();
+</script>
+
+</body>
+</html>

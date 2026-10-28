@@ -1,0 +1,3163 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout · Simulador M6</title>
+
+<!-- Mondrian via CDN -->
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/tokens/claro-tokens-3.0.0.custom-properties.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/icons/mondrian-icons-latest.css">
+
+<style>
+  :root{
+    --red-dark:#b41e13;
+    --red:#da291c;
+    --yellow:#ffc722;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --green-bg:#ddf9ed;
+    --green-text:#006b4f;
+    --gray-tertiary:#dbdbdb;
+    --bg-page:#f8f8f8;
+    --red-lightest:#ffe3e3;
+    --teal-dark:#005c66;
+  }
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  /* Botões/inputs não herdam a fonte do body por padrão (caem em Arial do navegador) — força Roboto/AMX do Mondrian */
+  button,input,select,textarea{font-family:inherit;}
+  body{margin:0;font-family:'Roboto', sans-serif;background:var(--bg-page);color:var(--ink);}
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Topbar ===== */
+  .topbar-inner{width:100%;max-width:1440px;margin:0 auto;padding:0 80px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;}
+  .topbar-utility{background:var(--red-dark);height:46px;display:flex;}
+  .topbar-utility .topbar-inner{height:100%;}
+  .topbar-location{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+  .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-a11y{display:flex;align-items:center;gap:16px;}
+  .topbar-a11y i{font-size:16px;line-height:1;}
+  .topbar-brand{background:var(--red);height:70px;display:flex;}
+  .topbar-brand .topbar-inner{height:100%;}
+  .brand-logo img{height:38px;display:block;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .topbar-actions i{font-size:24px;line-height:1;}
+  .topbar-exit{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+
+  .content{max-width:1440px;margin:0 auto;padding:48px 80px 0;}
+  .mdn-Breadcrumb{margin-bottom:48px;}
+
+  .checkout-container{display:flex;gap:48px;margin-top:48px;margin-bottom:48px;}
+  .checkout-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;}
+  .checkout-right{width:480px;display:flex;flex-direction:column;}
+
+  /* Detalhes Container (expandível) */
+  .detalhes-container{min-width:0;border-radius:12px;}
+  .detalhes-header{display:flex;align-items:center;gap:24px;padding:24px 16px;background:#fff;border-radius:12px;cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);}
+  @media (hover:hover){.detalhes-header:hover{box-shadow:0 8px 16px rgba(0,0,0,0.12);}}
+  .detalhes-header.open{border-radius:12px 12px 0 0;}
+  .detalhes-text{flex:1;min-width:0;font-size:16px;font-weight:500;color:var(--ink);margin:0;}
+  .detalhes-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink);transition:transform 0.2s cubic-bezier(0.2,0,0,1);background:none;border:none;padding:0;cursor:pointer;}
+  .detalhes-header.open .detalhes-icon{transform:rotate(180deg);}
+  .detalhes-content{display:none;}
+  .detalhes-content.open{display:flex;flex-direction:column;min-width:0;}
+
+  .detalhes-description{background:#fff;padding:0 16px 34px;display:flex;flex-direction:column;gap:32px;}
+  .detalhes-heading{display:flex;flex-direction:column;gap:8px;}
+  .detalhes-heading-label{font-size:12px;font-weight:400;color:var(--gray-dark);margin:0;}
+  .detalhes-heading-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .detalhes-body{font-size:16px;font-weight:400;color:var(--gray-dark);line-height:1.3;}
+  .detalhes-body p{margin:0 0 16px;}
+  .detalhes-body p:last-child{margin-bottom:0;}
+  .detalhes-body strong{font-weight:700;}
+
+  .detalhes-features{display:flex;flex-direction:column;gap:8px;}
+  .detalhes-feature{display:flex;align-items:center;gap:16px;}
+  .detalhes-feature-icon{width:48px;height:48px;flex-shrink:0;background:var(--red-lightest);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .detalhes-feature-icon i,.detalhes-feature-icon span{font-size:32px;line-height:1;color:var(--red);}
+  .detalhes-feature-icon img{width:28px;height:28px;object-fit:contain;}
+  .detalhes-feature-icon .mdn-Icon--md::before{font-size:32px;}
+  .detalhes-feature-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+  .detalhes-feature-title{font-size:16px;font-weight:700;color:var(--ink);margin:0;}
+  .detalhes-feature-desc{font-size:14px;font-weight:400;color:var(--gray-dark);margin:0;}
+
+  /* Grupo com a(s) descrição(ões) de produto + toggle "Ver mais/Ver menos"
+     (produto único: só o 1º bloco, sem toggle. 2+ produtos: 1º sempre
+     visível, os demais atrás de "Ver mais" — ver detalhes-description[data-role="desc-extra"]). */
+  .detalhes-description-group{display:flex;flex-direction:column;min-width:0;}
+  .detalhes-fade{height:54px;margin-top:-54px;background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 80%);position:relative;pointer-events:none;}
+  .detalhes-vermais-row{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:0 24px 24px;background:#fff;border:none;cursor:pointer;transition:opacity 0.2s cubic-bezier(0.2,0,0,1);}
+  @media (hover:hover){.detalhes-vermais-row:hover{opacity:0.72;}}
+  .detalhes-vermais-row span{font-size:16px;font-weight:500;color:var(--ink);}
+  .detalhes-vermais-row i{font-size:24px;line-height:1;color:var(--ink);}
+
+  .detalhes-plan{background:#fff;padding:34px 16px;}
+  .detalhes-plan-inner{display:flex;flex-direction:column;gap:16px;width:100%;min-width:0;}
+  .detalhes-plan-subtitle{font-size:16px;font-weight:400;color:var(--ink);margin:0;}
+  .streaming-carousel{display:flex;gap:8px;min-width:0;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -16px;padding:0 16px;cursor:grab;user-select:none;scroll-padding-left:16px;}
+  .streaming-carousel.dragging,.services-carousel.dragging{cursor:grabbing;scroll-snap-type:none;}
+  .streaming-carousel.dragging *,.services-carousel.dragging *{pointer-events:none;}
+  .streaming-carousel::-webkit-scrollbar{display:none;}
+  .streaming-card{position:relative;flex:0 0 auto;width:260px;height:340px;border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,0.16);background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:space-between;padding:24px;scroll-snap-align:start;}
+  .streaming-card--overlay::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, #000 82%, #000 100%);pointer-events:none;}
+  .streaming-card-logo{width:64px;height:64px;flex-shrink:0;position:relative;z-index:1;}
+  .streaming-card-logo img{width:100%;height:100%;display:block;}
+  .streaming-card-text{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1;}
+  .streaming-card-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:#fff;margin:0;}
+  .streaming-card-desc{font-size:16px;font-weight:400;color:#fff;margin:0;}
+
+  .detalhes-services{background:var(--bg-page);padding:24px;border-radius:0 0 12px 12px;}
+  .detalhes-services-inner{display:flex;flex-direction:column;gap:16px;min-width:0;}
+  .detalhes-services-subtitle{font-size:16px;font-weight:400;color:var(--gray-dark);margin:0;}
+  .services-carousel{display:flex;gap:8px;min-width:0;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;cursor:grab;user-select:none;}
+  .services-carousel::-webkit-scrollbar{display:none;}
+  .service-card{flex:0 0 auto;width:260px;min-height:250px;background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:16px;display:flex;flex-direction:column;scroll-snap-align:start;}
+  .service-card-header{display:flex;align-items:center;gap:8px;}
+  .service-card-icon{width:32px;height:32px;flex-shrink:0;}
+  .service-card-icon img{width:100%;height:100%;display:block;}
+  .service-card-name{font-size:16px;font-weight:500;color:var(--ink);margin:0;white-space:nowrap;}
+  .service-card-desc{padding-left:40px;font-size:16px;font-weight:400;color:var(--ink);margin:8px 0 0;}
+
+  .detalhes-swiper-nav{display:flex;gap:16px;align-self:center;}
+  .swiper-arrow{width:48px;height:48px;flex-shrink:0;border:none;border-radius:12px;background:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .swiper-arrow i{font-size:20px;color:#fff;line-height:1;}
+  .swiper-arrow:disabled{opacity:0.32;cursor:default;}
+  .swiper-arrow:active:not(:disabled){transform:scale(0.95);}
+
+  /* Container Agendamento */
+  .agendamento-container{background:#fff;border-radius:12px;padding:32px 16px;display:flex;flex-direction:column;gap:32px;}
+  .agendamento-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;margin:0 0 8px;}
+  .agendamento-subtitle{font-size:16px;color:var(--gray-dark);margin:0;}
+  .agendamento-section{display:flex;flex-direction:column;gap:8px;}
+  .agendamento-label{display:flex;align-items:flex-end;gap:8px;font-size:16px;font-weight:700;margin:0;}
+  .agendamento-label i{font-size:24px;line-height:1;}
+  .agendamento-value{font-size:16px;color:var(--ink);margin:0;}
+  [data-role="agendamento-summary"]{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .agendamento-summary-row{display:flex;gap:8px;font-size:16px;color:var(--ink);margin:0;}
+  .agendamento-summary-row strong{flex-shrink:0;font-weight:700;}
+  .agendamento-periods{display:flex;gap:24px;flex-wrap:wrap;width:100%;}
+  .agendamento-period{display:flex;flex-direction:column;gap:8px;background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;font-family:inherit;}
+  .agendamento-period-heading{display:flex;align-items:center;gap:16px;}
+  .agendamento-period-heading i{font-size:24px;line-height:1;color:var(--ink);}
+  .agendamento-period-heading span{font-size:20px;font-weight:500;color:var(--ink);}
+  .agendamento-period-radio{display:flex;align-items:center;gap:16px;font-size:16px;color:var(--ink);}
+  .agendamento-radio{width:24px;height:24px;flex-shrink:0;border:2px solid var(--gray-line);border-radius:50%;background:#fff;position:relative;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .agendamento-radio.active::after{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--teal-dark);}
+  .agendamento-calendar-row{display:flex;align-items:center;gap:8px;width:100%;min-width:0;}
+  .agendamento-calendar{display:flex;gap:16px;flex:1;min-width:0;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;cursor:grab;user-select:none;}
+  .agendamento-calendar::-webkit-scrollbar{display:none;}
+  .agendamento-calendar.dragging{cursor:grabbing;scroll-snap-type:none;}
+  .agendamento-calendar.dragging *{pointer-events:none;}
+  .agendamento-day{flex:0 0 auto;padding:24px 16px;border-radius:8px;border:1px solid var(--gray-line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-family:'Roboto', sans-serif;font-weight:500;font-size:20px;color:var(--ink);white-space:nowrap;filter:drop-shadow(0 0 2px rgba(49,49,49,0.15));scroll-snap-align:start;transition:background 0.2s cubic-bezier(0.2,0,0,1), color 0.2s cubic-bezier(0.2,0,0,1), border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .agendamento-day span{display:block;line-height:1.3;}
+  .agendamento-day.selected{background:var(--red-dark);border-color:var(--red-dark);color:#fff;}
+  .agendamento-calendar-arrow{display:none;}
+  @media (min-width:1024px){.agendamento-calendar-arrow{display:flex;}}
+  .agendamento-actions{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .agendamento-btn{height:40px;width:100%;border-radius:500px;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;transition:filter 0.2s cubic-bezier(0.2,0,0,1), background 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .agendamento-btn:active{transform:scale(0.98);}
+  .agendamento-btn-primary{background:var(--red);border:1px solid var(--red);color:#fff;}
+  .agendamento-btn-primary:hover{filter:brightness(0.95);}
+  .agendamento-btn-secondary{background:#fff;border:1px solid var(--red);color:var(--red);}
+  .agendamento-btn-secondary:hover{background:#fff5f5;}
+  .agendamento-btn-primary.disabled{opacity:.32;cursor:not-allowed;}
+  .agendamento-btn-primary.disabled:hover{filter:none;}
+
+  /* Config móvel (novo número / manter número atual) */
+  .config-movel-option{border:2px solid var(--gray-line);border-radius:8px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;cursor:pointer;text-align:left;background:none;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .config-movel-option.selected{border-color:var(--green-text);}
+  .config-movel-option-head{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;position:relative;}
+  .config-movel-option-title{font-family:'AMX', sans-serif;font-weight:500;font-size:16px;color:var(--ink);margin:0;}
+  .config-movel-check{display:none;align-items:center;justify-content:center;padding:4px;border-radius:90px;background:var(--green-bg);position:absolute;right:0;}
+  .config-movel-option.selected .config-movel-check{display:flex;}
+  .config-movel-check i{font-size:24px;line-height:1;color:var(--green-text);}
+  .config-movel-divider{height:1px;background:var(--gray-line);width:100%;border:none;margin:0;}
+  .config-movel-hint{font-size:12px;color:var(--gray-dark);text-align:center;margin:0;width:100%;}
+  .config-movel-chip-group{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .config-movel-chip-card{border:2px solid var(--gray-line);border-radius:12px;padding:24px;width:100%;cursor:pointer;position:relative;background:#fff;text-align:left;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .config-movel-chip-card.selected{border-color:var(--green-text);}
+  .config-movel-chip-head{display:flex;align-items:center;gap:16px;width:100%;}
+  .config-movel-chip-text{display:flex;flex-direction:column;gap:4px;}
+  .config-movel-chip-title{font-family:'AMX', sans-serif;font-weight:700;font-size:16px;color:var(--ink);margin:0;}
+  .config-movel-chip-sub{font-size:12px;color:var(--gray-dark);margin:4px 0 0;}
+  .config-movel-chip-sub strong{font-weight:700;}
+  .config-movel-divider-thin{border-top:1px solid var(--gray-line);margin-top:16px;padding-top:16px;display:flex;flex-direction:column;gap:16px;}
+  .config-movel-chip-info{display:flex;align-items:center;gap:16px;}
+  .config-movel-icon-pill{display:flex;align-items:center;justify-content:center;padding:8px;border-radius:500px;background:var(--red-lightest);flex-shrink:0;}
+  .config-movel-icon-pill i{font-size:24px;line-height:1;color:var(--red);}
+  .config-movel-chip-info p{font-size:14px;color:var(--ink);margin:0;}
+  .config-movel-tag{position:absolute;top:0;right:0;display:flex;align-items:center;gap:4px;padding:4px 8px;background:#fffaad;color:#b84d01;font-size:12px;font-weight:500;border-radius:0 10px 0 10px;}
+  .config-movel-tag i{font-size:16px;line-height:1;}
+  .config-movel-field-label{font-size:16px;color:var(--gray-dark);margin:0;}
+  .config-movel-input{width:100%;height:46px;border:1px solid var(--ink);border-radius:12px;padding:9px 17px;font-size:16px;color:var(--ink);font-family:inherit;background:#fff;appearance:none;-webkit-appearance:none;}
+  .config-movel-input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 1px var(--ink);}
+  .config-movel-select-wrap{position:relative;width:100%;}
+  .config-movel-select-wrap select{padding-right:40px;cursor:pointer;}
+  .config-movel-select-wrap i{position:absolute;right:17px;top:11px;font-size:24px;line-height:1;pointer-events:none;color:var(--ink);}
+
+  /* Cadastro complementar (Pré-pago comprando Internet/TV) — reaproveita
+     .config-movel-input pros campos de linha única (CEP, Número,
+     Complemento, Referência, e-mail vazio) e .agendamento-* pros resumos
+     "preenchido"; classes abaixo cobrem só o que é exclusivo desse fluxo. */
+  .cadastro-header-row{display:flex;gap:32px;align-items:center;width:100%;}
+  .cadastro-form{display:flex;flex-direction:column;gap:32px;width:100%;}
+  .cadastro-inputs{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .cadastro-fields-group{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .cadastro-alterar-btn{background:none;border:none;padding:0;font-family:'Roboto', sans-serif;font-size:16px;font-weight:500;color:var(--red);cursor:pointer;white-space:nowrap;}
+  .cadastro-alterar-btn:hover{text-decoration:underline;}
+  .cadastro-hint{font-size:12px;font-weight:500;color:var(--gray-dark);margin:0;width:100%;}
+  /* Campo de 2 linhas (label pequeno + valor) — desabilitado (Nome/CPF, só
+     leitura) ou editável (e-mail da fatura, já vem preenchido do passo
+     anterior mas pode ser trocado). */
+  .cadastro-field{width:100%;min-height:46px;border:1px solid var(--ink);border-radius:12px;padding:5px 17px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:#fff;box-sizing:border-box;}
+  .cadastro-field.disabled{opacity:.32;}
+  .cadastro-field-label{font-size:12px;color:var(--ink);margin:0;line-height:1.2;}
+  .cadastro-field-value{font-size:16px;font-weight:500;color:var(--ink);margin:0;line-height:1.2;}
+  input.cadastro-field-value{border:none;padding:0;background:none;font-family:inherit;width:100%;outline:none;}
+  .cadastro-checkbox-row{display:flex;align-items:center;gap:8px;}
+  .cadastro-checkbox-row input{width:20px;height:20px;accent-color:var(--red);cursor:pointer;flex-shrink:0;}
+  .cadastro-checkbox-row label{font-size:14px;color:var(--ink);cursor:pointer;}
+  .cadastro-address-preview{display:flex;gap:8px;align-items:flex-start;width:100%;}
+  .cadastro-address-preview i{font-size:24px;line-height:1.3;color:var(--ink);flex-shrink:0;}
+  .cadastro-address-preview p{margin:0;font-size:14px;line-height:1.3;color:var(--gray-dark);}
+  .cadastro-address-preview p:first-child{color:var(--ink);}
+  .cadastro-alert{display:flex;align-items:center;gap:8px;background:var(--green-bg);border-radius:12px;padding:17px 16px;width:100%;box-sizing:border-box;}
+  .cadastro-alert i{font-size:16px;color:var(--green-text);flex-shrink:0;}
+  .cadastro-alert p{font-size:16px;color:var(--green-text);margin:0;font-weight:500;}
+  .cadastro-prepago-wrap{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .cadastro-confirm-row{width:100%;padding:16px 0;}
+  .cadastro-confirm-row p{margin:0;font-size:16px;color:var(--ink);line-height:1.3;}
+  .cadastro-confirm-link{color:var(--teal-dark);text-decoration:underline;}
+  .cadastro-bottom-btn{width:100%;display:none;}
+
+  /* Termos Container (expandível) */
+  .termos-container{border-radius:12px;}
+  .termos-header{display:flex;align-items:center;gap:24px;padding:24px 16px;background:#fff;border-radius:12px;cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);}
+  @media (hover:hover){.termos-header:hover{box-shadow:0 8px 16px rgba(0,0,0,0.12);}}
+  .termos-header.open{border-radius:12px 12px 0 0;}
+  .termos-header-text{display:flex;flex:1;min-width:0;align-items:center;gap:16px;}
+  .termos-icon-wrapper{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink);line-height:1;}
+  .termos-text{flex:1;font-size:16px;font-weight:500;color:var(--ink);margin:0;}
+  .termos-toggle-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink);line-height:1;transition:transform 0.2s cubic-bezier(0.2,0,0,1);background:none;border:none;padding:0;cursor:pointer;}
+  .termos-header.open .termos-toggle-icon{transform:rotate(180deg);}
+  .termos-content{display:none;padding:24px 16px;background:#fff;border-radius:0 0 12px 12px;}
+  .termos-content.open{display:flex;flex-direction:column;gap:8px;}
+  .termos-item{display:flex;flex-direction:column;gap:16px;padding:24px;border:1px solid var(--gray-line);border-radius:12px;background:#fff;}
+  .termos-row{display:flex;align-items:center;gap:16px;width:100%;}
+  .termos-divider{width:100%;height:1px;background:var(--gray-tertiary);}
+  .termos-item-title{flex:1;min-width:0;font-size:16px;font-weight:400;color:var(--ink);margin:0;}
+  .termos-item-icon{width:32px;height:32px;flex-shrink:0;border:none;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .termos-item-icon:active{transform:scale(0.9);}
+  .termos-item-icon i{font-size:16px;line-height:1;color:#fff;}
+
+  /* Order Summary (sidebar desktop, full-width mobile) */
+  .order-summary{background:#fff;border-radius:24px;padding:32px 16px 16px 16px;display:flex;flex-direction:column;gap:24px;}
+  .order-summary-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;margin:0;}
+
+  /* Permanece no seu plano (produtos que o usuário já possui e não entraram
+     nesse pedido — internet/celular/telefone, ver regra de categoria em
+     CURRENT_OWNED_PRODUCTS no script) */
+  .permanece-container{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .permanece-container [data-role="permanece-list"]{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .permanece-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .permanece-item{display:flex;align-items:center;gap:8px;padding:16px;border:1px solid var(--gray-line);border-radius:12px;width:100%;}
+  .permanece-item i{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;}
+  .permanece-item-text{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .permanece-item-name{font-size:16px;font-weight:700;color:var(--ink);margin:0;}
+  /* Proposta v2: um cartão único (cinza claro, sem borda de ação), linhas separadas por
+     divisória fina. ?permanece=atual no endereço volta ao layout anterior. */
+  .permanece-card{display:flex;flex-direction:column;width:100%;background:#f1f1f1;border-radius:12px;padding:4px 16px;box-sizing:border-box;}
+  .permanece-card-head{display:flex;align-items:center;gap:8px;padding:12px 0;font-size:14px;color:var(--gray-dark);margin:0;border-bottom:1px solid var(--gray-line);}
+  .permanece-card-head i{font-size:20px;line-height:1;color:var(--ink);flex-shrink:0;}
+  .permanece-row{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--gray-line);}
+  .permanece-row:last-of-type{border-bottom:none;}
+  .permanece-row > i{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;}
+  .permanece-row-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .permanece-row-name{font-size:16px;font-weight:700;color:var(--ink);margin:0;line-height:1.25;}
+  .permanece-row-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-dark);margin:0;}
+  .permanece-row-status i{font-size:14px;line-height:1;}
+  .permanece-row-price{font-size:14px;color:var(--gray-dark);margin:0;white-space:nowrap;flex-shrink:0;}
+  .permanece-card-title{padding:16px 0 12px;border-bottom:1px solid var(--gray-line);}
+  .permanece-card--acc{padding:0 16px;}
+  .permanece-acc-head{display:flex;align-items:center;gap:16px;width:100%;padding:24px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);}
+  .permanece-acc-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1;flex-shrink:0;}
+  .permanece-acc-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .permanece-acc-title{font-size:16px;font-weight:500;line-height:1.25;}
+  .permanece-acc-sub{font-size:12px;color:var(--gray-dark);}
+  .permanece-acc-total{font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;padding-left:12px;border-left:1px solid var(--gray-line);align-self:stretch;display:flex;align-items:center;}
+  .permanece-acc-chev{width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin-left:8px;font-size:24px;line-height:1;flex-shrink:0;transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .permanece-card--acc.is-open .permanece-acc-chev{transform:rotate(180deg);}
+  @media (max-width:480px){.permanece-acc-title{font-size:16px;}.permanece-acc-total{font-size:13px;}}
+  .permanece-acc-body{border-top:1px solid var(--gray-line);}
+  .permanece-total{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;}
+  .permanece-total-label{font-size:14px;font-weight:700;color:var(--ink);margin:0;}
+  .permanece-total-value{font-size:14px;font-weight:700;color:var(--ink);margin:0;white-space:nowrap;}
+  .permanece-card-note{font-size:12px;color:var(--gray-dark);margin:0;padding:0 0 12px;}
+  .permanece-item-price{font-size:14px;font-weight:400;color:var(--gray-dark);margin:0;white-space:nowrap;}
+
+  /* Action Card (produto adicionado) */
+  /* Envelope de 1+ action-cards dentro do order-summary: precisa de
+     width:100% explícito porque em mobile .order-summary usa
+     align-items:flex-start (pra empilhar título+cards sem esticar o
+     título) — sem isso esse container encolhe pro conteúdo (shrink-to-fit)
+     e o filho width:100% do .action-card fica sub-dimensionado. O gap
+     também dá o espaçamento entre múltiplos cards (pedido com 2+ produtos). */
+  [data-role="action-cards-mount"]{width:100%;display:flex;flex-direction:column;gap:24px;}
+  .action-card{width:100%;border:1px solid var(--gray-line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:24px;background:#fff;align-items:flex-start;}
+  .action-card-tag{background:var(--green-bg);border:1px solid var(--green-bg);border-radius:4px;padding:4px 8px;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--green-text);width:fit-content;}
+  .action-card-pontos-alert{width:100%;box-sizing:border-box;}
+  .action-card--pontos{gap:12px;}
+  .action-card--pontos .action-card-name{font-size:16px;}
+  .action-card-tag--info{background:#f1f1f1;border-color:#f1f1f1;color:var(--ink);}
+  .action-card-pontos-new{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
+  .action-card-pontos-new .action-card-price-label{margin:0;}
+  .action-card-pontos-value{font-size:16px;font-weight:700;color:var(--ink);margin:0;white-space:nowrap;}
+  .action-card-current-plan{background:#f8f8f8;border-radius:12px;padding:12px;width:100%;}
+  .action-card-current-plan p{font-size:12px;line-height:1.3;color:var(--ink);margin:0;}
+  .action-card-current-plan strong{font-weight:700;}
+  .action-card-product{display:flex;align-items:center;gap:24px;width:100%;align-self:stretch;}
+  .action-card-product-name{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+  .action-card-icon{width:32px;height:32px;padding:7px;border:1px solid var(--gray-line);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;}
+  .action-card-icon i{font-size:18px;line-height:1;}
+  .action-card-name{flex:1;font-size:20px;font-weight:700;color:var(--ink);margin:0;}
+  .action-card-delete{width:16px;height:16px;flex-shrink:0;cursor:pointer;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .action-card-delete:active{transform:scale(0.9);}
+  .action-card-divider{width:100%;height:1px;background:var(--gray-line);align-self:stretch;}
+  .action-card-price-row{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
+  .action-card-price-label{font-size:12px;font-weight:700;color:var(--ink);margin:0;white-space:nowrap;}
+  .action-card-price-was{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
+  .action-card-price-was s{text-decoration:line-through;}
+  .action-card-price{display:flex;flex-direction:column;align-items:flex-start;gap:0;width:fit-content;max-width:200px;flex-shrink:0;}
+  .action-card-price-inner{display:flex;align-items:flex-end;gap:4px;}
+  .price-prefix{font-size:16px;font-weight:700;color:var(--ink);}
+  .price-amount-group{display:flex;align-items:flex-end;}
+  .price-amount{font-size:24px;font-weight:700;font-family:'AMX';color:var(--ink);}
+  .price-cents{font-size:16px;font-weight:700;color:var(--ink);}
+  .total-cents{font-size:16px;font-family:'Roboto', sans-serif;}
+  .footer-price-cents{font-size:16px;font-family:'Roboto', sans-serif;}
+  .price-suffix{font-size:16px;font-weight:700;color:var(--ink);margin-left:-4px;}
+  .action-card-link{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;align-self:stretch;font-size:16px;font-weight:400;color:var(--red);text-decoration:none;margin:0;cursor:pointer;transition:opacity 0.2s cubic-bezier(0.2,0,0,1);}
+  .action-card-link:active{opacity:0.7;}
+  .action-card-link i{font-size:16px;line-height:1;color:var(--red);}
+
+  .action-card-selected-list{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .action-card-selected-item{display:flex;align-items:center;gap:8px;width:100%;}
+  .action-card-selected-icon{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .action-card-selected-icon img{width:100%;height:100%;display:block;}
+  .action-card-selected-icon i{font-size:32px;line-height:1;color:var(--red);}
+  .action-card-selected-icon.boxed{border:1px solid var(--gray-line);border-radius:16px;background:#fff;padding:7px;}
+  .action-card-selected-icon.boxed img{width:18px;height:18px;}
+  .action-card-selected-icon.boxed i{font-size:18px;}
+  .action-card-selected-text{flex:1;min-width:0;display:flex;flex-direction:column;font-size:14px;}
+  .action-card-selected-name{font-weight:500;margin:0;color:var(--ink);}
+  .action-card-selected-price{font-weight:400;margin:0;color:var(--ink);}
+  .action-card-selected-delete{width:16px;height:16px;flex-shrink:0;cursor:pointer;border:none;background:none;padding:0;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .action-card-selected-delete:active{transform:scale(0.9);}
+  .action-card-selected-delete img{width:100%;height:100%;display:block;}
+
+  .action-card-toggle-icon{transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .action-card-link.open .action-card-toggle-icon{transform:rotate(180deg);}
+
+  .action-card-addlist{background:var(--bg-page);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:16px;width:100%;}
+  .action-card-addlist-items{display:flex;flex-direction:column;width:100%;}
+  .action-card-addlist-item{display:flex;align-items:center;gap:12px;width:100%;padding:8px 0;}
+  .action-card-addlist-item:first-child{padding-top:0;}
+  .action-card-addlist-item:not(:last-child){border-bottom:1px solid var(--gray-line);}
+  .action-card-addlist-item-left{flex:1;min-width:0;display:flex;align-items:center;gap:8px;}
+  .action-card-addlist-icon{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .action-card-addlist-icon img{width:100%;height:100%;display:block;}
+  .action-card-addlist-icon i{font-size:32px;line-height:1;color:var(--red);}
+  .action-card-addlist-icon.boxed{border:1px solid var(--gray-line);border-radius:16px;background:#fff;padding:7px;}
+  .action-card-addlist-icon.boxed img{width:18px;height:18px;}
+  .action-card-addlist-icon.boxed i{font-size:18px;}
+  .action-card-addlist-text{flex:1;min-width:0;display:flex;flex-direction:column;font-size:14px;}
+  .action-card-addlist-name{font-weight:500;margin:0;color:var(--ink);}
+  .action-card-addlist-price{font-weight:400;margin:0;color:var(--ink);}
+
+  .btn-add{background:var(--yellow);border:none;border-radius:500px;height:28px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .btn-add:hover{filter:brightness(0.95);}
+  .btn-add:active{transform:scale(0.95);}
+
+  .action-card-vermais{text-align:center;font-size:16px;font-weight:400;color:var(--red);cursor:pointer;width:100%;}
+  .action-card-vermais:hover{text-decoration:underline;}
+
+  /* ===== Teste (2026-10-27): adicionais são do PEDIDO, não do produto =====
+     Uma seção "Turbine seu pedido" depois dos cards (com os adicionais
+     compatíveis com tudo que está no carrinho, sem repetir) + um grupo
+     "Adicionais" no resumo. "Ver todos" abre bottom sheet (mobile) / modal
+     (desktop) com filtros por categoria e busca. */
+  .addons-summary-card{width:100%;border:1px solid var(--gray-line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px;background:#fff;}
+  .addons-summary-title{font-size:16px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .addons-summary-line{display:flex;align-items:center;gap:8px;width:100%;font-size:14px;color:var(--ink);}
+  .addons-summary-line-name{flex:1;min-width:0;font-weight:500;}
+  .addons-summary-line-price{white-space:nowrap;font-weight:400;}
+  .addons-summary-remove{width:16px;height:16px;flex-shrink:0;cursor:pointer;border:none;background:none;padding:0;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .addons-summary-remove:active{transform:scale(0.9);}
+  .addons-summary-remove img{width:100%;height:100%;display:block;}
+  .addons-summary-total{display:flex;justify-content:space-between;gap:16px;width:100%;padding-top:12px;border-top:1px solid var(--gray-line);font-size:12px;font-weight:700;color:var(--ink);}
+  .addons-summary-total + .addons-summary-total{padding-top:0;border-top:none;}
+  .addons-block{background:var(--bg-page);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:16px;width:100%;}
+  .addons-title{font-size:16px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .addons-sub{font-size:12px;font-weight:400;color:var(--gray-dark);margin:2px 0 0;}
+  .addons-notice{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--gray-line);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--ink);}
+  .addons-notice p{flex:1;margin:0;}
+  .addons-notice button{background:none;border:none;padding:0;font-size:16px;line-height:1;color:var(--gray-dark);cursor:pointer;}
+  .addons-link{background:none;border:none;padding:0;font:inherit;font-size:16px;color:var(--red);cursor:pointer;width:100%;text-align:center;}
+  .addons-link:hover{text-decoration:underline;}
+  /* Adicionado: botão secundário do Mondrian (mdn-Button--secondary, contorno vermelho da marca). */
+  .mdn-Button.addon-added{flex-shrink:0;white-space:nowrap;font-weight:500;}
+
+  /* ----- Card de adicional (1 por família) -----
+     Hierarquia: nome (700) > preço (valor grande + periodicidade pequena) >
+     etiqueta de escopo / "O que é?" (apoio) > seletores. Fica branco sobre o
+     fundo cinza do bloco; ao adicionar ganha borda de destaque. */
+  .addon-list{display:flex;flex-direction:column;gap:12px;width:100%;}
+  .addon-card{background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;width:100%;box-sizing:border-box;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .addon-card.is-added{border-color:var(--red);}
+  .addon-card--chain{margin-top:-6px;}
+  .addon-head{display:flex;align-items:center;gap:12px;width:100%;}
+  .addon-icon{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .addon-icon img{width:100%;height:100%;display:block;}
+  .addon-icon i{font-size:32px;line-height:1;color:var(--red);}
+  .addon-icon.boxed{border:1px solid var(--gray-line);border-radius:20px;background:#fff;padding:9px;box-sizing:border-box;}
+  .addon-icon.boxed img{width:20px;height:20px;}
+  .addon-icon.boxed i{font-size:20px;}
+  .addon-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .addon-name-row{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;}
+  .addon-name{font-size:16px;font-weight:700;line-height:1.25;color:var(--ink);}
+  .addon-eyebrow{font-size:11px;font-weight:500;line-height:1.2;letter-spacing:0.04em;text-transform:uppercase;color:var(--gray-dark);}
+  .addon-name-wrap{min-width:0;}
+  .addon-nowrap{white-space:nowrap;display:inline-flex;align-items:center;}
+  .addon-info-btn{display:inline-flex;flex-shrink:0;position:relative;top:-2px;margin-left:6px;align-items:center;justify-content:center;width:20px;height:20px;background:none;border:none;padding:0;color:var(--gray-dark);cursor:pointer;border-radius:50%;transition:color 0.2s cubic-bezier(0.2,0,0,1);}
+  .addon-info-btn[aria-expanded="true"]{color:var(--red);}
+  @media (hover:hover){.addon-info-btn:hover{color:var(--red);}}
+  .addon-price-row{display:flex;align-items:flex-end;flex-wrap:wrap;gap:0 8px;}
+  .addon-price-was{flex-basis:100%;margin:0;}
+  .addon-price-note{flex-basis:100%;margin:2px 0 0;font-size:12px;color:var(--gray-dark);}
+  .addon-price{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);}
+  .addon-period{font-size:12px;font-weight:400;color:var(--gray-dark);}
+  .addon-price-note{font-size:12px;font-weight:400;color:var(--gray-dark);margin-bottom:2px;}
+  .addon-info-panel{margin:0;padding:12px;border-radius:8px;background:var(--bg-page);font-size:14px;line-height:1.4;color:var(--ink);}
+  .addon-info-panel{animation:content-fade 0.25s cubic-bezier(0,0,0.2,1);}
+  .addon-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;width:100%;padding-top:12px;border-top:1px solid var(--gray-line);}
+  .addon-selectors{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+  .addon-stepper,.addon-seg{display:inline-flex;align-items:center;border:1px solid var(--gray-line);border-radius:500px;padding:2px;background:#fff;}
+  .addon-stepper button{width:28px;height:28px;border:none;border-radius:50%;background:var(--bg-page);font:inherit;font-size:18px;line-height:1;color:var(--ink);cursor:pointer;padding:0;}
+  .addon-stepper button:disabled{opacity:0.35;cursor:default;}
+  .addon-stepper-value{min-width:84px;text-align:center;font-size:14px;font-weight:500;color:var(--ink);}
+  .addon-seg{flex-wrap:wrap;}
+  .addon-seg button{flex:1 1 auto;min-height:28px;padding:4px 12px;border:none;border-radius:500px;background:none;font:inherit;font-size:13px;line-height:1.2;color:var(--ink);cursor:pointer;transition:background 0.2s cubic-bezier(0.2,0,0,1),color 0.2s cubic-bezier(0.2,0,0,1);}
+  .addon-seg button.active{background:var(--ink);color:#fff;}
+  .addon-seg button:disabled{opacity:0.35;cursor:default;}
+  /* Mobile: seletor ocupa a largura toda e o botão vem embaixo (evita o botão
+     quebrar de linha sozinho à esquerda quando o segmentado é largo). */
+  @media (max-width:599px){
+    .addon-selectors{width:100%;}
+    .addon-stepper,.addon-seg{width:100%;box-sizing:border-box;}
+    .addon-stepper{justify-content:space-between;}
+    .addon-seg button{flex:1;}
+    .addon-controls .btn-add{width:100%;height:40px;font-size:14px;}
+  }
+
+  .addons-modal-overlay{position:fixed;inset:0;background:rgba(31,29,29,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:999;}
+  .addons-modal-overlay[hidden]{display:none;}
+  .addons-modal-overlay:not([hidden]){animation:content-fade 0.2s cubic-bezier(0,0,0.2,1);}
+  .addons-modal{background:#fff;width:100%;max-width:560px;max-height:88vh;border-radius:24px 24px 0 0;display:flex;flex-direction:column;}
+  .addons-modal-overlay:not([hidden]) .addons-modal{animation:slide-up 0.3s cubic-bezier(0.05,0.7,0.1,1);}
+  .addons-modal-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 24px 12px;}
+  .addons-modal-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .addons-modal-close{background:none;border:none;font-size:24px;line-height:1;color:var(--ink);cursor:pointer;padding:0 4px;}
+  .addons-modal-tools{display:flex;flex-direction:column;gap:12px;padding:0 24px 12px;}
+  .addons-modal-search{width:100%;box-sizing:border-box;height:44px;border:1px solid var(--gray-line);border-radius:8px;padding:0 12px;font:inherit;font-size:16px;color:var(--ink);}
+  .addons-modal-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;}
+  .addons-modal-chips[hidden]{display:none;}
+  .addons-chip{flex-shrink:0;height:32px;padding:0 14px;border-radius:500px;border:1px solid var(--gray-line);background:#fff;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;}
+  .addons-chip.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .addons-modal-list{flex:1;min-height:0;overflow-y:auto;padding:16px 24px;background:var(--bg-page);display:flex;flex-direction:column;gap:12px;}
+  .addons-modal-empty{font-size:14px;color:var(--gray-dark);text-align:center;margin:24px 0;}
+  .addons-modal-footer{padding:16px 24px 24px;border-top:1px solid var(--gray-line);}
+  .addons-modal-done{width:100%;height:48px;border:none;border-radius:500px;background:var(--red);color:#fff;font:inherit;font-size:16px;font-weight:500;cursor:pointer;}
+  @media (min-width:600px){
+    .addons-modal-overlay{align-items:center;padding:16px;}
+    .addons-modal{border-radius:24px;}
+  }
+
+  /* ===== Upsell — produto de menor valor entre Celular/Banda Larga/TV que
+     falta na posse (Figma "Checkout exclusivo - M6", node 13214:6185).
+     Mesmo markup nos dois mounts (mobile/desktop) — só a classe
+     .upsell-actions--row muda o layout dos botões, resto já se ajusta pela
+     largura do container (mesmo padrão do resto da página). ===== */
+  .upsell-card{background:var(--red-dark);border-radius:24px;padding:32px;width:100%;box-sizing:border-box;}
+  .upsell-card-inner{display:flex;flex-direction:column;gap:24px;width:100%;}
+  .upsell-top-row{display:flex;align-items:flex-start;justify-content:space-between;width:100%;gap:8px;}
+  .upsell-tag{display:inline-flex;align-items:center;gap:4px;background:var(--red-lightest);border:1px solid var(--red-lightest);color:var(--red-dark);border-radius:4px;padding:4px 8px;font-size:12px;font-weight:500;white-space:nowrap;}
+  .upsell-tag i{font-size:16px;line-height:1;}
+  .upsell-close{width:24px;height:24px;border:none;background:none;padding:0;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .upsell-close i{font-size:24px;line-height:1;}
+  .upsell-product-row{display:flex;align-items:center;gap:8px;width:100%;}
+  .upsell-product-icon{width:32px;height:32px;border-radius:16px;background:#fff;border:1px solid var(--gray-line);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-sizing:border-box;}
+  .upsell-product-icon i{font-size:18px;color:var(--red-dark);}
+  .upsell-product-name{color:#fff;font-size:20px;font-weight:700;margin:0;}
+  .upsell-price{display:flex;flex-direction:column;align-items:flex-start;}
+  .upsell-price-was{color:#fff;font-size:12px;font-weight:700;margin:0;}
+  /* Reaproveita as classes de valor do Action Card (.price-prefix/.price-amount/
+     .price-cents/.price-suffix), só sobrescrevendo a cor pra branco no fundo
+     vermelho — evita duplicar a estrutura de "inteiro grande + centavos". */
+  .upsell-price .price-prefix,
+  .upsell-price .price-amount,
+  .upsell-price .price-cents,
+  .upsell-price .price-suffix{color:#fff;}
+  .upsell-actions{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;}
+  .upsell-actions .agendamento-btn-secondary{width:100%;}
+  .upsell-later{background:none;border:none;color:#fff;font-size:12px;font-weight:500;cursor:pointer;padding:0;font-family:inherit;white-space:nowrap;}
+  .upsell-actions--row{flex-direction:row;gap:16px;}
+  .upsell-actions--row .agendamento-btn-secondary{flex:1;width:auto;}
+  .upsell-actions--row .upsell-later{font-size:16px;}
+  /* Os dois mounts vivem em .checkout-left (não mais um deles na sidebar
+     direita) — mesmo breakpoint de sempre (1024px) alterna qual aparece,
+     igual .order-summary-mobile/.order-summary-desktop logo abaixo. */
+  .upsell-mount-mobile{display:block;}
+  .upsell-mount-desktop{display:none;}
+  @media (min-width:1024px){
+    .upsell-mount-mobile{display:none;}
+    .upsell-mount-desktop{display:block;}
+  }
+
+  .order-details{display:flex;flex-direction:column;gap:4px;font-size:14px;}
+  .order-detail-row{display:flex;justify-content:space-between;align-items:center;}
+  [data-role="desconto-multi-value"]{color:var(--green-text);font-weight:700;}
+  /* No footer flutuante mobile (fundo preto), o verde do valor do desconto
+     fica com contraste ruim — mantém branco ali, como o resto do texto do
+     footer-taxa-row (color:#fff herdado). */
+  .footer-taxa-value[data-role="desconto-multi-value"]{color:#fff;}
+  .order-detail-label{font-weight:700;color:var(--ink);}
+  .order-detail-value{font-weight:400;text-align:right;}
+  .order-divider{height:1px;background:var(--gray-line);}
+
+  .order-total{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
+  .order-total-label{font-size:12px;font-weight:700;color:var(--gray-dark);margin:0;white-space:nowrap;}
+  .order-total-price{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;}
+  .order-total-value{display:flex;align-items:flex-end;gap:4px;}
+  .total-prefix{font-size:16px;font-weight:700;}
+  .total-amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .total-suffix{font-size:16px;font-weight:700;}
+  .total-was{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
+  .total-was--footer{color:#fff;}
+  .order-adjusted{font-size:12px;font-weight:400;color:var(--gray-dark);margin:0;}
+
+  .btn-sale{background:var(--yellow);border:none;border-radius:500px;padding:16px 32px;height:48px;font-size:16px;font-weight:500;color:var(--ink);cursor:pointer;width:100%;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .btn-sale:hover{filter:brightness(0.95);}
+  .btn-sale:active{transform:scale(0.98);}
+  .btn-sale:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .checkout-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);border-radius:12px 12px 0 0;padding:12px 16px;gap:16px;flex-direction:column;z-index:100;}
+  .footer-total-row{display:flex;gap:16px;align-items:center;width:100%;}
+  .checkout-footer-toggle{width:24px;height:24px;flex-shrink:0;border:none;background:none;padding:0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .checkout-footer-toggle:active{transform:scale(0.9);}
+  .checkout-footer-toggle i{font-size:24px;line-height:1;}
+  .footer-total-text{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .footer-cart-text{color:#fff;font-size:12px;font-weight:400;margin:0;white-space:nowrap;}
+  .footer-price-group{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;max-width:200px;}
+  .footer-price{color:#fff;display:flex;align-items:flex-end;gap:0;margin:0;}
+  .footer-price-amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
+  .footer-price-prefix{font-size:16px;font-family:Roboto,sans-serif;}
+  .footer-price-suffix{font-size:16px;font-weight:700;}
+  .footer-adjusted{color:#fff;font-size:12px;font-weight:400;margin:4px 0 0;}
+
+  .footer-expanded-info{display:flex;flex-direction:column;gap:12px;width:100%;}
+  .footer-expanded-info[hidden]{display:none;}
+  .footer-disclaimer{color:#fff;font-size:14px;font-weight:400;text-align:center;margin:0;}
+  .footer-taxas{display:flex;flex-direction:column;gap:4px;width:100%;}
+  .footer-taxa-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;width:100%;color:#fff;font-size:14px;}
+  .footer-taxa-label{font-weight:700;margin:0;}
+  .footer-taxa-value{font-weight:400;text-align:right;margin:0;}
+  .footer-divider{height:1px;background:var(--gray-line);width:100%;}
+
+  .remove-modal-overlay{position:fixed;inset:0;background:rgba(31,29,29,0.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:999;}
+  .remove-modal-overlay[hidden]{display:none;}
+  .remove-modal{background:#fff;border-radius:12px;width:400px;max-width:100%;display:flex;flex-direction:column;}
+  .remove-modal-header{display:flex;justify-content:flex-end;padding:16px;}
+  .remove-modal-close{width:32px;height:32px;flex-shrink:0;border:none;background:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .remove-modal-close:active{transform:scale(0.9);}
+  .remove-modal-close i{font-size:20px;line-height:1;}
+  .remove-modal-body{padding:4px 16px;}
+  .remove-modal-title{font-size:24px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);text-align:center;margin:0;}
+  .remove-modal-footer{display:flex;flex-direction:column;gap:8px;padding:16px;}
+  .remove-modal-btn{height:40px;width:100%;border-radius:500px;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;transition:filter 0.2s cubic-bezier(0.2,0,0,1), background 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .remove-modal-btn:active{transform:scale(0.98);}
+  .remove-modal-btn-primary{background:var(--red);border:1px solid var(--red);color:#fff;}
+  .remove-modal-btn-primary:hover{filter:brightness(0.95);}
+  .remove-modal-btn-secondary{background:#fff;border:1px solid var(--red);color:var(--red);}
+  .remove-modal-btn-secondary:hover{background:#fff5f5;}
+
+  /* ===== MATERIAL DESIGN MOTION ===== */
+  @keyframes fade-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes slide-up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes scale-in{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+  @keyframes content-fade{from{opacity:0;}to{opacity:1;}}
+
+  .checkout-container{animation:fade-in 0.5s cubic-bezier(0,0,0.2,1);}
+  .order-summary,.detalhes-container,.agendamento-container,.termos-container{opacity:0;animation:slide-up 0.4s cubic-bezier(0.05,0.7,0.1,1) forwards;}
+  .order-summary-mobile{animation-delay:0ms;}
+  .detalhes-container{animation-delay:60ms;}
+  .agendamento-container{animation-delay:120ms;}
+  .termos-container{animation-delay:180ms;}
+  .order-summary-desktop{animation-delay:60ms;}
+
+  .streaming-card,.service-card{opacity:0;animation:slide-up 0.35s cubic-bezier(0.05,0.7,0.1,1) forwards;}
+  .streaming-carousel .streaming-card:nth-child(1){animation-delay:0ms;}
+  .streaming-carousel .streaming-card:nth-child(2){animation-delay:60ms;}
+  .streaming-carousel .streaming-card:nth-child(3){animation-delay:120ms;}
+  .streaming-carousel .streaming-card:nth-child(4){animation-delay:180ms;}
+  .streaming-carousel .streaming-card:nth-child(5){animation-delay:240ms;}
+  .streaming-carousel .streaming-card:nth-child(6){animation-delay:300ms;}
+  .services-carousel .service-card:nth-child(1){animation-delay:0ms;}
+  .services-carousel .service-card:nth-child(2){animation-delay:60ms;}
+  .services-carousel .service-card:nth-child(3){animation-delay:120ms;}
+  .services-carousel .service-card:nth-child(4){animation-delay:180ms;}
+  .services-carousel .service-card:nth-child(5){animation-delay:240ms;}
+  .services-carousel .service-card:nth-child(6){animation-delay:300ms;}
+
+  .detalhes-content.open,.termos-content.open{animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
+  [data-role="desc-extra"]:not([hidden]){animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
+  .action-card-addlist:not([hidden]),.action-card-selected-list:not([hidden]){animation:fade-in 0.3s cubic-bezier(0,0,0.2,1);}
+  .footer-expanded-info:not([hidden]){animation:fade-in 0.3s cubic-bezier(0,0,0.2,1);}
+  .remove-modal-overlay:not([hidden]){animation:fade-in 0.2s cubic-bezier(0,0,0.2,1);}
+  .remove-modal-overlay:not([hidden]) .remove-modal{animation:scale-in 0.25s cubic-bezier(0.05,0.7,0.1,1);}
+
+  .order-summary-mobile{display:flex;}
+  .order-summary-desktop{display:none;}
+
+  /* ===== Media Queries ===== */
+  @media (max-width:1300px){
+    .topbar-inner{padding:0 24px;}
+    .content{padding:32px 24px 0;}
+  }
+  @media (max-width:599px){
+    .topbar-inner{padding:0 16px;}
+    .content{padding:24px 16px 0;}
+    .checkout-container{flex-direction:column;gap:32px;margin-bottom:200px;}
+    .checkout-right{width:100%;}
+    .checkout-footer{display:flex;}
+    .agendamento-container{padding:32px 16px;}
+    .order-summary{display:flex;flex-direction:column;align-items:flex-start;padding:32px 16px 16px;width:100%;align-self:stretch;background:#fff;border-radius:24px;}
+    .order-summary-title{margin-bottom:32px;align-self:stretch;}
+    .order-summary-desktop{display:none;}
+    .order-summary-mobile{display:flex;}
+  }
+  @media (min-width:1024px){
+    .order-summary-desktop{display:flex;flex-direction:column;gap:32px;}
+    .order-summary-mobile{display:none;}
+    .checkout-footer{display:none;}
+    .order-summary{width:auto;padding:32px 16px 16px 16px;gap:24px;background:#fff;border-radius:24px;}
+    .order-summary-title{margin-bottom:0;align-self:auto;}
+    .cadastro-bottom-btn{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar-utility">
+    <div class="topbar-inner">
+      <div class="topbar-location">
+        <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
+        <span>Nome da Rua</span>
+        <i class="mdn-Icon-baixo mdn-Icon--sm mdn-Icon--inverse"></i>
+      </div>
+      <div class="topbar-a11y">
+        <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
+        <i class="mdn-Icon-libras mdn-Icon--sm mdn-Icon--inverse" title="Libras"></i>
+        <i class="mdn-Icon-alto-contraste mdn-Icon--sm mdn-Icon--inverse" title="Contraste"></i>
+        <i class="mdn-Icon-tamanho-diminuir mdn-Icon--sm mdn-Icon--inverse" title="Diminuir fonte"></i>
+        <i class="mdn-Icon-tamanho-aumentar mdn-Icon--sm mdn-Icon--inverse" title="Aumentar fonte"></i>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-brand">
+    <div class="topbar-inner">
+      <a href="vitrine.html" class="brand-logo">
+        <img src="https://mondrian.claro.com.br/brands/horizontal/inverse/minha-claro.svg" alt="MinhaClaro">
+      </a>
+      <div class="topbar-actions">
+        <i class="mdn-Icon-notificacao mdn-Icon--md mdn-Icon--inverse" title="Notificações"></i>
+        <a href="#" class="topbar-exit">
+          <i class="mdn-Icon-sair mdn-Icon--md mdn-Icon--inverse"></i>
+          Sair
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="content">
+
+  <nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile">
+    <a class="mdn-Breadcrumb-link" href="vitrine.html">
+      <i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md" aria-hidden="true"></i>Voltar
+    </a>
+  </nav>
+
+  <div class="checkout-container">
+    <div class="checkout-left">
+
+      <!-- Upsell — mesmo componente do mount mobile mais abaixo, só que na
+           posição de topo que a versão desktop ocupa (acima de "Ver
+           detalhes do produto", nunca dentro da sidebar de resumo à
+           direita — ver [[upsell_checkout]]). Os dois mounts alternam por
+           CSS no mesmo breakpoint de .order-summary-mobile/-desktop. -->
+      <div class="upsell-mount-desktop" data-role="upsell-mount" data-variant="desktop" hidden></div>
+
+      <div class="order-summary order-summary-mobile">
+        <h2 class="order-summary-title">Resumo do seu pedido</h2>
+        <div data-role="action-cards-mount"></div>
+      </div>
+
+      <!-- Upsell (mobile) — fica FORA do card branco "Resumo do pedido"
+           (não é aninhado nele, é seu próprio card vermelho), direto como
+           filho de .checkout-left pra herdar o gap:16px e a largura cheia
+           da coluna — nesting dentro do card branco antes causava o
+           componente renderizar encolhido/quebrado no mobile real. -->
+      <div class="upsell-mount-mobile" data-role="upsell-mount" data-variant="mobile" hidden></div>
+
+      <div class="detalhes-container">
+        <div class="detalhes-header" onclick="toggleDetalhes(this)">
+          <p class="detalhes-text">Ver detalhes do produto</p>
+          <button type="button" class="detalhes-icon" aria-label="Expandir">
+            <i class="mdn-Icon-baixo mdn-Icon--md"></i>
+          </button>
+        </div>
+        <div class="detalhes-content">
+
+          <div class="detalhes-description-group" data-role="desc-group"></div>
+
+          <div class="detalhes-plan" id="streamingsSection" hidden>
+            <div class="detalhes-plan-inner">
+              <div class="detalhes-heading">
+                <p class="detalhes-heading-title">Incluso neste plano</p>
+                <p class="detalhes-plan-subtitle">O melhor do entretenimento escolhido especialmente para você e sua família.</p>
+              </div>
+              <div class="streaming-carousel" data-role="streaming-carousel"></div>
+              <div class="detalhes-swiper-nav">
+                <button type="button" class="swiper-arrow" data-role="streaming-prev" aria-label="Anterior"><i class="mdn-Icon-esquerda"></i></button>
+                <button type="button" class="swiper-arrow" data-role="streaming-next" aria-label="Próximo"><i class="mdn-Icon-direita"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="detalhes-services" id="servicesSection" hidden>
+            <div class="detalhes-services-inner">
+              <div class="detalhes-heading">
+                <p class="detalhes-heading-title">Serviços digitais</p>
+                <p class="detalhes-services-subtitle">Benefícios que só cliente Claro tem</p>
+              </div>
+              <div class="services-carousel" data-role="services-carousel"></div>
+              <div class="detalhes-swiper-nav">
+                <button type="button" class="swiper-arrow" data-role="services-prev" aria-label="Anterior"><i class="mdn-Icon-esquerda"></i></button>
+                <button type="button" class="swiper-arrow" data-role="services-next" aria-label="Próximo"><i class="mdn-Icon-direita"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Cadastro complementar (Pré-pago comprando Internet/TV): ver
+           showCadastroPrePago no script. Abaixo dos detalhes do produto,
+           acima de Config Móvel/Agendamento/Entrega — coleta os dados que
+           o Pré-pago nunca teve (sem conta mensal), 1 etapa por vez
+           (prévia → ativo → preenchido). Figma "Jornada Pré-Pago". -->
+      <div class="cadastro-prepago-wrap" id="cadastroPrePagoWrap" hidden>
+
+        <!-- Seu novo plano móvel: informativo, sem estados, mesmo texto
+             sempre — só confirma que o número de celular do Pré-pago é
+             mantido (node 12606:12895). -->
+        <div class="agendamento-container">
+          <div>
+            <h3 class="agendamento-title">Seu novo plano móvel</h3>
+          </div>
+          <div class="agendamento-section">
+            <p class="agendamento-label"><i class="mdn-Icon-celular-5g"></i>Número do celular</p>
+            <p class="agendamento-value">Você irá manter seu número atual<br><span data-role="cadastro-manter-numero-valor"></span></p>
+          </div>
+        </div>
+
+        <!-- Dados pessoais (node 12610:3767 ativo / 12606:13351 preenchido):
+             nome/CPF já vêm do cadastro do chip, só leitura; e-mail é o
+             único campo a preencher. -->
+        <div class="agendamento-container" id="cadastroDadosPessoaisContainer">
+          <p class="agendamento-title" style="opacity:.3;margin:0" data-role="dp-previa">Dados pessoais</p>
+          <div class="cadastro-form" data-role="dp-ativo" hidden>
+            <h3 class="agendamento-title" style="margin:0">Dados pessoais</h3>
+            <div class="cadastro-inputs">
+              <div class="cadastro-field disabled">
+                <p class="cadastro-field-label">Nome completo</p>
+                <p class="cadastro-field-value">Rodrigo Franciulli</p>
+              </div>
+              <div class="cadastro-field disabled">
+                <p class="cadastro-field-label">CPF</p>
+                <p class="cadastro-field-value">123.456.789-10</p>
+              </div>
+              <input type="email" class="config-movel-input" placeholder="E-mail" data-role="dp-email-input">
+            </div>
+            <button type="button" class="agendamento-btn agendamento-btn-primary disabled" data-role="dp-continuar-btn" onclick="confirmCadastroDadosPessoais()">Continuar</button>
+          </div>
+          <div class="cadastro-form" data-role="dp-preenchido" hidden>
+            <div class="cadastro-header-row">
+              <h3 class="agendamento-title" style="margin:0;flex:1">Dados pessoais</h3>
+              <button type="button" class="cadastro-alterar-btn" onclick="alterarCadastroStep('dadosPessoais')">Alterar</button>
+            </div>
+            <div class="cadastro-fields-group">
+              <div class="agendamento-section">
+                <p class="agendamento-label"><i class="mdn-Icon-pessoa"></i>Nome completo</p>
+                <p class="agendamento-value">Rodrigo Franciulli</p>
+              </div>
+              <div class="agendamento-section">
+                <p class="agendamento-label"><i class="mdn-Icon-pessoa-identidade"></i>CPF</p>
+                <p class="agendamento-value">123.456.789-10</p>
+              </div>
+              <div class="agendamento-section">
+                <p class="agendamento-label"><i class="mdn-Icon-e-mail"></i>E-mail</p>
+                <p class="agendamento-value" data-role="dp-email-value"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Endereço (node 12612:3675 ativo/CEP, 12618:6047 ativo/revelado,
+             12612:3692 preenchido): 2 sub-fases dentro do estado ativo — CEP
+             sozinho primeiro, depois número/complemento/referência quando o
+             CEP é resolvido (ver end-address-preview/end-numero-input etc,
+             escondidos até lá). -->
+        <div class="agendamento-container" id="cadastroEnderecoContainer">
+          <p class="agendamento-title" style="opacity:.3;margin:0" data-role="end-previa">Endereço</p>
+          <div class="cadastro-form" data-role="end-ativo" hidden>
+            <h3 class="agendamento-title" style="margin:0">Endereço</h3>
+            <div class="cadastro-inputs">
+              <input type="text" inputmode="numeric" class="config-movel-input" placeholder="CEP" maxlength="9" data-role="end-cep-input">
+              <div class="cadastro-address-preview" data-role="end-address-preview" hidden>
+                <i class="mdn-Icon-localizacao"></i>
+                <div>
+                  <p data-role="end-rua"></p>
+                  <p data-role="end-bairro-cidade-uf"></p>
+                </div>
+              </div>
+              <input type="text" class="config-movel-input" placeholder="Número" data-role="end-numero-input" hidden>
+              <div class="cadastro-checkbox-row" data-role="end-sem-numero-row" hidden>
+                <input type="checkbox" id="endSemNumero" data-role="end-sem-numero-checkbox">
+                <label for="endSemNumero">Meu endereço não possui número</label>
+              </div>
+              <input type="text" class="config-movel-input" placeholder="Complemento (opcional)" data-role="end-complemento-input" hidden>
+              <input type="text" class="config-movel-input" placeholder="Referência (opcional)" data-role="end-referencia-input" hidden>
+            </div>
+            <button type="button" class="agendamento-btn agendamento-btn-primary disabled" data-role="end-continuar-btn" onclick="onCadastroEnderecoContinuar()">Continuar</button>
+          </div>
+          <div class="cadastro-form" data-role="end-preenchido" hidden>
+            <div class="cadastro-header-row">
+              <h3 class="agendamento-title" style="margin:0;flex:1">Endereço</h3>
+              <button type="button" class="cadastro-alterar-btn" onclick="alterarCadastroStep('endereco')">Alterar</button>
+            </div>
+            <div class="cadastro-fields-group">
+              <div class="agendamento-section">
+                <p class="agendamento-label"><i class="mdn-Icon-casa"></i>Endereço</p>
+                <p class="agendamento-value" data-role="end-endereco-value"></p>
+              </div>
+              <div class="agendamento-section" data-role="end-complemento-row" hidden>
+                <p class="agendamento-label"><i class="mdn-Icon-localizacao"></i>Complemento</p>
+                <p class="agendamento-value" data-role="end-complemento-value"></p>
+              </div>
+              <div class="agendamento-section" data-role="end-referencia-row" hidden>
+                <p class="agendamento-label"><i class="mdn-Icon-loja"></i>Referência</p>
+                <p class="agendamento-value" data-role="end-referencia-value"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagamento (node 12654:4591 ativo, 12654:4646 preenchido):
+             dropdown de vencimento + e-mail (pré-preenchido com o e-mail de
+             Dados pessoais, mas editável). -->
+        <div class="agendamento-container" id="cadastroPagamentoContainer">
+          <p class="agendamento-title" style="opacity:.3;margin:0" data-role="pag-previa">Pagamento</p>
+          <div class="cadastro-form" data-role="pag-ativo" hidden>
+            <h3 class="agendamento-title" style="margin:0">Pagamento</h3>
+            <p class="agendamento-subtitle">Você receberá uma fatura por e-mail todos os meses.</p>
+            <div class="cadastro-fields-group">
+              <p class="cadastro-hint">Escolha a data de vencimento da sua fatura</p>
+              <div class="config-movel-select-wrap">
+                <select class="config-movel-input" data-role="pag-vencimento-select">
+                  <option value="">Dia de vencimento da fatura</option>
+                  <option value="5">Todo dia 5</option>
+                  <option value="10">Todo dia 10</option>
+                  <option value="15">Todo dia 15</option>
+                  <option value="20">Todo dia 20</option>
+                </select>
+                <i class="mdn-Icon-baixo"></i>
+              </div>
+            </div>
+            <div class="cadastro-fields-group">
+              <p class="cadastro-hint">Confirme o e-mail em que você deseja receber sua fatura.</p>
+              <div class="cadastro-field">
+                <p class="cadastro-field-label">E-mail de recebimento da fatura</p>
+                <input type="email" class="cadastro-field-value" data-role="pag-email-input">
+              </div>
+            </div>
+            <div class="cadastro-alert">
+              <i class="mdn-Icon-check-circulo"></i>
+              <p>Você pode alterar a forma de pagamento no app Minha Claro depois de concluir o pedido.</p>
+            </div>
+            <button type="button" class="agendamento-btn agendamento-btn-primary disabled" data-role="pag-continuar-btn" onclick="confirmCadastroPagamento()">Continuar</button>
+          </div>
+          <div class="cadastro-form" data-role="pag-preenchido" hidden>
+            <div class="cadastro-header-row">
+              <h3 class="agendamento-title" style="margin:0;flex:1">Pagamento</h3>
+              <button type="button" class="cadastro-alterar-btn" onclick="alterarCadastroStep('pagamento')">Alterar</button>
+            </div>
+            <div class="cadastro-fields-group">
+              <div class="agendamento-section">
+                <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Data de vencimento da fatura</p>
+                <p class="agendamento-value" data-role="pag-vencimento-value"></p>
+              </div>
+              <div class="agendamento-section">
+                <p class="agendamento-label"><i class="mdn-Icon-e-mail"></i>E-mail de recebimento da fatura</p>
+                <p class="agendamento-value" data-role="pag-email-value"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prévia do último passo: NÃO é um card próprio — é literalmente o
+             mesmo Agendamento/Entrega/Atualização do plano que qualquer
+             outro pedido já mostra mais abaixo (installType/
+             showAtualizacaoPlano, ver perto da declaração de
+             showCadastroPrePago), só que trancado (título a 30% opacidade)
+             até cadastroPPState.ativacaoReached virar true — nesse momento
+             essa prévia some e o card de verdade, na posição de sempre logo
+             depois deste wrap (Config Móvel fica escondido nesse fluxo, os
+             dois ficam adjacentes), aparece no lugar. Corrigido 2026-09-24
+             depois da Eve apontar que faltava a prévia (o card "Ativação"
+             fixo antigo já tinha sido removido, mas a prévia foi removida
+             junto por engano). Título calculado em
+             cadastroPPFinalStepKind()/updateCadastroFinalStepVisibility().
+             Figma "Jornada Pré-Pago", node 12673:7582. -->
+        <div class="agendamento-container" id="cadastroFinalStepPreview">
+          <p class="agendamento-title" style="opacity:.3;margin:0" data-role="final-step-preview-title">Atualização do plano</p>
+        </div>
+
+      </div>
+
+      <!-- Config móvel: só aparece quando o pedido inclui um plano de Celular
+           que é uma linha NOVA pra essa posse (categoria "celular" não
+           possuída — ver hasNewCelularLine/OWNED_CATEGORIES). Fica acima do
+           Agendamento/Entrega. Mesma classe .agendamento-container do bloco
+           abaixo (mesmo componente visual, conteúdo próprio). -->
+      <div class="agendamento-container" id="configMovelContainer" hidden>
+        <div>
+          <h3 class="agendamento-title">Seu novo plano móvel</h3>
+        </div>
+
+        <!-- Resumo: estado default (chip físico + novo número) ou depois de
+             confirmar uma escolha no formulário. -->
+        <div data-role="config-movel-summary" style="display:flex;flex-direction:column;gap:32px;width:100%">
+          <div class="agendamento-section">
+            <p class="agendamento-label"><i class="mdn-Icon-celular-5g"></i>Número do celular</p>
+            <p class="agendamento-value" data-role="config-movel-summary-numero-label"></p>
+            <p class="agendamento-value" data-role="config-movel-summary-numero-value" hidden></p>
+          </div>
+          <div class="agendamento-section">
+            <p class="agendamento-label"><i class="mdn-Icon-chip"></i>Tipo de chip</p>
+            <p class="agendamento-value" style="font-weight:700" data-role="config-movel-summary-chip-title"></p>
+            <p class="agendamento-value" data-role="config-movel-summary-chip-desc"></p>
+          </div>
+        </div>
+
+        <button type="button" class="agendamento-btn agendamento-btn-primary" data-role="config-movel-primary-btn" onclick="alterarConfigMovel()">Alterar</button>
+      </div>
+
+      <!-- Atualização do plano: só aparece quando o pedido inclui um plano de
+           Celular que é a categoria JÁ POSSUÍDA por essa posse — usuário está
+           trocando de plano, não recebendo nada novo (mesmo número Claro), ver
+           showAtualizacaoPlano/OWNED_CATEGORIES. SUBSTITUI Agendamento/Entrega,
+           nunca soma: se o combo tiver qualquer produto que exija instalação
+           técnica ou entrega física, esse card fica escondido e o de
+           Agendamento/Entrega assume sozinho. Estático, sem "Alterar" (Figma
+           "Checkout exclusivo - M6", node 13297:4426, variante "Atualização do
+           plano"). Mesma classe .agendamento-container dos blocos acima/abaixo
+           (mesmo componente visual, conteúdo próprio). -->
+      <div class="agendamento-container" id="atualizacaoPlanoContainer" hidden>
+        <div>
+          <h3 class="agendamento-title">Atualização do plano</h3>
+          <p class="agendamento-subtitle">Seu novo plano será atualizado em nosso sistema.</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-documento"></i>Contrato</p>
+          <p class="agendamento-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+          <p class="agendamento-value">Em até 24 horas</p>
+        </div>
+      </div>
+
+      <!-- Agendamento: só aparece quando o pedido exige instalação técnica
+           (installType === 'tecnico' — Técnico sempre prevalece em pedido
+           misto, ver [[combo_install_type_rule]]) -->
+      <div class="agendamento-container" id="agendamentoContainer" hidden>
+        <div>
+          <h3 class="agendamento-title">Agendamento da instalação</h3>
+          <p class="agendamento-subtitle">Este pedido requer instalação. Ajuste a data e o período, se preferir.</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-casa"></i>Endereço</p>
+          <p class="agendamento-value" data-role="agendamento-endereco-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Data e período</p>
+          <div data-role="agendamento-summary">
+            <p class="agendamento-summary-row"><strong>Data:</strong> <span data-role="agendamento-summary-date"></span></p>
+            <p class="agendamento-summary-row"><strong>Período:</strong> <span data-role="agendamento-summary-period"></span></p>
+          </div>
+          <p class="agendamento-value" data-role="agendamento-form-intro" hidden>Escolha o período e a data da visita técnica:</p>
+        </div>
+
+        <div class="agendamento-periods" data-role="agendamento-periods" hidden>
+          <button type="button" class="agendamento-period" data-role="agendamento-period" data-period="manha" onclick="selectAgendamentoPeriod('manha')">
+            <span class="agendamento-period-heading"><i class="mdn-Icon-sol"></i><span>Manhã</span></span>
+            <span class="agendamento-period-radio"><span class="agendamento-radio" data-role="agendamento-radio-manha"></span><span>Das 08:00 — Até 12:00</span></span>
+          </button>
+          <button type="button" class="agendamento-period" data-role="agendamento-period" data-period="tarde" onclick="selectAgendamentoPeriod('tarde')">
+            <span class="agendamento-period-heading"><i class="mdn-Icon-sol-se-pondo"></i><span>Tarde</span></span>
+            <span class="agendamento-period-radio"><span class="agendamento-radio" data-role="agendamento-radio-tarde"></span><span>Das 12:00 — Até 18:00</span></span>
+          </button>
+        </div>
+
+        <div class="agendamento-calendar-row" data-role="agendamento-calendar-row" hidden>
+          <button type="button" class="swiper-arrow agendamento-calendar-arrow" data-role="agendamento-cal-prev" aria-label="Anterior"><i class="mdn-Icon-esquerda"></i></button>
+          <div class="agendamento-calendar" data-role="agendamento-calendar"></div>
+          <button type="button" class="swiper-arrow agendamento-calendar-arrow" data-role="agendamento-cal-next" aria-label="Próximo"><i class="mdn-Icon-direita"></i></button>
+        </div>
+
+        <div class="agendamento-actions">
+          <button type="button" class="agendamento-btn agendamento-btn-primary" data-role="agendamento-primary-btn" onclick="handleAgendamentoPrimary()">Alterar</button>
+          <button type="button" class="agendamento-btn agendamento-btn-secondary" data-role="agendamento-cancel-btn" onclick="cancelAgendamento()" hidden>Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Entrega do pedido: só aparece quando NENHUM produto exige instalação
+           técnica (installType === 'auto' — TV Box/Soundbox sem fiação e
+           todo plano de Celular, ver [[combo_install_type_rule]]) E existe
+           algo físico pra realmente entregar (hasPhysicalDelivery acima) —
+           some quando o pedido é só uma troca de plano de Celular já possuído
+           (nesse caso o card "Atualização do plano" acima cobre o aviso).
+           Mesmas classes .agendamento-* do container acima (mesmo componente
+           visual, conteúdo fixo sem picker) — precedente em
+           checkout-box.html/checkout-soundbox.html. -->
+      <div class="agendamento-container" id="entregaContainer" hidden>
+        <div>
+          <h3 class="agendamento-title">Entrega do pedido</h3>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-casa"></i>Endereço</p>
+          <p class="agendamento-value" data-role="entrega-endereco-value">R. Nome da Rua, 0000<br>Cidade - UF</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+          <p class="agendamento-value">Em até 3 dias úteis</p>
+        </div>
+      </div>
+
+      <!-- Ativação do serviço: pedidos formados só por produtos digitais
+           (installType 'ativacao' — streamings avulsos como HBO Max/Netflix/
+           Amazon Prime, Telecine, Globoplay etc., ver Carrossel de
+           Adicionais). Não há nada físico pra entregar nem visita técnica,
+           só uma ativação no sistema. SUBSTITUI Agendamento/Entrega/
+           Atualização do plano, nunca soma — mesma regra de prioridade de
+           sempre (Técnico > Entrega > Atualização do plano > Ativação do
+           serviço, ver installType acima): só aparece quando nenhum produto
+           do pedido exige técnico nem é 'auto'. -->
+      <div class="agendamento-container" id="ativacaoServicoContainer" hidden>
+        <div>
+          <h3 class="agendamento-title">Ativação do serviço</h3>
+          <p class="agendamento-subtitle">Seu serviço será ativado automaticamente após a confirmação do pedido.</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-celular-5g"></i>Como funciona</p>
+          <p class="agendamento-value">Você receberá as instruções de ativação por e-mail e SMS.</p>
+        </div>
+
+        <div class="agendamento-section">
+          <p class="agendamento-label"><i class="mdn-Icon-calendario"></i>Prazo</p>
+          <p class="agendamento-value">Em até 24 horas</p>
+        </div>
+      </div>
+
+      <!-- Permanece no seu plano: produtos que o usuário já possui
+           (internet/celular/telefone) e que essa compra não altera —
+           ver CURRENT_OWNED_PRODUCTS no script. Some inteiro quando o
+           pedido cobre as 3 categorias possuídas. -->
+      <div class="permanece-container" id="permaneceContainer" hidden>
+        <h3 class="permanece-title">Permanece no seu plano</h3>
+        <div data-role="permanece-list"></div>
+      </div>
+
+      <div class="termos-container">
+        <div class="termos-header" onclick="toggleTermos(this)">
+          <div class="termos-header-text">
+            <div class="termos-icon-wrapper"><i class="mdn-Icon-documento mdn-Icon--md"></i></div>
+            <p class="termos-text">Condições da oferta e termo de adesão</p>
+          </div>
+          <button type="button" class="termos-toggle-icon" aria-label="Expandir"><i class="mdn-Icon-baixo mdn-Icon--md"></i></button>
+        </div>
+        <div class="termos-content">
+          <div class="termos-item" data-role="termos-ofertas"></div>
+          <div class="termos-item">
+            <div class="termos-row">
+              <p class="termos-item-title">Termo de Adesão</p>
+              <button type="button" class="termos-item-icon" aria-label="Ver termo de adesão"><i class="mdn-Icon-olho"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmação + botão duplicado (só desktop): aparecem quando o
+           cadastro Pré-pago chega na etapa final (ativacaoReached) — no
+           mobile a barra fixa (#finalizarBtnMobile) já cumpre o papel do
+           botão duplicado, escondido via CSS abaixo de 599px mesmo se o JS
+           desmarcar hidden. Rótulo do botão mantido "Concluir pedido" (não
+           "Confirmar e fechar pedido" do Figma) pra bater com o botão de
+           sempre — texto da confirmação ajustado pra citar o mesmo rótulo.
+           Figma "Jornada Pré-Pago", node 12669:6734 (texto) e 12669:6723
+           (botão duplicado no fim da página). -->
+      <div class="cadastro-confirm-row" id="cadastroConfirmRow" hidden>
+        <p>Ao clicar em "<strong>Concluir pedido</strong>", declaro que li e estou de acordo com o <strong>termo de adesão</strong> contido em <span class="cadastro-confirm-link">(Termo de condições)</span>.</p>
+      </div>
+      <button type="button" class="btn-sale cadastro-bottom-btn" id="finalizarBtnDesktopBottom" onclick="finalizarPedido('conclusao.html')" hidden>Concluir pedido</button>
+
+    </div>
+
+    <div class="checkout-right">
+      <div class="order-summary order-summary-desktop">
+        <h2 class="order-summary-title">Resumo do seu pedido</h2>
+        <div data-role="action-cards-mount"></div>
+
+        <p style="font-size:14px;color:var(--gray-dark);text-align:center;margin:0;">
+          Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.
+        </p>
+
+        <div class="order-details">
+          <div class="order-detail-row"><span class="order-detail-label">Taxa de Adesão</span><span class="order-detail-value">Grátis</span></div>
+          <div class="order-detail-row" data-role="instalacao-row"><span class="order-detail-label">Instalação</span><span class="order-detail-value">Grátis</span></div>
+          <div class="order-detail-row" data-role="pontos-row" hidden><span class="order-detail-label" data-role="pontos-label">Pontos adicionais</span><span class="order-detail-value" data-role="pontos-value"></span></div>
+          <div data-role="promo-rows" style="display:contents"></div>
+          <div class="order-detail-row" data-role="desconto-multi-row" hidden><span class="order-detail-label">Desconto Multi</span><span class="order-detail-value" data-role="desconto-multi-value"></span></div>
+        </div>
+
+        <div class="order-divider"></div>
+
+        <div class="order-total">
+          <p class="order-total-label">Total do seu carrinho</p>
+          <div class="order-total-price">
+            <p class="total-was" data-role="total-was" hidden></p>
+            <div class="order-total-value">
+              <span class="total-prefix">R$</span>
+              <span class="total-amount">0,00</span>
+              <span class="total-suffix">/mês</span>
+            </div>
+            <p class="order-adjusted">ajustado à sua fatura</p>
+          </div>
+        </div>
+
+        <button type="button" class="btn-sale" id="finalizarBtnDesktop" onclick="finalizarPedido('conclusao.html')">Concluir pedido</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="checkout-footer">
+  <div class="footer-expanded-info" hidden>
+    <p class="footer-disclaimer">Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.</p>
+    <div class="footer-taxas">
+      <div class="footer-taxa-row"><p class="footer-taxa-label">Taxa de Adesão</p><p class="footer-taxa-value">Grátis</p></div>
+      <div class="footer-taxa-row" data-role="instalacao-row-mobile"><p class="footer-taxa-label">Instalação</p><p class="footer-taxa-value">Grátis</p></div>
+      <div class="footer-taxa-row" data-role="pontos-row" hidden><p class="footer-taxa-label" data-role="pontos-label">Pontos adicionais</p><p class="footer-taxa-value" data-role="pontos-value"></p></div>
+      <div data-role="promo-rows" data-mobile style="display:contents"></div>
+      <div class="footer-taxa-row" data-role="desconto-multi-row" hidden><p class="footer-taxa-label">Desconto Multi</p><p class="footer-taxa-value" data-role="desconto-multi-value"></p></div>
+    </div>
+    <div class="footer-divider"></div>
+  </div>
+
+  <div class="footer-total-row">
+    <button type="button" class="checkout-footer-toggle" onclick="toggleFooter()" aria-label="Expandir">
+      <i class="mdn-Icon-cima" id="footerToggleIcon"></i>
+    </button>
+    <div class="footer-total-text">
+      <p class="footer-cart-text">Total do seu carrinho:</p>
+      <div class="footer-price-group">
+        <p class="total-was total-was--footer" data-role="total-was" hidden></p>
+        <div class="footer-price">
+          <span class="footer-price-amount"><span class="footer-price-prefix">R$</span> 0,00</span>
+          <span class="footer-price-suffix">/mês</span>
+        </div>
+        <p class="footer-adjusted">ajustado à sua fatura</p>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn-sale" id="finalizarBtnMobile" onclick="finalizarPedido('conclusao.html')">Concluir pedido</button>
+</div>
+
+<div class="remove-modal-overlay" id="removeModalOverlay" hidden>
+  <div class="remove-modal" role="dialog" aria-modal="true" aria-labelledby="removeModalTitle">
+    <div class="remove-modal-header">
+      <button type="button" class="remove-modal-close" aria-label="Fechar" onclick="closeRemoveModal()"><i class="mdn-Icon-fechar"></i></button>
+    </div>
+    <div class="remove-modal-body">
+      <p class="remove-modal-title" id="removeModalTitle">Tem certeza de que quer remover este produto do carrinho?</p>
+    </div>
+    <div class="remove-modal-footer">
+      <button type="button" class="remove-modal-btn remove-modal-btn-primary" onclick="closeRemoveModal()">Manter no carrinho</button>
+      <button type="button" class="remove-modal-btn remove-modal-btn-secondary" onclick="confirmRemoveProduct()">Remover produto</button>
+    </div>
+  </div>
+</div>
+
+<div class="addons-modal-overlay" id="addonsModalOverlay" hidden onclick="if(event.target===this)closeAddonsModal()">
+  <div class="addons-modal" role="dialog" aria-modal="true" aria-labelledby="addonsModalTitle">
+    <div class="addons-modal-header">
+      <h2 class="addons-modal-title" id="addonsModalTitle">Todos os adicionais</h2>
+      <button type="button" class="addons-modal-close" aria-label="Fechar" onclick="closeAddonsModal()">×</button>
+    </div>
+    <div class="addons-modal-tools">
+      <input type="search" class="addons-modal-search" id="addonsModalSearch" placeholder="Buscar adicional" aria-label="Buscar adicional" oninput="addonState.modalQuery=this.value;renderAddonsModal()">
+      <div class="addons-modal-chips" id="addonsModalChips"></div>
+    </div>
+    <div class="addons-modal-list" id="addonsModalList"></div>
+    <div class="addons-modal-footer"><button type="button" class="addons-modal-done" id="addonsModalDone" onclick="closeAddonsModal()">Concluir</button></div>
+  </div>
+</div>
+
+<script src="product-catalog.js"></script>
+<script src="adicionais-teste.js"></script>
+<script>
+  // ===== Resolução do pedido a partir do sessionStorage =====
+  // Gravado por detalhes.html (startCheckout, 1 produto) ou pelo "Monte seu
+  // combo" (continueComboResumo, N produtos) — ver [[product_catalog_spreadsheet]].
+  var DEFAULT_PEDIDO = ['tv-box'];
+  var pedidoIds;
+  try {
+    pedidoIds = JSON.parse(sessionStorage.getItem('pedidoEmAndamento'));
+    if (!Array.isArray(pedidoIds) || !pedidoIds.length) pedidoIds = DEFAULT_PEDIDO;
+  } catch (e) {
+    pedidoIds = DEFAULT_PEDIDO;
+  }
+  var products = pedidoIds.map(function (id) { return PRODUCT_CATALOG[id]; }).filter(Boolean);
+  if (!products.length) products = [PRODUCT_CATALOG[DEFAULT_PEDIDO[0]]];
+
+  // Prioridade Técnico > Entrega (auto) > Ativação (digital, sem instalação
+  // nem entrega física — streamings avulsos do Carrossel de Adicionais):
+  // 'ativacao' só quando o pedido não tem NENHUM produto técnico ou 'auto'.
+  var installType = products.some(function (p) { return p.installType === 'tecnico'; }) ? 'tecnico'
+    : products.some(function (p) { return p.installType === 'auto'; }) ? 'auto'
+    : 'ativacao';
+  var hasMobilePlan = products.some(function (p) { return p.categoria === 'celular'; });
+
+  // ===== Persistência dos adicionais escolhidos =====
+  // sessionStorage['pedidoAdicionais'] = { [produtoId]: [nomeDoAdicional, ...] }.
+  // Sem isso, um adicional marcado no Action Card se perdia ao voltar pra
+  // vitrine e retornar ao checkout (o estado só existia em memória, dentro
+  // de initActionCard). Nome do adicional é o id dele no catálogo (ver
+  // `catalog` em initActionCard — usa a.nome como id, não tem id próprio).
+  function loadAdicionaisState() {
+    try {
+      var raw = JSON.parse(sessionStorage.getItem('pedidoAdicionais'));
+      return raw && typeof raw === 'object' ? raw : {};
+    } catch (e) { return {}; }
+  }
+  function saveAdicionaisState(state) {
+    try { sessionStorage.setItem('pedidoAdicionais', JSON.stringify(state)); } catch (e) {}
+  }
+
+  // ===== Desconto multi: pedido veio de um card de "Melhores ofertas"? =====
+  // Gravado por vitrine.html (só nos cliques em card [data-oferta-id], nunca
+  // em produto solo ou no combo builder — ver [[checkout_dynamic_page]]).
+  // Só vira desconto de verdade se a oferta tiver precoRiscado (ofertas de 1
+  // produto só, como 'oferta-box', não têm — nada a dividir) e se o conjunto
+  // de produtos do pedido bater exatamente com o da oferta (senão pode ser
+  // sessionStorage velho de uma navegação anterior).
+  var pedidoOfertaId = null;
+  try { pedidoOfertaId = sessionStorage.getItem('pedidoOfertaId'); } catch (e) {}
+  var bundleOferta = null;
+  if (pedidoOfertaId && typeof OFERTAS_COMBINADAS !== 'undefined') {
+    var maybeOferta = OFERTAS_COMBINADAS[pedidoOfertaId];
+    if (maybeOferta && maybeOferta.precoRiscado && maybeOferta.produtos.length === products.length) {
+      var ofertaIds = maybeOferta.produtos.map(function (p) { return p.id; }).slice().sort();
+      var orderIds = products.map(function (p) { return p.id; }).slice().sort();
+      var matches = ofertaIds.every(function (id, i) { return id === orderIds[i]; });
+      if (matches) bundleOferta = maybeOferta;
+    }
+  }
+
+  // Divide o desconto total proporcionalmente ao preço de cada produto (não
+  // dividido em partes iguais — um produto de R$179,90 não deveria "levar" o
+  // mesmo desconto em reais que um de R$99,90). O desconto total é recalculado
+  // a partir dos preços atuais do catálogo (sumFullPrice - precoTotal), não do
+  // precoRiscado digitado à mão na planilha — assim continua correto mesmo se
+  // o preço de algum produto mudar depois e a planilha não for atualizada
+  // junto (mesmo cuidado tomado com CURRENT_OWNED_PRODUCTS). O último produto
+  // "leva" o arredondamento restante pra soma bater exato com precoTotal.
+  var bundleDiscount = null;
+  if (bundleOferta) {
+    var sumFullPrice = products.reduce(function (sum, p) { return sum + p.preco; }, 0);
+    var totalDiscount = Math.round((sumFullPrice - bundleOferta.precoTotal) * 100) / 100;
+    if (totalDiscount > 0) {
+      var perProduct = {};
+      var runningTotal = 0;
+      products.forEach(function (p, idx) {
+        var discounted;
+        if (idx === products.length - 1) {
+          discounted = Math.round((bundleOferta.precoTotal - runningTotal) * 100) / 100;
+        } else {
+          var share = totalDiscount * (p.preco / sumFullPrice);
+          discounted = Math.round((p.preco - share) * 100) / 100;
+          runningTotal += discounted;
+        }
+        perProduct[p.id] = discounted;
+      });
+      bundleDiscount = { total: totalDiscount, perProduct: perProduct };
+    }
+  }
+
+  // ===== Desconto multi (regra geral por combinação de categorias) =====
+  // Regra de negócio (Eve, 2026-09-22, versão final simplificada): cada
+  // categoria abaixo tem um valor fixo de desconto, aplicado no próprio
+  // produto dela, sempre que o carrinho tiver 2+ categorias diferentes —
+  // não importa QUAL outra categoria está junto, nem a ordem em que os
+  // produtos foram adicionados. Internet nunca tem desconto próprio, só
+  // "conta" como uma das categorias presentes. Os valores de categorias
+  // presentes somam entre si (TV+Celular+Telefone juntos = 20+40+10=70).
+  // Só entra em jogo quando NÃO há uma oferta curada válida pro carrinho
+  // (bundleDiscount acima) — evita dar desconto dobrado quando o carrinho é
+  // exatamente uma oferta de "Melhores ofertas" com precoTotal próprio já
+  // definido à mão. Valores hardcoded aqui (não na planilha) porque foram
+  // passados como regra de negócio direta, não como dado de catálogo — dá
+  // pra mover pra planilha depois se precisar ajustar com frequência.
+  var CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
+  if (!bundleDiscount) {
+    var categoriasNoCarrinho = {};
+    products.forEach(function (p) { categoriasNoCarrinho[p.categoria] = true; });
+    if (Object.keys(categoriasNoCarrinho).length >= 2) {
+      var descontoPorProduto = {};
+      var descontoGeralTotal = 0;
+      Object.keys(CATEGORY_DISCOUNTS).forEach(function (categoria) {
+        if (!categoriasNoCarrinho[categoria]) return;
+        var alvo = products.find(function (p) { return p.categoria === categoria; });
+        if (!alvo) return;
+        descontoPorProduto[alvo.id] = CATEGORY_DISCOUNTS[categoria];
+        descontoGeralTotal += CATEGORY_DISCOUNTS[categoria];
+      });
+      if (descontoGeralTotal > 0) {
+        var perProductGeral = {};
+        Object.keys(descontoPorProduto).forEach(function (pid) {
+          perProductGeral[pid] = Math.round((PRODUCT_CATALOG[pid].preco - descontoPorProduto[pid]) * 100) / 100;
+        });
+        bundleDiscount = { total: descontoGeralTotal, perProduct: perProductGeral };
+      }
+    }
+  }
+
+  // ===== Plano alterado vs. novo plano adicionado =====
+  // Quais categorias já são "possuídas" (e o "plano atual" de cada uma)
+  // dependem da POSSE ativa (ver [[vitrine_posse_selector]]) — não é mais um
+  // trio fixo internet/celular/telefone, já que posses como `tv` possuem só
+  // TV, `controle`/`pré-pago`/`pós-pago` só celular, `banda-larga` só
+  // internet. Mesmo mecanismo de leitura de POSSE_CONFIGS/fallback pra posse
+  // padrão que `vitrine.html` usa, duplicado aqui (projeto sem módulos JS).
+  var CATEGORIA_INFO = {
+    internet: { label: 'Internet residencial', icon: { kind: 'mdn', class: 'mdn-Icon-wifi' } },
+    celular: { label: 'Planos de celular', icon: { kind: 'mdn', class: 'mdn-Icon-celular-5g' } },
+    telefone: { label: 'Telefone fixo', icon: { kind: 'mdn', class: 'mdn-Icon-telefone-fixo' } },
+    tv: { label: 'Planos de TV', icon: { kind: 'mdn', class: 'mdn-Icon-tv' } },
+  };
+  function getPosseCheckoutCfg() {
+    var vazio = { categoriasPossui: [], categoriaAtual: {}, categoriaAtualValor: {} };
+    if (typeof POSSE_CONFIGS === 'undefined') return vazio;
+    var lista = Object.keys(POSSE_CONFIGS).map(function (id) { return POSSE_CONFIGS[id]; })
+      .sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+    var defaultCfg = lista.length ? lista[0] : null;
+    var posseId = sessionStorage.getItem('posseAtiva');
+    var cfg = (posseId && POSSE_CONFIGS[posseId]) || defaultCfg;
+    if (!cfg) return vazio;
+    function fallbackList(field) {
+      return (cfg[field] && cfg[field].length) ? cfg[field] : (defaultCfg ? defaultCfg[field] || [] : []);
+    }
+    function fallbackMap(field) {
+      return (cfg[field] && Object.keys(cfg[field]).length) ? cfg[field] : (defaultCfg ? defaultCfg[field] || {} : {});
+    }
+    return {
+      posseId: cfg.id || posseId || '',
+      categoriasPossui: fallbackList('categoriasPossui'),
+      categoriaAtual: fallbackMap('categoriaAtual'),
+      categoriaAtualValor: fallbackMap('categoriaAtualValor'),
+    };
+  }
+  var POSSE_CHECKOUT_CFG = getPosseCheckoutCfg();
+  // ===== Pontos adicionais de TV (reajuste compulsório na troca do plano de TV) =====
+  // Posse com TV + N pontos adicionais: ao contratar um novo plano de TV os pontos
+  // acompanham o plano novo e passam a custar o valor novo (sem opção de remover).
+  // Dado de posse esperado: pontosAdicionais { qtd, valorAtual } (valorAtual = total/mês
+  // dos pontos hoje). Valor novo = qtd × "Ponto adicional TV" (placeholder — regra real
+  // baseada no valor da TV principal ainda não existe). Demo no protótipo: ?pontos=2
+  // (usa TV antiga + valores de exemplo, pois nenhuma posse da planilha tem pontos ainda).
+  var PONTOS_DEMO = /[?&]pontos=(\d+)/.exec(location.search);
+  // ?pontos=N também vale vindo da vitrine-teste (guardado na sessão); ?pontos=0 desliga.
+  try {
+    if (PONTOS_DEMO) sessionStorage.setItem('pontosDemo', PONTOS_DEMO[1]);
+    else if (sessionStorage.getItem('pontosDemo')) PONTOS_DEMO = [null, sessionStorage.getItem('pontosDemo')];
+    if (PONTOS_DEMO && parseInt(PONTOS_DEMO[1], 10) === 0) PONTOS_DEMO = null;
+  } catch (e) {}
+  var PONTOS_ADICIONAIS = null;
+  var MAX_PONTOS_TV = 3;
+  (function () {
+    var raw = POSSE_CHECKOUT_CFG.pontosAdicionais || null;
+    if (PONTOS_DEMO) {
+      var q = parseInt(PONTOS_DEMO[1], 10) || 2;
+      raw = { qtd: q, valorAtual: Math.round(36.01 * q * 100) / 100 };
+      if (POSSE_CHECKOUT_CFG.categoriasPossui.indexOf('tv') === -1) POSSE_CHECKOUT_CFG.categoriasPossui.push('tv');
+      if (!POSSE_CHECKOUT_CFG.categoriaAtual.tv) POSSE_CHECKOUT_CFG.categoriaAtual.tv = 'tv-box-cabo';
+    }
+    if (raw && raw.qtd > 0) {
+      var unit = 69.9;
+      (window.ADICIONAIS_TESTE || []).some(function (a) { if (a.nome === '1 Ponto adicional TV') { unit = a.preco; return true; } });
+      PONTOS_ADICIONAIS = { qtd: raw.qtd, valorAtual: raw.valorAtual, valorNovo: Math.round(unit * raw.qtd * 100) / 100 };
+    }
+  })();
+  var OWNED_CATEGORIES = POSSE_CHECKOUT_CFG.categoriasPossui;
+  function isOwnedCategory(categoria) { return OWNED_CATEGORIES.indexOf(categoria) !== -1; }
+  // Valor manual (categoriaAtualValor) tem prioridade sobre o produto do
+  // catálogo, mesma regra de `applyPosseConfig()` em vitrine.html — pra
+  // quando o "plano atual" não é nenhum SKU real (ex.: pré-pago R$29,90).
+  function currentCategoriaPreco(categoria) {
+    var valorManual = POSSE_CHECKOUT_CFG.categoriaAtualValor[categoria];
+    if (typeof valorManual === 'number') return valorManual;
+    var produtoId = POSSE_CHECKOUT_CFG.categoriaAtual[categoria];
+    var produto = produtoId && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[produtoId];
+    return produto ? produto.preco : null;
+  }
+
+  // ===== Config móvel: aparece só quando o pedido inclui um plano de
+  // Celular que é linha NOVA pra essa posse (categoria não possuída — mesma
+  // lógica de isOwnedCategory/OWNED_CATEGORIES acima, "Novo plano
+  // adicionado"). Mesmo padrão confirmed/draft do Agendamento
+  // (agendamentoState/handleAgendamentoPrimary) — resumo por padrão, form
+  // some ao clicar "Alterar", "Continuar" confirma e recolhe de novo. =====
+  var hasNewCelularLine = products.some(function (p) { return p.categoria === 'celular' && !isOwnedCategory('celular'); });
+  // Escolha de número/chip feita na tela intermediária config-movel.html
+  // (válida só pro mesmo conjunto de produtos). Sem ela, vai pra lá antes.
+  var configMovelSalvo = null;
+  try {
+    var _cm = JSON.parse(sessionStorage.getItem('configMovelEscolha'));
+    if (_cm && _cm.pedido === pedidoIds.slice().sort().join('|')) configMovelSalvo = _cm;
+  } catch (e) {}
+  if (hasNewCelularLine && !configMovelSalvo) window.location.replace('config-movel.html');
+
+  // ===== Atualização do plano: aparece quando o pedido inclui um plano de
+  // Celular cuja categoria JÁ é possuída por essa posse (troca de plano, não
+  // linha nova — usuário já tem número Claro, não há nada pra "receber").
+  // Complemento exato de hasNewCelularLine acima. `hasPhysicalDelivery`
+  // decide se o card "Entrega do pedido" ainda faz sentido: fica false só
+  // quando o ÚNICO produto installType 'auto' do pedido é esse plano de
+  // Celular já possuído (nada físico pra enviar).
+  // `showAtualizacaoPlano` é o que de fato controla o container: SUBSTITUI
+  // Entrega/Agendamento, nunca soma (pedido confirmado pela Eve em
+  // 2026-09-24) — um combo com Celular possuído + qualquer produto que
+  // exija Entrega (auto físico) ou Agendamento (técnico) mostra só o card de
+  // Entrega/Agendamento, escondendo Atualização do plano inteiramente. =====
+  var hasCelularPlanChange = products.some(function (p) { return p.categoria === 'celular' && isOwnedCategory('celular'); });
+  var hasPhysicalDelivery = products.some(function (p) { return p.installType === 'auto' && !(p.categoria === 'celular' && isOwnedCategory('celular')); });
+  var showAtualizacaoPlano = hasCelularPlanChange && installType === 'auto' && !hasPhysicalDelivery;
+
+  // ===== Cadastro complementar (Pré-pago comprando Internet/TV/Celular): a
+  // posse Pré-pago nunca teve conta mensal (só recarga), então não existe
+  // nenhum cadastro (endereço/e-mail/forma de pagamento) já registrado pra
+  // essa linha — só nome/CPF, que vêm de um cadastro básico feito na compra
+  // do chip. Ao comprar Internet, TV ou outro plano de Celular (Controle/
+  // Pós — produtos com fatura mensal), o checkout precisa coletar esses
+  // dados antes de fechar o pedido. Corrigido 2026-09-24: a 1ª versão só
+  // disparava pra Internet/TV, deixando o wizard inteiro sumir numa compra
+  // de Celular puro (Eve reportou "nenhum dos novos componentes aparece").
+  // Ver cadastroPPState mais abaixo pro fluxo prévia→ativo→preenchido por
+  // etapa. Figma "Jornada Pré-Pago", node 12673:7279 (tela de referência
+  // completa). =====
+  var isPrePago = POSSE_CHECKOUT_CFG.posseId === 'pre-pago';
+  var hasCadastroPrePagoProduct = products.some(function (p) { return p.categoria === 'internet' || p.categoria === 'tv' || p.categoria === 'celular'; });
+  var showCadastroPrePago = isPrePago && hasCadastroPrePagoProduct;
+
+  var CONFIG_MOVEL_CHIP_LABEL = { fisico: 'Chip Comum (físico)', esim: 'eSim (chip virtual)' };
+  var CONFIG_MOVEL_CHIP_DESC = {
+    fisico: 'Enviaremos um chip físico para o seu endereço, que poderá ser utilizado no seu aparelho.',
+    esim: 'Enviaremos por e-mail após a aprovação do pedido.',
+  };
+  var configMovelState = {
+    confirmed: { numeroOption: 'novo', chipType: 'fisico', numero: '', operadora: '' },
+  };
+  function formatConfigMovelNumero(digits) {
+    if (!digits) return '';
+    var ddd = digits.slice(0, 2);
+    var resto = digits.slice(2);
+    if (!resto) return '(' + ddd + ')';
+    if (resto.length <= 4) return '(' + ddd + ') ' + resto;
+    return '(' + ddd + ') ' + resto.slice(0, resto.length - 4) + '-' + resto.slice(-4);
+  }
+  function renderConfigMovelSummary() {
+    var s = configMovelState.confirmed;
+    var isManter = s.numeroOption === 'manter';
+    document.querySelector('[data-role="config-movel-summary-numero-label"]').textContent = isManter ? 'Você irá manter seu número atual' : 'Você irá receber um novo número';
+    var numeroEl = document.querySelector('[data-role="config-movel-summary-numero-value"]');
+    numeroEl.hidden = !isManter;
+    numeroEl.textContent = isManter ? formatConfigMovelNumero(s.numero) : '';
+    document.querySelector('[data-role="config-movel-summary-chip-title"]').textContent = CONFIG_MOVEL_CHIP_LABEL[s.chipType];
+    document.querySelector('[data-role="config-movel-summary-chip-desc"]').textContent = CONFIG_MOVEL_CHIP_DESC[s.chipType];
+  }
+  // As escolhas (número + chip) são feitas na tela intermediária
+  // config-movel.html; aqui só o resumo. "Alterar" volta pra lá.
+  function alterarConfigMovel() { window.location.href = 'config-movel.html?voltar=checkout'; }
+  function initConfigMovel() {
+    if (!hasNewCelularLine) return;
+    if (configMovelSalvo) {
+      configMovelState.confirmed = {
+        numeroOption: configMovelSalvo.numeroOption, chipType: configMovelSalvo.chipType,
+        numero: configMovelSalvo.numero || '', operadora: configMovelSalvo.operadora || '',
+      };
+    }
+    document.getElementById('configMovelContainer').hidden = false;
+    renderConfigMovelSummary();
+  }
+
+  // ===== Cadastro complementar (Pré-pago comprando Internet/TV) — ver
+  // showCadastroPrePago acima. Cada etapa (Dados pessoais/Endereço/
+  // Pagamento) tem 3 estados (previa/ativo/preenchido), mesmo padrão
+  // confirmed/draft do Agendamento/Config Móvel: "Continuar" grava confirmed
+  // a partir de draft e avança pra próxima etapa; "Alterar" reabre a etapa
+  // em 'ativo' com draft = confirmed, sem tocar nas etapas seguintes (que
+  // continuam como estavam). "Atualização do plano" final não tem draft —
+  // é só informativo, mostrado quando ativacaoReached vira true. =====
+  var CADASTRO_PP_FALLBACK_ENDERECO = { rua: 'Rua Henri Dunant', bairro: 'Santo Amaro', cidade: 'São Paulo', uf: 'SP' };
+  var cadastroPPState = {
+    dadosPessoais: { status: showCadastroPrePago ? 'ativo' : 'previa', confirmed: { email: '' }, draft: { email: '' } },
+    endereco: {
+      status: 'previa', cepRevealed: false,
+      confirmed: { cep: '', rua: '', bairro: '', cidade: '', uf: '', numero: '', semNumero: false, complemento: '', referencia: '' },
+      draft: { cep: '', rua: '', bairro: '', cidade: '', uf: '', numero: '', semNumero: false, complemento: '', referencia: '' },
+    },
+    pagamento: { status: 'previa', confirmed: { vencimento: '', email: '' }, draft: { vencimento: '', email: '' } },
+    ativacaoReached: false,
+  };
+
+  function cadastroPPIsComplete() {
+    return cadastroPPState.ativacaoReached
+      && cadastroPPState.dadosPessoais.status !== 'ativo'
+      && cadastroPPState.endereco.status !== 'ativo'
+      && cadastroPPState.pagamento.status !== 'ativo';
+  }
+  function updateFinalizarBtnState() {
+    var disabled = showCadastroPrePago && !cadastroPPIsComplete();
+    ['finalizarBtnDesktop', 'finalizarBtnMobile', 'finalizarBtnDesktopBottom'].forEach(function (id) {
+      var btn = document.getElementById(id);
+      if (btn) btn.disabled = disabled;
+    });
+  }
+  // Qual dos 3 componentes finais aplica pra esse pedido — mesma regra de
+  // sempre (técnico > entrega > atualização), só usada aqui pra escolher o
+  // título da prévia trancada.
+  var CADASTRO_PP_FINAL_TITLES = { tecnico: 'Agendamento da instalação', entrega: 'Entrega do pedido', atualizacao: 'Atualização do plano' };
+  function cadastroPPFinalStepKind() {
+    if (installType === 'tecnico') return 'tecnico';
+    if (showAtualizacaoPlano) return 'atualizacao';
+    return 'entrega';
+  }
+  function formatCep(digits) {
+    return digits.length <= 5 ? digits : digits.slice(0, 5) + '-' + digits.slice(5, 8);
+  }
+  function isValidEmail(value) { return /\S+@\S+\.\S+/.test(value.trim()); }
+  function formatCadastroEnderecoLines(d) {
+    var ruaLinha = d.rua + (d.numero ? (', ' + d.numero) : '');
+    return ruaLinha + '<br>' + d.bairro + ', ' + d.cidade + ' - ' + d.uf + '<br>CEP: ' + formatCep(d.cep);
+  }
+  // Agendamento/Entrega mostram o endereço FIXO do protótipo por padrão
+  // (mesmo texto de qualquer outro pedido) — no fluxo Pré-pago, o usuário
+  // acabou de digitar o endereço real na etapa Endereço do cadastro, então
+  // esses dois cards devem repetir ESSE endereço, não o placeholder. Chamado
+  // toda vez que Endereço é confirmado (1ª vez ou via "Alterar").
+  function applyCadastroPPEnderecoToFinalStep() {
+    if (!showCadastroPrePago) return;
+    var d = cadastroPPState.endereco.confirmed;
+    if (!d.rua) return;
+    var html = formatCadastroEnderecoLines(d);
+    var agEl = document.querySelector('[data-role="agendamento-endereco-value"]');
+    if (agEl) agEl.innerHTML = html;
+    var enEl = document.querySelector('[data-role="entrega-endereco-value"]');
+    if (enEl) enEl.innerHTML = html;
+  }
+
+  // ---- Dados pessoais ----
+  function renderCadastroDadosPessoais() {
+    var s = cadastroPPState.dadosPessoais;
+    document.querySelector('[data-role="dp-previa"]').hidden = s.status !== 'previa';
+    document.querySelector('[data-role="dp-ativo"]').hidden = s.status !== 'ativo';
+    document.querySelector('[data-role="dp-preenchido"]').hidden = s.status !== 'preenchido';
+    if (s.status === 'preenchido') document.querySelector('[data-role="dp-email-value"]').textContent = s.confirmed.email;
+    updateFinalizarBtnState();
+  }
+  function updateCadastroDpContinueBtn() {
+    var btn = document.querySelector('[data-role="dp-continuar-btn"]');
+    var valid = isValidEmail(cadastroPPState.dadosPessoais.draft.email);
+    btn.disabled = !valid;
+    btn.classList.toggle('disabled', !valid);
+  }
+  function confirmCadastroDadosPessoais() {
+    if (document.querySelector('[data-role="dp-continuar-btn"]').disabled) return;
+    var s = cadastroPPState.dadosPessoais;
+    s.confirmed.email = s.draft.email.trim();
+    s.status = 'preenchido';
+    if (cadastroPPState.endereco.status === 'previa') cadastroPPState.endereco.status = 'ativo';
+    renderCadastroDadosPessoais();
+    renderCadastroEndereco();
+  }
+
+  // ---- Endereço ----
+  function renderCadastroEndereco() {
+    var s = cadastroPPState.endereco;
+    document.querySelector('[data-role="end-previa"]').hidden = s.status !== 'previa';
+    document.querySelector('[data-role="end-ativo"]').hidden = s.status !== 'ativo';
+    document.querySelector('[data-role="end-preenchido"]').hidden = s.status !== 'preenchido';
+    document.querySelector('[data-role="end-address-preview"]').hidden = !s.cepRevealed;
+    document.querySelector('[data-role="end-numero-input"]').hidden = !s.cepRevealed;
+    document.querySelector('[data-role="end-sem-numero-row"]').hidden = !s.cepRevealed;
+    document.querySelector('[data-role="end-complemento-input"]').hidden = !s.cepRevealed;
+    document.querySelector('[data-role="end-referencia-input"]').hidden = !s.cepRevealed;
+    if (s.status === 'preenchido') {
+      var d = s.confirmed;
+      var ruaLinha = d.rua + (d.numero ? (', ' + d.numero) : '');
+      document.querySelector('[data-role="end-endereco-value"]').innerHTML = ruaLinha + '<br>' + d.bairro + ', ' + d.cidade + ' - ' + d.uf + '<br>CEP: ' + formatCep(d.cep);
+      document.querySelector('[data-role="end-complemento-row"]').hidden = !d.complemento;
+      if (d.complemento) document.querySelector('[data-role="end-complemento-value"]').textContent = d.complemento;
+      document.querySelector('[data-role="end-referencia-row"]').hidden = !d.referencia;
+      if (d.referencia) document.querySelector('[data-role="end-referencia-value"]').textContent = d.referencia;
+    }
+    updateFinalizarBtnState();
+  }
+  function updateCadastroEndContinueBtn() {
+    var btn = document.querySelector('[data-role="end-continuar-btn"]');
+    var d = cadastroPPState.endereco.draft;
+    var valid = !cadastroPPState.endereco.cepRevealed ? d.cep.length === 8 : (d.semNumero || d.numero.trim().length > 0);
+    btn.disabled = !valid;
+    btn.classList.toggle('disabled', !valid);
+  }
+  // Endereço real via ViaCEP (API pública, sem chave); cai no endereço fixo
+  // do protótipo se a consulta falhar/der CEP inválido/offline — nunca
+  // trava a etapa por falta de dado, mesmo princípio de conclusao.html's
+  // DEFAULT_ORDER.
+  function buscarCep(digits) {
+    if (digits.length !== 8) return Promise.resolve(Object.assign({}, CADASTRO_PP_FALLBACK_ENDERECO));
+    return fetch('https://viacep.com.br/ws/' + digits + '/json/')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data || data.erro) return Object.assign({}, CADASTRO_PP_FALLBACK_ENDERECO);
+        return {
+          rua: data.logradouro || CADASTRO_PP_FALLBACK_ENDERECO.rua,
+          bairro: data.bairro || CADASTRO_PP_FALLBACK_ENDERECO.bairro,
+          cidade: data.localidade || CADASTRO_PP_FALLBACK_ENDERECO.cidade,
+          uf: data.uf || CADASTRO_PP_FALLBACK_ENDERECO.uf,
+        };
+      })
+      .catch(function () { return Object.assign({}, CADASTRO_PP_FALLBACK_ENDERECO); });
+  }
+  function onCadastroEnderecoContinuar() {
+    var btn = document.querySelector('[data-role="end-continuar-btn"]');
+    if (btn.disabled) return;
+    var s = cadastroPPState.endereco;
+    if (!s.cepRevealed) {
+      btn.disabled = true;
+      btn.classList.add('disabled');
+      buscarCep(s.draft.cep).then(function (end) {
+        s.draft.rua = end.rua; s.draft.bairro = end.bairro; s.draft.cidade = end.cidade; s.draft.uf = end.uf;
+        document.querySelector('[data-role="end-rua"]').textContent = end.rua;
+        document.querySelector('[data-role="end-bairro-cidade-uf"]').textContent = end.bairro + ', ' + end.cidade + ' - ' + end.uf;
+        s.cepRevealed = true;
+        renderCadastroEndereco();
+        updateCadastroEndContinueBtn();
+      });
+      return;
+    }
+    s.confirmed = {
+      cep: s.draft.cep, rua: s.draft.rua, bairro: s.draft.bairro, cidade: s.draft.cidade, uf: s.draft.uf,
+      numero: s.draft.semNumero ? '' : s.draft.numero.trim(),
+      semNumero: s.draft.semNumero,
+      complemento: s.draft.complemento.trim(),
+      referencia: s.draft.referencia.trim(),
+    };
+    s.status = 'preenchido';
+    applyCadastroPPEnderecoToFinalStep();
+    if (cadastroPPState.pagamento.status === 'previa') {
+      cadastroPPState.pagamento.status = 'ativo';
+      // Pré-preenche com o e-mail de Dados pessoais (permanece editável).
+      cadastroPPState.pagamento.draft.email = cadastroPPState.dadosPessoais.confirmed.email;
+      document.querySelector('[data-role="pag-email-input"]').value = cadastroPPState.pagamento.draft.email;
+      updateCadastroPagContinueBtn();
+    }
+    renderCadastroEndereco();
+    renderCadastroPagamento();
+    updateCadastroFinalStepVisibility();
+  }
+
+  // ---- Pagamento ----
+  function renderCadastroPagamento() {
+    var s = cadastroPPState.pagamento;
+    document.querySelector('[data-role="pag-previa"]').hidden = s.status !== 'previa';
+    document.querySelector('[data-role="pag-ativo"]').hidden = s.status !== 'ativo';
+    document.querySelector('[data-role="pag-preenchido"]').hidden = s.status !== 'preenchido';
+    if (s.status === 'preenchido') {
+      document.querySelector('[data-role="pag-vencimento-value"]').textContent = 'Todo dia ' + s.confirmed.vencimento;
+      document.querySelector('[data-role="pag-email-value"]').textContent = s.confirmed.email;
+    }
+    updateFinalizarBtnState();
+  }
+  function updateCadastroPagContinueBtn() {
+    var btn = document.querySelector('[data-role="pag-continuar-btn"]');
+    var d = cadastroPPState.pagamento.draft;
+    var valid = !!d.vencimento && isValidEmail(d.email);
+    btn.disabled = !valid;
+    btn.classList.toggle('disabled', !valid);
+  }
+  function confirmCadastroPagamento() {
+    if (document.querySelector('[data-role="pag-continuar-btn"]').disabled) return;
+    var s = cadastroPPState.pagamento;
+    s.confirmed = { vencimento: s.draft.vencimento, email: s.draft.email.trim() };
+    s.status = 'preenchido';
+    cadastroPPState.ativacaoReached = true;
+    renderCadastroPagamento();
+    updateCadastroFinalStepVisibility();
+  }
+
+  // ---- Última etapa: não é um card próprio, é o mesmo Agendamento/Entrega/
+  // Atualização do plano que qualquer pedido já mostra (installType/
+  // showAtualizacaoPlano, calculados perto de showCadastroPrePago) — fica
+  // escondido até ativacaoReached virar true, aí aplica a MESMA regra de
+  // sempre (nunca mostra mais de um: técnico > entrega > atualização, ver
+  // [[checkout_atualizacao_plano_celular]]). Corrigido 2026-09-24: a versão
+  // anterior tinha um 4º card fixo "Ativação", que a Eve apontou como
+  // errado — não existe esse 4º estado, é sempre um dos três já existentes. ----
+  function updateCadastroFinalStepVisibility() {
+    var locked = showCadastroPrePago && !cadastroPPState.ativacaoReached;
+    document.getElementById('agendamentoContainer').hidden = locked || installType !== 'tecnico';
+    document.getElementById('entregaContainer').hidden = locked || installType !== 'auto' || !hasPhysicalDelivery;
+    document.getElementById('atualizacaoPlanoContainer').hidden = locked || !showAtualizacaoPlano;
+    document.getElementById('ativacaoServicoContainer').hidden = locked || installType !== 'ativacao';
+
+    // Prévia trancada (título a 30%) enquanto locked; some assim que o real
+    // aparece logo depois dela (ver comentário no HTML).
+    var previewEl = document.getElementById('cadastroFinalStepPreview');
+    previewEl.hidden = !showCadastroPrePago || cadastroPPState.ativacaoReached;
+    if (!previewEl.hidden) {
+      document.querySelector('[data-role="final-step-preview-title"]').textContent = CADASTRO_PP_FINAL_TITLES[cadastroPPFinalStepKind()];
+    }
+
+    // Confirmação "Ao clicar em..." + botão duplicado (só desktop, ver CSS
+    // .cadastro-bottom-btn) — só depois que a etapa final é alcançada.
+    var showConfirm = showCadastroPrePago && cadastroPPState.ativacaoReached;
+    document.getElementById('cadastroConfirmRow').hidden = !showConfirm;
+    document.getElementById('finalizarBtnDesktopBottom').hidden = !showConfirm;
+
+    updateFinalizarBtnState();
+  }
+
+  // ---- Alterar: reabre uma etapa já preenchida, draft = confirmed ----
+  function alterarCadastroStep(stepKey) {
+    var s = cadastroPPState[stepKey];
+    s.status = 'ativo';
+    if (stepKey === 'dadosPessoais') {
+      s.draft.email = s.confirmed.email;
+      document.querySelector('[data-role="dp-email-input"]').value = s.draft.email;
+      renderCadastroDadosPessoais();
+      updateCadastroDpContinueBtn();
+    } else if (stepKey === 'endereco') {
+      s.draft = Object.assign({}, s.confirmed);
+      s.cepRevealed = true;
+      document.querySelector('[data-role="end-cep-input"]').value = formatCep(s.draft.cep);
+      document.querySelector('[data-role="end-rua"]').textContent = s.draft.rua;
+      document.querySelector('[data-role="end-bairro-cidade-uf"]').textContent = s.draft.bairro + ', ' + s.draft.cidade + ' - ' + s.draft.uf;
+      document.querySelector('[data-role="end-numero-input"]').value = s.draft.numero;
+      document.querySelector('[data-role="end-numero-input"]').disabled = s.draft.semNumero;
+      document.querySelector('[data-role="end-sem-numero-checkbox"]').checked = s.draft.semNumero;
+      document.querySelector('[data-role="end-complemento-input"]').value = s.draft.complemento;
+      document.querySelector('[data-role="end-referencia-input"]').value = s.draft.referencia;
+      renderCadastroEndereco();
+      updateCadastroEndContinueBtn();
+    } else if (stepKey === 'pagamento') {
+      s.draft = Object.assign({}, s.confirmed);
+      document.querySelector('[data-role="pag-vencimento-select"]').value = s.draft.vencimento;
+      document.querySelector('[data-role="pag-email-input"]').value = s.draft.email;
+      renderCadastroPagamento();
+      updateCadastroPagContinueBtn();
+    }
+    updateFinalizarBtnState();
+  }
+
+  function initCadastroPrePago() {
+    if (!showCadastroPrePago) return;
+    document.getElementById('cadastroPrePagoWrap').hidden = false;
+    document.querySelector('[data-role="cadastro-manter-numero-valor"]').textContent = '(11) 99876-5432';
+
+    document.querySelector('[data-role="dp-email-input"]').addEventListener('input', function (e) {
+      cadastroPPState.dadosPessoais.draft.email = e.target.value;
+      updateCadastroDpContinueBtn();
+    });
+
+    document.querySelector('[data-role="end-cep-input"]').addEventListener('input', function (e) {
+      var digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+      e.target.value = formatCep(digits);
+      cadastroPPState.endereco.draft.cep = digits;
+      updateCadastroEndContinueBtn();
+    });
+    document.querySelector('[data-role="end-numero-input"]').addEventListener('input', function (e) {
+      cadastroPPState.endereco.draft.numero = e.target.value;
+      updateCadastroEndContinueBtn();
+    });
+    document.querySelector('[data-role="end-sem-numero-checkbox"]').addEventListener('change', function (e) {
+      cadastroPPState.endereco.draft.semNumero = e.target.checked;
+      var numeroInput = document.querySelector('[data-role="end-numero-input"]');
+      numeroInput.disabled = e.target.checked;
+      if (e.target.checked) { numeroInput.value = ''; cadastroPPState.endereco.draft.numero = ''; }
+      updateCadastroEndContinueBtn();
+    });
+    document.querySelector('[data-role="end-complemento-input"]').addEventListener('input', function (e) {
+      cadastroPPState.endereco.draft.complemento = e.target.value;
+    });
+    document.querySelector('[data-role="end-referencia-input"]').addEventListener('input', function (e) {
+      cadastroPPState.endereco.draft.referencia = e.target.value;
+    });
+
+    document.querySelector('[data-role="pag-vencimento-select"]').addEventListener('change', function (e) {
+      cadastroPPState.pagamento.draft.vencimento = e.target.value;
+      updateCadastroPagContinueBtn();
+    });
+    document.querySelector('[data-role="pag-email-input"]').addEventListener('input', function (e) {
+      cadastroPPState.pagamento.draft.email = e.target.value;
+      updateCadastroPagContinueBtn();
+    });
+
+    renderCadastroDadosPessoais();
+    renderCadastroEndereco();
+    renderCadastroPagamento();
+    updateCadastroFinalStepVisibility();
+  }
+
+  function formatBRL(value) {
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Separa a parte inteira dos centavos pra render em dois tamanhos de fonte
+  // (inteiro grande, ",centavos" no tamanho do "/mês" — ver .price-cents).
+  function priceAmountHtml(value) {
+    var str = formatBRL(value);
+    var commaIdx = str.indexOf(',');
+    var intPart = commaIdx === -1 ? str : str.slice(0, commaIdx);
+    var centsPart = commaIdx === -1 ? '' : str.slice(commaIdx);
+    return '<span class="price-amount-group"><span class="price-amount">' + intPart + '</span><span class="price-cents">' + centsPart + '</span></span>';
+  }
+
+  // Mesma ideia de priceAmountHtml, só que sem o wrapper "group" (o inteiro
+  // fica junto do texto ao redor, ex: "R$ 159" + ",90" pequeno) — usado pro
+  // total do carrinho (rodapé mobile e sidebar desktop), onde o "R$"/inteiro
+  // já vive dentro de um único elemento que não precisa virar flex container.
+  function splitCentsHtml(value, centsClass) {
+    var str = formatBRL(value);
+    var commaIdx = str.indexOf(',');
+    if (commaIdx === -1) return str;
+    return str.slice(0, commaIdx) + '<span class="' + centsClass + '">' + str.slice(commaIdx) + '</span>';
+  }
+
+  function iconHtml(icon, extraClass) {
+    if (!icon) return '';
+    if (icon.kind === 'img') return '<img src="' + icon.src + '" alt="' + (icon.alt || '') + '">';
+    if (icon.kind === 'mdn' && icon.class) return '<i class="' + icon.class + ' ' + (extraClass || '') + '"></i>';
+    return '';
+  }
+
+  // ===== Descrição do(s) produto(s): 1º sempre aberto; 2º em diante atrás
+  // de "Ver mais" (generaliza o padrão de 2 produtos do checkout-600mega-100gb.html) =====
+  function renderDescricaoGroup() {
+    var group = document.querySelector('[data-role="desc-group"]');
+    var first = products[0];
+    var firstHtml =
+      '<div class="detalhes-description">' +
+        '<div class="detalhes-heading">' +
+          '<p class="detalhes-heading-label">' + first.nome + '</p>' +
+          '<p class="detalhes-heading-title">Descrição do produto</p>' +
+        '</div>' +
+        (first.descricaoLonga ? '<div class="detalhes-body"><p>' + first.descricaoLonga.replace(/\n/g, '<br>') + '</p></div>' : '') +
+        '<div class="detalhes-features">' + first.detalhesDestaques.map(function (f) {
+          return '<div class="detalhes-feature"><div class="detalhes-feature-icon">' + iconHtml(f.icone) + '</div>' +
+            '<div class="detalhes-feature-text"><p class="detalhes-feature-title">' + f.titulo + '</p><p class="detalhes-feature-desc">' + f.descricao + '</p></div></div>';
+        }).join('') + '</div>' +
+      '</div>';
+
+    if (products.length === 1) {
+      group.innerHTML = firstHtml;
+      return;
+    }
+
+    var extrasHtml = products.slice(1).map(function (p) {
+      return '<div class="detalhes-description" data-role="desc-extra-item">' +
+        '<div class="detalhes-heading">' +
+          '<p class="detalhes-heading-label">' + p.nome + '</p>' +
+          '<p class="detalhes-heading-title">Descrição do produto</p>' +
+        '</div>' +
+        '<div class="detalhes-features">' + p.detalhesDestaques.map(function (f) {
+          return '<div class="detalhes-feature"><div class="detalhes-feature-icon">' + iconHtml(f.icone) + '</div>' +
+            '<div class="detalhes-feature-text"><p class="detalhes-feature-title">' + f.titulo + '</p><p class="detalhes-feature-desc">' + f.descricao + '</p></div></div>';
+        }).join('') + '</div>' +
+      '</div>';
+    }).join('');
+
+    group.innerHTML = firstHtml +
+      '<div data-role="desc-extra" hidden>' + extrasHtml + '</div>' +
+      '<div class="detalhes-fade" data-role="desc-fade"></div>' +
+      '<button type="button" class="detalhes-vermais-row" data-role="desc-toggle" onclick="toggleDescricaoExtra(this)">' +
+        '<span data-role="desc-toggle-text">Ver mais</span>' +
+        '<i class="mdn-Icon-baixo mdn-Icon--md" data-role="desc-toggle-icon"></i>' +
+      '</button>';
+  }
+
+  function toggleDescricaoExtra(btn) {
+    var group = btn.closest('[data-role="desc-group"]');
+    var extra = group.querySelector('[data-role="desc-extra"]');
+    var fade = group.querySelector('[data-role="desc-fade"]');
+    var text = group.querySelector('[data-role="desc-toggle-text"]');
+    var icon = group.querySelector('[data-role="desc-toggle-icon"]');
+    var expanding = extra.hidden;
+
+    extra.hidden = !expanding;
+    fade.hidden = expanding;
+    btn.classList.toggle('open', expanding);
+    text.textContent = expanding ? 'Ver menos' : 'Ver mais';
+    icon.classList.toggle('mdn-Icon-baixo', !expanding);
+    icon.classList.toggle('mdn-Icon-cima', expanding);
+  }
+
+  // ===== Streamings/serviços digitais combinados de todos os produtos do
+  // pedido, deduplicados por nome — some a seção inteira se nenhum produto
+  // tiver conteúdo (ex.: combo só com Telefone). =====
+  function dedupByName(lists) {
+    var seen = {};
+    var out = [];
+    lists.forEach(function (list) {
+      list.forEach(function (item) {
+        if (!seen[item.nome]) { seen[item.nome] = true; out.push(item); }
+      });
+    });
+    return out;
+  }
+
+  var STREAMING_ASSETS = {
+    'Disney+': { bg: 'assets/detalhes/bg-disney.png', logo: 'disneyplus' },
+    'Amazon Prime': { bg: 'assets/detalhes/bg-amazon-netflix.png', logo: 'amazon-prime' },
+    'Globoplay': { bg: 'assets/detalhes/bg-globoplay.png', logo: 'globoplay', overlay: true },
+    'Apple TV': { bg: 'assets/detalhes/bg-appletv.png', logo: 'apple-tv' },
+    'Netflix': { bg: 'assets/detalhes/bg-amazon-netflix.png', logo: 'netflix' },
+    'HBO Max': { bg: 'assets/detalhes/bg-hbomax.png', logo: 'hbo-max' },
+  };
+
+  function renderStreamingsServicos() {
+    var streamings = dedupByName(products.map(function (p) { return p.streamings; }));
+    var servicos = dedupByName(products.map(function (p) { return p.servicosDigitais; }));
+
+    var streamingsSection = document.getElementById('streamingsSection');
+    if (streamings.length) {
+      streamingsSection.hidden = false;
+      document.querySelector('[data-role="streaming-carousel"]').innerHTML = streamings.map(function (s) {
+        var asset = STREAMING_ASSETS[s.nome];
+        var bgStyle = asset
+          ? (asset.overlay ? "background-image:url('" + asset.bg + "');background-size:100.13% 146.6%;background-position:center bottom;" : "background-image:url('" + asset.bg + "')")
+          : 'background:var(--ink)';
+        var logoSrc = asset ? 'https://mondrian.claro.com.br/brands/app/32px-alternative/' + asset.logo + '.svg' : '';
+        return '<div class="streaming-card' + (asset && asset.overlay ? ' streaming-card--overlay' : '') + '" style="' + bgStyle + '">' +
+          (logoSrc ? '<div class="streaming-card-logo"><img src="' + logoSrc + '" alt="' + s.nome + '"></div>' : '<div></div>') +
+          '<div class="streaming-card-text"><p class="streaming-card-title">' + s.nome + '</p><p class="streaming-card-desc">' + s.descricao + '</p></div>' +
+        '</div>';
+      }).join('');
+    } else {
+      streamingsSection.hidden = true;
+    }
+
+    var servicesSection = document.getElementById('servicesSection');
+    if (servicos.length) {
+      servicesSection.hidden = false;
+      document.querySelector('[data-role="services-carousel"]').innerHTML = servicos.map(function (s) {
+        return '<div class="service-card"><div class="service-card-header"><div class="service-card-icon">' + iconHtml(s.icone) + '</div>' +
+          '<p class="service-card-name">' + s.nome + '</p></div><p class="service-card-desc">' + s.descricao + '</p></div>';
+      }).join('');
+    } else {
+      servicesSection.hidden = true;
+    }
+  }
+
+  // ===== Termos: 1 linha por produto (categoriaTermos), + Termo de Adesão fixo =====
+  function renderTermos() {
+    var rows = products.map(function (p, idx) {
+      var divider = idx > 0 ? '<div class="termos-divider"></div>' : '';
+      return divider + '<div class="termos-row"><p class="termos-item-title">' + (p.categoriaTermos || 'Condições de oferta') + '</p>' +
+        '<button type="button" class="termos-item-icon" aria-label="Ver ' + (p.categoriaTermos || 'condições de oferta') + '"><i class="mdn-Icon-olho"></i></button></div>';
+    }).join('');
+    document.querySelector('[data-role="termos-ofertas"]').innerHTML = rows;
+  }
+
+  // ===== Permanece no seu plano: categorias possuídas pela posse ATIVA
+  // (ver OWNED_CATEGORIES/CATEGORIA_INFO acima) que esse pedido não toca. =====
+  function renderPermanece() {
+    var touched = {};
+    products.forEach(function (p) { touched[p.categoria] = true; });
+
+    var remaining = OWNED_CATEGORIES.filter(function (cat) { return !touched[cat]; });
+    var container = document.getElementById('permaneceContainer');
+    if (!remaining.length) { container.hidden = true; return; }
+
+    var listEl = container.querySelector('[data-role="permanece-list"]');
+    if (!/[?&]permanece=atual/.test(location.search)) {
+      // Nome do plano atual (produto do catálogo) quando existir; senão só a categoria.
+      var somaPermanece = 0, comPreco = 0;
+      var rowsHtml = remaining.map(function (cat) {
+        var info = CATEGORIA_INFO[cat];
+        var pid = POSSE_CHECKOUT_CFG.categoriaAtual[cat];
+        var prod = pid && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pid];
+        var preco = currentCategoriaPreco(cat);
+        if (preco != null) { somaPermanece += preco; comPreco++; }
+        return '<div class="permanece-row">' + iconHtml(info.icon) +
+          '<div class="permanece-row-text"><p class="permanece-row-name">' + (prod ? prod.nome : info.label) + '</p>' +
+          '<p class="permanece-row-status"><i class="mdn-Icon-check"></i>' + 'Sem alteração</p></div>' +
+          (preco != null ? '<p class="permanece-row-price">R$ ' + formatBRL(preco) + '/mês</p>' : '') +
+          '</div>';
+      }).join('');
+      // Título dentro do cartão cinza; uma só frase de apoio (a do valor) logo abaixo dele.
+      container.querySelector('.permanece-title').hidden = true;
+      // Vários produtos: cartão fechado (título, "N produtos" e a soma) que expande a lista.
+      // Um produto só: título no singular e a linha direto, sem acordeão.
+      var plural = remaining.length > 1;
+      somaPermanece = Math.round(somaPermanece * 100) / 100;
+      var noteHtml = '<p class="permanece-card-note">Seguem na sua fatura atual e não entram no total do seu carrinho.</p>';
+      if (!plural) {
+        listEl.innerHTML = '<div class="permanece-card"><h3 class="permanece-title permanece-card-title">Produto que permanece no seu plano</h3>' + rowsHtml + noteHtml + '</div>';
+      } else {
+        var open = !!window.__permaneceOpen;
+        listEl.innerHTML = '<div class="permanece-card permanece-card--acc' + (open ? ' is-open' : '') + '">' +
+          '<button type="button" class="permanece-acc-head" aria-expanded="' + open + '" onclick="window.__permaneceOpen=!window.__permaneceOpen;renderPermanece();">' +
+            '<i class="mdn-Icon-quatro-quadrados mdn-Icon--md permanece-acc-icon"></i>' +
+            '<span class="permanece-acc-text"><span class="permanece-acc-title">Produtos que permanecem no seu plano</span>' +
+            '<span class="permanece-acc-sub">' + remaining.length + ' produtos · sem alteração</span></span>' +
+            (comPreco > 0 ? '<span class="permanece-acc-total">R$ ' + formatBRL(somaPermanece) + '/mês</span>' : '') +
+            '<i class="mdn-Icon-baixo mdn-Icon--md permanece-acc-chev"></i></button>' +
+          (open ? '<div class="permanece-acc-body">' + rowsHtml + noteHtml + '</div>' : '') + '</div>';
+      }
+      container.hidden = false;
+      return;
+    }
+    var itemsHtml = remaining.map(function (cat) {
+      var info = CATEGORIA_INFO[cat];
+      var preco = currentCategoriaPreco(cat);
+      return '<div class="permanece-item">' + iconHtml(info.icon) +
+        '<div class="permanece-item-text"><p class="permanece-item-name">' + info.label + '</p>' +
+        (preco != null ? '<p class="permanece-item-price">R$ ' + formatBRL(preco) + '/mês</p>' : '') +
+        '</div></div>';
+    }).join('');
+
+    container.querySelector('[data-role="permanece-list"]').innerHTML = itemsHtml;
+    container.hidden = false;
+  }
+
+  // ===== Toggles genéricos (Detalhes / Termos) =====
+  var carouselNavRefreshers = [];
+  function toggleDetalhes(headerEl) {
+    var contentEl = headerEl.nextElementSibling;
+    var isOpen = contentEl.classList.toggle('open');
+    headerEl.classList.toggle('open', isOpen);
+    headerEl.querySelector('.detalhes-text').textContent = isOpen ? 'Ocultar detalhes' : 'Ver detalhes do produto';
+    if (isOpen) carouselNavRefreshers.forEach(function (fn) { fn(); });
+  }
+  function toggleTermos(headerEl) {
+    var contentEl = headerEl.nextElementSibling;
+    contentEl.classList.toggle('open');
+    headerEl.classList.toggle('open');
+  }
+
+  function makeDraggable(track) {
+    if (!track) return;
+    var isDown = false, moved = false, startX = 0, startScrollLeft = 0;
+    track.addEventListener('mousedown', function (e) { isDown = true; moved = false; startX = e.pageX; startScrollLeft = track.scrollLeft; e.preventDefault(); });
+    window.addEventListener('mousemove', function (e) {
+      if (!isDown) return;
+      var dx = e.pageX - startX;
+      if (Math.abs(dx) > 3) { moved = true; track.classList.add('dragging'); }
+      track.scrollLeft = startScrollLeft - dx;
+    });
+    window.addEventListener('mouseup', function () { isDown = false; track.classList.remove('dragging'); });
+    track.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
+
+  function initCarouselNav(track, prevBtn, nextBtn) {
+    if (!track) return null;
+    var baseline = null;
+    function scrollByCard(dir) {
+      var card = track.querySelector(':scope > *');
+      var amount = card ? card.getBoundingClientRect().width + 8 : 260;
+      track.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+    function updateNav() {
+      if (baseline === null && track.clientWidth > 0) baseline = track.scrollLeft;
+      var max = track.scrollWidth - track.clientWidth - 1;
+      if (prevBtn) prevBtn.disabled = track.scrollLeft <= (baseline == null ? 0 : baseline);
+      if (nextBtn) nextBtn.disabled = track.scrollLeft >= max;
+    }
+    if (prevBtn) prevBtn.addEventListener('click', function () { scrollByCard(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { scrollByCard(1); });
+    track.addEventListener('scroll', updateNav);
+    window.addEventListener('resize', updateNav);
+    if (window.ResizeObserver) new ResizeObserver(updateNav).observe(track);
+    updateNav();
+    carouselNavRefreshers.push(updateNav);
+    return updateNav;
+  }
+
+  // ===== Agendamento da instalação (resumo <-> formulário) =====
+  var AGENDAMENTO_PERIODS = {
+    manha: { label: 'Manhã', summaryRange: 'Das 08:00 até 12:00' },
+    tarde: { label: 'Tarde', summaryRange: 'Das 12:00 até 18:00' },
+  };
+  var AGENDAMENTO_WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  var AGENDAMENTO_WEEKDAYS_FULL = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  var AGENDAMENTO_DAYS_COUNT = 14;
+
+  function buildAgendamentoDays() {
+    var days = [];
+    var today = new Date();
+    for (var i = 1; i <= AGENDAMENTO_DAYS_COUNT; i++) {
+      days.push(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i));
+    }
+    return days;
+  }
+  function isSameAgendamentoDay(a, b) {
+    return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+  function formatAgendamentoDayMonth(d) {
+    return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0');
+  }
+
+  var agendamentoDays = buildAgendamentoDays();
+  var agendamentoState = {
+    confirmed: { period: 'manha', date: agendamentoDays[0] },
+    draft: { period: 'manha', date: agendamentoDays[0] },
+  };
+  var updateAgendamentoCalendarNav = null;
+
+  function renderAgendamentoSummary() {
+    var period = agendamentoState.confirmed.period;
+    var date = agendamentoState.confirmed.date;
+    document.querySelector('[data-role="agendamento-summary-date"]').textContent = formatAgendamentoDayMonth(date) + ' - ' + AGENDAMENTO_WEEKDAYS_FULL[date.getDay()];
+    var p = AGENDAMENTO_PERIODS[period];
+    document.querySelector('[data-role="agendamento-summary-period"]').textContent = p.label + ' - ' + p.summaryRange;
+  }
+  function updateAgendamentoPeriodUI() {
+    document.querySelectorAll('[data-role="agendamento-period"]').forEach(function (btn) {
+      var active = btn.dataset.period === agendamentoState.draft.period;
+      btn.querySelector('.agendamento-radio').classList.toggle('active', active);
+    });
+  }
+  function renderAgendamentoCalendar() {
+    var track = document.querySelector('[data-role="agendamento-calendar"]');
+    track.innerHTML = '';
+    agendamentoDays.forEach(function (d) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'agendamento-day';
+      btn.classList.toggle('selected', isSameAgendamentoDay(d, agendamentoState.draft.date));
+      btn.innerHTML = '<span>' + AGENDAMENTO_WEEKDAYS_SHORT[d.getDay()] + '</span><span>' + formatAgendamentoDayMonth(d) + '</span>';
+      btn.addEventListener('click', function () { agendamentoState.draft.date = d; renderAgendamentoCalendar(); });
+      track.appendChild(btn);
+    });
+  }
+  function selectAgendamentoPeriod(period) { agendamentoState.draft.period = period; updateAgendamentoPeriodUI(); }
+  function handleAgendamentoPrimary() {
+    var formOpen = !document.querySelector('[data-role="agendamento-periods"]').hidden;
+    if (formOpen) confirmAgendamento(); else openAgendamentoForm();
+  }
+  function openAgendamentoForm() {
+    agendamentoState.draft.period = agendamentoState.confirmed.period;
+    agendamentoState.draft.date = agendamentoState.confirmed.date;
+    document.querySelector('[data-role="agendamento-summary"]').hidden = true;
+    document.querySelector('[data-role="agendamento-form-intro"]').hidden = false;
+    document.querySelector('[data-role="agendamento-periods"]').hidden = false;
+    document.querySelector('[data-role="agendamento-calendar-row"]').hidden = false;
+    document.querySelector('[data-role="agendamento-cancel-btn"]').hidden = false;
+    updateAgendamentoPeriodUI();
+    renderAgendamentoCalendar();
+    if (updateAgendamentoCalendarNav) updateAgendamentoCalendarNav();
+  }
+  function confirmAgendamento() {
+    agendamentoState.confirmed.period = agendamentoState.draft.period;
+    agendamentoState.confirmed.date = agendamentoState.draft.date;
+    renderAgendamentoSummary();
+    closeAgendamentoForm();
+  }
+  function cancelAgendamento() { closeAgendamentoForm(); }
+  function closeAgendamentoForm() {
+    document.querySelector('[data-role="agendamento-summary"]').hidden = false;
+    document.querySelector('[data-role="agendamento-form-intro"]').hidden = true;
+    document.querySelector('[data-role="agendamento-periods"]').hidden = true;
+    document.querySelector('[data-role="agendamento-calendar-row"]').hidden = true;
+    document.querySelector('[data-role="agendamento-cancel-btn"]').hidden = true;
+  }
+
+  function getVisibleOrderSummary() {
+    var summaries = document.querySelectorAll('.order-summary');
+    for (var i = 0; i < summaries.length; i++) {
+      if (summaries[i].offsetParent !== null) return summaries[i];
+    }
+    return summaries[0];
+  }
+
+  // ===== Action Card =====
+  // Cada Action Card tem seu PRÓPRIO catálogo de adicionais — vem de
+  // product.adicionais (aba Adicionais_Checkout da planilha), diferente do
+  // checkout-600mega-100gb.html original (que usava 1 catálogo global pra
+  // todos os cards). actionCardInstances guarda {product}
+  // por card, pra syncOrderTotal/finalizarPedido lerem o certo de cada um.
+  var actionCardInstances = new Map();   // card -> { product }
+  var ADDONS_SUGGESTED_COUNT = 3;
+  var ADDON_CAT_LABEL = { internet: 'Internet', tv: 'TV', celular: 'Celular', telefone: 'Telefone' };
+
+  function actionCardAddonIconHtml(item) {
+    if (item.icone && item.icone.kind === 'img') return '<img src="' + item.icone.src + '" alt="">';
+    if (item.icone && item.icone.kind === 'mdn' && item.icone.class) return '<i class="' + item.icone.class + '"></i>';
+    return '';
+  }
+
+  // ===== Adicionais do PEDIDO (teste 2026-10-27) =====
+  // Fonte: adicionais-teste.js (lista do time). Cada adicional é atrelado a
+  // UMA categoria principal (Banda Larga/internet, TV ou Celular) e só
+  // aparece se o carrinho tiver um produto dessa categoria.
+  //
+  // FAMÍLIA x OPÇÃO: um card na tela = uma FAMÍLIA (Wi-Fi Mesh, HBO Max,
+  // Netflix…); cada família tem 1+ OPÇÕES (as linhas da lista do time) que
+  // variam em até 3 eixos — quantidade (stepper), variante (com/sem anúncios,
+  // padrão/premium…) e periodicidade (mensal/anual). O estado guardado
+  // continua sendo o NOME da opção, então sessionStorage/pedido salvo não
+  // mudam de formato. Quando a planilha trouxer essas colunas, só a origem
+  // dos dados muda (ADICIONAIS_TESTE).
+  var ADDON_ICON_BASE = { kind: 'mdn', class: 'mdn-Icon-pacote-adicional' };
+  // false = cada linha da lista do time vira UM card (sem seletores de
+  // quantidade/variante/periodicidade). true = agrupa por "familia" com
+  // seletores (versão anterior; continua no código para estudo futuro).
+  var ADDON_GROUPED = false;
+
+  // Textos do "O que é?" — vêm de adicionais-teste.js (provisórios).
+  var ADDON_DESCRIPTIONS = window.ADICIONAIS_TESTE_DESCRICOES || {};
+  var ADDON_UNITS = { 'wi-fi mesh': ['extensor', 'extensores'], 'ponto ultra': ['ponto', 'pontos'] };
+  // Ordem de prioridade dos eixos: ao mudar um eixo, os de MENOR prioridade
+  // (à direita) se ajustam sozinhos; os de maior prioridade nunca mudam.
+  var ADDON_DIM_ORDER = ['qtd', 'variante', 'periodo'];
+
+  function buildAddonPool(prods) {
+    var cats = [];
+    prods.forEach(function (p) { if (cats.indexOf(p.categoria) === -1) cats.push(p.categoria); });
+    var byId = {}, options = [], seq = 0;
+    (window.ADICIONAIS_TESTE || []).forEach(function (a) {
+      // "cat" pode ser uma categoria ('tv') ou uma lista (['internet','tv'], p/ streamings
+      // vinculados a mais de um produto principal): aparece se QUALQUER uma estiver no carrinho.
+      var acats = Array.isArray(a.cat) ? a.cat : [a.cat];
+      if (!acats.some(function (c) { return cats.indexOf(c) !== -1; }) || byId[a.nome]) return;
+      // Regra: no máximo 3 pontos adicionais de TV por cliente — some quem passaria disso.
+      if (PONTOS_ADICIONAIS && a.familia === 'Ponto Adicional' && a.qtd > MAX_PONTOS_TV - PONTOS_ADICIONAIS.qtd) return;
+      var o = { id: a.nome, name: a.nome, preco: a.preco,
+        icone: a.icone || ADDON_ICON_BASE, boxed: !a.icone,
+        cats: acats, universal: acats.length > 1, sugestao: a.sugestao || null, seq: seq++,
+        familia: ADDON_GROUPED ? (a.familia || a.nome) : a.nome, grupo: a.familia || a.nome,
+        qtd: a.qtd || null, variante: a.variante || null,
+        periodo: a.periodo || 'mensal', descricao: a.descricao || null,
+        precoDe: a.precoDe || null, sufixo: a.sufixo || '/mês', nota: a.nota || null,
+        promo: a.promoMeses ? { meses: a.promoMeses, apos: a.promoApos } : null };
+      byId[a.nome] = o; options.push(o);
+    });
+
+    // Agrupa opções em famílias (1 card por família).
+    var famMap = {}, families = [];
+    options.forEach(function (o) {
+      var key = o.familia.toLowerCase();
+      var f = famMap[key];
+      if (!f) {
+        f = famMap[key] = { id: key, nomeBase: o.familia, options: [], cats: o.cats, universal: o.universal,
+          sugestao: null, seq: o.seq, icone: o.icone, boxed: o.boxed, descricao: null };
+        families.push(f);
+      }
+      o.fam = f;
+      f.options.push(o);
+      if (o.sugestao && (!f.sugestao || o.sugestao < f.sugestao)) f.sugestao = o.sugestao;
+      if (o.descricao && !f.descricao) f.descricao = o.descricao;
+    });
+    families.forEach(function (f) {
+      f.nome = f.options.length > 1 ? f.nomeBase : f.options[0].name;
+      f.descricao = f.descricao || ADDON_DESCRIPTIONS[f.options[0].grupo.toLowerCase()] || null;
+      f.unit = ADDON_UNITS[f.id] || null;
+      // Ordena as opções: quantidade, depois mensal antes de anual, depois a ordem da lista.
+      f.options.sort(function (x, y) {
+        return ((x.qtd || 0) - (y.qtd || 0)) || ((x.periodo === 'anual') - (y.periodo === 'anual')) || (x.seq - y.seq);
+      });
+      // Eixos que realmente variam dentro da família.
+      f.dims = {};
+      ADDON_DIM_ORDER.forEach(function (dim) {
+        var vals = [];
+        f.options.forEach(function (o) { if (o[dim] != null && vals.indexOf(o[dim]) === -1) vals.push(o[dim]); });
+        if (vals.length > 1) f.dims[dim] = vals;
+      });
+      f.hasControls = Object.keys(f.dims).length > 0;
+    });
+    return { cats: cats, byId: byId, list: options, families: families };
+  }
+
+  // 3 sugestões em rodízio entre as categorias do carrinho — com Internet + TV
+  // vem Internet, TV, Internet…
+  // Dentro do grupo: coluna Sugestão (1..n), senão ordem da planilha.
+  function orderAddons(pool) {
+    var buckets = pool.cats.map(function (c) { return { key: c, items: [] }; });
+    buckets.push({ key: 'universal', items: [] });   // vinculados a mais de uma categoria
+    pool.families.forEach(function (it) {
+      var key = it.universal ? 'universal' : it.cats.filter(function (c) { return pool.cats.indexOf(c) !== -1; })[0];
+      buckets.filter(function (b) { return b.key === key; })[0].items.push(it);
+    });
+    buckets.forEach(function (b) {
+      b.items.sort(function (x, y) { return ((x.sugestao || 999) - (y.sugestao || 999)) || (x.seq - y.seq); });
+    });
+    var suggested = [], i = 0, progressed = true;
+    while (suggested.length < ADDONS_SUGGESTED_COUNT && progressed) {
+      progressed = false;
+      buckets.forEach(function (b) {
+        if (suggested.length < ADDONS_SUGGESTED_COUNT && b.items[i]) { suggested.push(b.items[i]); progressed = true; }
+      });
+      i++;
+    }
+    // Lista completa ("Ver todos"): ordem da lista do time, mas com as opções do
+    // MESMO produto juntas e em sequência (2, 3, 4 extensores…).
+    var groupSeq = {};
+    pool.families.forEach(function (f) {
+      var g = f.options[0].grupo;
+      if (groupSeq[g] === undefined || f.seq < groupSeq[g]) groupSeq[g] = f.seq;
+    });
+    var all = pool.families.slice().sort(function (x, y) {
+      return (groupSeq[x.options[0].grupo] - groupSeq[y.options[0].grupo]) || (x.seq - y.seq);
+    });
+    return { suggested: suggested, ordered: all, buckets: buckets };
+  }
+
+  var ADDON_POOL = buildAddonPool(products);
+  var ADDON_ORDER = orderAddons(ADDON_POOL);
+  // choice: opção exibida por família enquanto ainda não foi adicionada.
+  var addonState = { selected: [], notice: [], choice: {}, info: {}, modalFilter: 'todos', modalQuery: '' };
+
+  // Carrega o que estava salvo (formato legado { produtoId: [nomes] } —
+  // vitrine/config-movel ainda leem assim) e descarta o que ficou sem produto
+  // compatível no carrinho (e opções repetidas da mesma família).
+  (function loadAddonSelection() {
+    var saved = loadAdicionaisState(), seen = {}, famSeen = {};
+    Object.keys(saved).forEach(function (pid) {
+      if (!Array.isArray(saved[pid])) return;
+      saved[pid].forEach(function (n) {
+        var o = ADDON_POOL.byId[n];
+        if (o && !seen[n] && !famSeen[o.grupo]) { seen[n] = true; famSeen[o.grupo] = true; addonState.selected.push(n); }
+      });
+    });
+    try {
+      var aviso = JSON.parse(sessionStorage.getItem('addonsAviso'));
+      if (Array.isArray(aviso) && aviso.length) addonState.notice = aviso;
+      sessionStorage.removeItem('addonsAviso');
+    } catch (e) {}
+  })();
+
+  // Salva no formato legado atribuindo cada adicional a um produto "dono"
+  // (um que o liste na planilha, senão o primeiro compatível do carrinho).
+  function persistAddons() {
+    var legacy = {};
+    addonState.selected.forEach(function (id) {
+      var it = ADDON_POOL.byId[id]; if (!it) return;
+      var owner = products.filter(function (p) {
+        return it.cats.indexOf(p.categoria) !== -1 && (p.adicionais || []).some(function (a) { return a.nome === id; });
+      })[0] || products.filter(function (p) { return it.cats.indexOf(p.categoria) !== -1; })[0];
+      if (!owner) return;
+      (legacy[owner.id] = legacy[owner.id] || []).push(id);
+    });
+    saveAdicionaisState(legacy);
+  }
+
+  function famSelectedOption(fam) {
+    return fam.options.filter(function (o) { return addonState.selected.indexOf(o.id) !== -1; })[0] || null;
+  }
+  function famCurrentOption(fam) {
+    var sel = famSelectedOption(fam);
+    if (sel) return sel;
+    var c = addonState.choice[fam.id];
+    return (c && ADDON_POOL.byId[c]) || fam.options[0];
+  }
+  // Opções do MESMO produto (mesmo "grupo" na lista do time: 2/3/4 extensores,
+  // mensal/anual, com/sem anúncios…) são excludentes: escolher uma tira a outra.
+  function addonGroupMates(opt) {
+    return ADDON_POOL.list.filter(function (o) { return o.grupo === opt.grupo && o !== opt; });
+  }
+  function addonMateSelected(opt) {
+    return addonGroupMates(opt).filter(function (o) { return addonState.selected.indexOf(o.id) !== -1; })[0] || null;
+  }
+  function toggleFamily(fam) {
+    var sel = famSelectedOption(fam);
+    if (sel) addonState.selected.splice(addonState.selected.indexOf(sel.id), 1);
+    else {
+      var opt = famCurrentOption(fam);
+      addonGroupMates(opt).forEach(function (m) {
+        var i = addonState.selected.indexOf(m.id);
+        if (i !== -1) addonState.selected.splice(i, 1);
+      });
+      addonState.selected.push(opt.id);
+    }
+    persistAddons();
+    renderAddons();
+  }
+  function removeAddonOption(id) {
+    var i = addonState.selected.indexOf(id);
+    if (i !== -1) addonState.selected.splice(i, 1);
+    persistAddons();
+    renderAddons();
+  }
+  // Troca a opção da família (stepper/segmentado). Se já estava adicionada,
+  // a opção nova substitui a antiga no pedido e o preço atualiza na hora.
+  function chooseFamilyOption(fam, opt) {
+    addonState.choice[fam.id] = opt.id;
+    var sel = famSelectedOption(fam);
+    if (sel) { addonState.selected[addonState.selected.indexOf(sel.id)] = opt.id; persistAddons(); }
+    renderAddons();
+  }
+  // Opções que existem para (dim = value) mantendo os eixos de MAIOR prioridade
+  // como estão. Vazio = combinação inexistente (botão fica desabilitado).
+  function famDimCandidates(fam, dim, value) {
+    var cur = famCurrentOption(fam);
+    var higher = ADDON_DIM_ORDER.slice(0, ADDON_DIM_ORDER.indexOf(dim)).filter(function (d) { return fam.dims[d]; });
+    return fam.options.filter(function (o) {
+      return o[dim] === value && higher.every(function (d) { return o[d] === cur[d]; });
+    });
+  }
+  function setFamilyDim(fam, dim, value) {
+    var cand = famDimCandidates(fam, dim, value);
+    if (!cand.length) return;
+    var cur = famCurrentOption(fam);
+    var lower = ADDON_DIM_ORDER.slice(ADDON_DIM_ORDER.indexOf(dim) + 1).filter(function (d) { return fam.dims[d]; });
+    var best = cand[0], bestScore = -1;
+    cand.forEach(function (o) {
+      var sc = lower.filter(function (d) { return o[d] === cur[d]; }).length;
+      if (sc > bestScore) { bestScore = sc; best = o; }
+    });
+    chooseFamilyOption(fam, best);
+  }
+
+  function addonIsAnnual(o) { return o.periodo === 'anual'; }
+
+  // ===== Preço promocional por N meses ("De R$ 30 por R$ 0 · Após 3 meses, R$ 30/mês") =====
+  // Cada item do carrinho tem preço atual (preco) e, opcionalmente, promo {meses, apos}:
+  // vale "preco" por `meses` meses e depois passa a "apos". cartPhases() agrupa os itens
+  // por prazo e devolve o total de cada fase — é a única regra, usada pelo total, pelo
+  // texto "Após N meses" e pelas linhas de taxas (desktop e mobile).
+  function promoAfterText(meses, apos, spaced) {
+    return 'Após ' + meses + (meses === 1 ? ' mês' : ' meses') + ', R$' + (spaced ? ' ' : '') + formatBRL(apos) + '/mês';
+  }
+  function ordinalMes(n) { return n + 'º mês'; }
+  function cartPhases(items) {
+    var now = 0, regular = 0, bounds = [];
+    items.forEach(function (it) {
+      now += it.preco;
+      regular += it.promo ? it.promo.apos : it.preco;
+      if (it.promo && bounds.indexOf(it.promo.meses) === -1) bounds.push(it.promo.meses);
+    });
+    bounds.sort(function (a, b) { return a - b; });
+    var phases = bounds.map(function (b) {
+      var t = 0;
+      items.forEach(function (it) { t += (it.promo && it.promo.meses <= b) ? it.promo.apos : it.preco; });
+      return { meses: b, total: Math.round(t * 100) / 100 };
+    });
+    return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, phases: phases };
+  }
+  // Linhas "Valor do 1º ao 3º mês" / "Valor a partir do 3º mês" (texto do Figma).
+  function promoFeeRows(ph) {
+    var rows = [], prev = 1, cur = ph.now;
+    ph.phases.forEach(function (p, i) {
+      rows.push([i === 0 && p.meses === 1 ? 'Valor no 1º mês' : 'Valor do ' + prev + 'º ao ' + ordinalMes(p.meses), cur]);
+      prev = p.meses; cur = p.total;
+    });
+    if (ph.phases.length) rows.push(['Valor a partir do ' + ordinalMes(prev), cur]);
+    return rows;
+  }
+  function pontosAtivos() { return !!PONTOS_ADICIONAIS && products.some(function (p) { return p.categoria === 'tv'; }); }
+  function cartItems() {
+    var items = [];
+    document.querySelectorAll('.order-summary-desktop [data-action-card]').forEach(function (card) {
+      items.push({ preco: parseFloat(card.dataset.basePrice) || 0, promo: null });
+    });
+    addonState.selected.forEach(function (id) { var o = ADDON_POOL.byId[id]; items.push({ preco: o.preco, promo: o.promo || null }); });
+    if (pontosAtivos()) items.push({ preco: PONTOS_ADICIONAIS.valorNovo, promo: null });
+    return items;
+  }
+  function renderPromoCart(ph) {
+    var promo = ph.phases.length > 0;
+    var rows = promoFeeRows(ph);
+    document.querySelectorAll('[data-role="promo-rows"]').forEach(function (box) {
+      var mobile = box.hasAttribute('data-mobile');
+      box.innerHTML = '';
+      rows.forEach(function (r) {
+        var row = document.createElement('div');
+        row.className = mobile ? 'footer-taxa-row' : 'order-detail-row';
+        row.innerHTML = '<' + (mobile ? 'p' : 'span') + ' class="' + (mobile ? 'footer-taxa-label' : 'order-detail-label') + '">' + r[0] + '</' + (mobile ? 'p' : 'span') + '>' +
+          '<' + (mobile ? 'p' : 'span') + ' class="' + (mobile ? 'footer-taxa-value' : 'order-detail-value') + '">R$ ' + formatBRL(r[1]) + '/mês</' + (mobile ? 'p' : 'span') + '>';
+        box.appendChild(row);
+      });
+    });
+    // "De R$ X por:" acima do total + "Após N meses, R$ Y/mês" no lugar do "ajustado à sua fatura".
+    document.querySelectorAll('[data-role="total-was"]').forEach(function (el) {
+      var cheaper = promo && ph.regular > ph.now;   // "De" só quando hoje está mais barato que depois
+      el.hidden = !cheaper;
+      el.innerHTML = cheaper ? 'De <s>R$ ' + formatBRL(ph.regular) + '</s> por:' : '';
+    });
+    document.querySelectorAll('.order-adjusted, .footer-adjusted').forEach(function (el) {
+      if (!el.hasAttribute('data-default')) el.setAttribute('data-default', el.textContent);
+      el.innerHTML = promo ? ph.phases.map(function (p) { return promoAfterText(p.meses, p.total, true); }).join('<br>') : el.getAttribute('data-default');
+    });
+  }
+  function syncOrderTotal() {
+    // Anual = valor mensal (R$ 10 mais barato que o mensal): entra no total mensal.
+    // Total = preço de hoje (promocional); as fases futuras saem de cartPhases().
+    var ph = cartPhases(cartItems());
+    var pa = pontosAtivos();
+    document.querySelectorAll('[data-role="pontos-row"]').forEach(function (row) {
+      row.hidden = !pa;
+      if (pa) {
+        row.querySelector('[data-role="pontos-label"]').textContent = 'Pontos adicionais (' + PONTOS_ADICIONAIS.qtd + ')';
+        row.querySelector('[data-role="pontos-value"]').textContent = 'R$ ' + formatBRL(PONTOS_ADICIONAIS.valorNovo) + '/mês';
+      }
+    });
+    var total = ph.now;
+    renderPromoCart(ph);
+    document.querySelectorAll('.footer-price-amount').forEach(function (el) { el.innerHTML = '<span class="footer-price-prefix">R$</span> ' + splitCentsHtml(total, 'footer-price-cents'); });
+    document.querySelectorAll('.total-amount').forEach(function (el) { el.innerHTML = splitCentsHtml(total, 'total-cents'); });
+  }
+
+  function addonIconEl(item) {
+    var wrap = document.createElement('div');
+    wrap.className = 'addon-icon' + (item.boxed ? ' boxed' : '');
+    wrap.innerHTML = actionCardAddonIconHtml(item);
+    return wrap;
+  }
+  function addonUnitLabel(fam, qtd) {
+    return fam.unit ? (qtd === 1 ? fam.unit[0] : fam.unit[1]) : '';
+  }
+
+  // Card de 1 família: ícone + nome + etiqueta de escopo + "O que é?",
+  // preço em destaque (valor grande, periodicidade pequena), seletores
+  // (quantidade / variante / periodicidade) e o botão Adicionar.
+  function addonRowEl(fam) {
+    var cur = famCurrentOption(fam);
+    var added = !!famSelectedOption(fam);
+    var showScope = ADDON_POOL.cats.length > 1 && !fam.universal;   // vinculado a várias categorias: sem etiqueta
+    var annual = addonIsAnnual(cur);
+    var card = document.createElement('div');
+    card.className = 'addon-card' + (added ? ' is-added' : '');
+
+    var head = document.createElement('div');
+    head.className = 'addon-head';
+    head.appendChild(addonIconEl(fam));
+    var text = document.createElement('div');
+    text.className = 'addon-text';
+    var nameRow = document.createElement('div');
+    nameRow.className = 'addon-name-row';
+    var nameWords = fam.nome.split(' '), nameLast = nameWords.pop();
+    // Última palavra + ícone ⓘ juntos (nowrap): o ícone nunca fica sozinho na linha.
+    nameRow.innerHTML = '<span class="addon-name-wrap"><span class="addon-name">' + (nameWords.length ? nameWords.join(' ') + ' ' : '') + '<span class="addon-nowrap">' + nameLast + '</span></span></span>';
+    // Escopo (Para Internet / Para TV): linha pequena ACIMA do nome, só quando o
+    // carrinho tem mais de uma categoria — não disputa espaço com nome/ícone.
+    if (showScope) {
+      var eyebrow = document.createElement('span');
+      eyebrow.className = 'addon-eyebrow';
+      eyebrow.textContent = 'Para ' + (ADDON_CAT_LABEL[fam.cats[0]] || fam.cats[0]);
+      text.appendChild(eyebrow);
+    }
+    text.appendChild(nameRow);
+    var priceRow = document.createElement('div');
+    priceRow.className = 'addon-price-row';
+    // Mesmo formato de preço do card do produto: R$ menor, inteiro grande,
+    // ,centavos e /mês no tamanho do R$ (classes .price-* do site).
+    priceRow.innerHTML = (cur.precoDe ? '<p class="action-card-price-was addon-price-was">De <s>R$ ' + formatBRL(cur.precoDe) + '</s> por:</p>' : '') +
+      '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(cur.preco) + '<span class="price-suffix">' + (cur.sufixo || '/mês') + '</span></div>' +
+      (cur.promo ? '<p class="addon-price-note">' + promoAfterText(cur.promo.meses, cur.promo.apos, false) + '</p>' : (cur.nota ? '<p class="addon-price-note">' + cur.nota + '</p>' : ''));
+    text.appendChild(priceRow);
+    if (fam.descricao) {
+      var open = !!addonState.info[fam.id];
+      var info = document.createElement('button');
+      info.type = 'button';
+      info.className = 'addon-info-btn';
+      info.setAttribute('aria-expanded', open ? 'true' : 'false');
+      info.setAttribute('aria-label', 'O que é ' + fam.nome + '?');
+      info.innerHTML = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.75" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7.25" y="7" width="1.5" height="4.5" rx=".75" fill="currentColor"/><circle cx="8" cy="4.75" r="1" fill="currentColor"/></svg>';
+      info.addEventListener('click', function () { addonState.info[fam.id] = !open; renderAddons(); });
+            nameRow.querySelector('.addon-nowrap').appendChild(info);   // inline: acompanha a última palavra do nome
+    }
+    head.appendChild(text);
+
+    function addButton() {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = added ? 'mdn-Button mdn-Button--secondary mdn-Button--sm addon-added' : 'btn-add';
+      btn.setAttribute('aria-pressed', added ? 'true' : 'false');
+      btn.setAttribute('aria-label', (added ? 'Remover ' : 'Adicionar ') + cur.name);
+      btn.textContent = added ? 'Adicionado' : 'Adicionar';
+      btn.addEventListener('click', function () { toggleFamily(fam); });
+      return btn;
+    }
+    if (!fam.hasControls) head.appendChild(addButton());
+    card.appendChild(head);
+
+    if (fam.descricao && addonState.info[fam.id]) {
+      var panel = document.createElement('p');
+      panel.className = 'addon-info-panel';
+      panel.innerHTML = '<strong>O que é?</strong> ';
+      panel.appendChild(document.createTextNode(fam.descricao));
+      card.appendChild(panel);
+    }
+
+    if (fam.hasControls) {
+      var controls = document.createElement('div');
+      controls.className = 'addon-controls';
+      var left = document.createElement('div');
+      left.className = 'addon-selectors';
+      if (fam.dims.qtd) {
+        var vals = fam.dims.qtd, idx = vals.indexOf(cur.qtd);
+        var st = document.createElement('div');
+        st.className = 'addon-stepper';
+        var minus = document.createElement('button');
+        minus.type = 'button'; minus.textContent = '−'; minus.disabled = idx <= 0;
+        minus.setAttribute('aria-label', 'Diminuir quantidade');
+        minus.addEventListener('click', function () { setFamilyDim(fam, 'qtd', vals[idx - 1]); });
+        var val = document.createElement('span');
+        val.className = 'addon-stepper-value';
+        val.textContent = cur.qtd + ' ' + addonUnitLabel(fam, cur.qtd);
+        var plus = document.createElement('button');
+        plus.type = 'button'; plus.textContent = '+'; plus.disabled = idx >= vals.length - 1;
+        plus.setAttribute('aria-label', 'Aumentar quantidade');
+        plus.addEventListener('click', function () { setFamilyDim(fam, 'qtd', vals[idx + 1]); });
+        st.appendChild(minus); st.appendChild(val); st.appendChild(plus);
+        left.appendChild(st);
+      }
+      ['variante', 'periodo'].forEach(function (dim) {
+        if (!fam.dims[dim]) return;
+        var seg = document.createElement('div');
+        seg.className = 'addon-seg';
+        seg.setAttribute('role', 'group');
+        fam.dims[dim].forEach(function (v) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = cur[dim] === v ? 'active' : '';
+          b.setAttribute('aria-pressed', cur[dim] === v ? 'true' : 'false');
+          if (!famDimCandidates(fam, dim, v).length) b.disabled = true;
+          b.textContent = dim === 'periodo' ? (v === 'anual' ? 'Anual' : 'Mensal') : v;
+          b.addEventListener('click', function () { setFamilyDim(fam, dim, v); });
+          seg.appendChild(b);
+        });
+        left.appendChild(seg);
+      });
+      controls.appendChild(left);
+      controls.appendChild(addButton());
+      card.appendChild(controls);
+    }
+    return card;
+  }
+
+  function renderAddonSummary(el) {
+    if (!addonState.selected.length) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    el.innerHTML = '';
+    var card = document.createElement('div');
+    card.className = 'addons-summary-card';
+    card.innerHTML = '<p class="addons-summary-title">Adicionais</p>';
+    var monthly = 0;
+    addonState.selected.forEach(function (id) {
+      var it = ADDON_POOL.byId[id];
+      var annual = addonIsAnnual(it);
+      monthly += it.preco;
+      var line = document.createElement('div');
+      line.className = 'addons-summary-line';
+      line.innerHTML = '<span class="addons-summary-line-name">+ ' + it.name + '</span><span class="addons-summary-line-price">R$ ' + formatBRL(it.preco) + '/mês</span>';
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'addons-summary-remove';
+      del.setAttribute('aria-label', 'Remover ' + it.name);
+      del.innerHTML = '<img src="assets/action-card/lixeira.svg" alt="">';
+      del.addEventListener('click', function () { removeAddonOption(id); });
+      line.appendChild(del);
+      card.appendChild(line);
+    });
+    function totalRow(label, value, suffix) {
+      var tot = document.createElement('div');
+      tot.className = 'addons-summary-total';
+      tot.innerHTML = '<span>' + label + '</span><span>R$ ' + formatBRL(Math.round(value * 100) / 100) + suffix + '</span>';
+      card.appendChild(tot);
+    }
+    if (monthly > 0) totalRow('Total mensal de adicionais', monthly, '/mês');
+    el.appendChild(card);
+  }
+
+  function renderAddonSection(el) {
+    if (!ADDON_ORDER.ordered.length) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    el.innerHTML = '';
+    var block = document.createElement('div');
+    block.className = 'addons-block';
+    var head = document.createElement('div');
+    head.innerHTML = '<p class="addons-title">Turbine seu pedido</p>';
+    block.appendChild(head);
+    if (addonState.notice.length) {
+      var n = document.createElement('div');
+      n.className = 'addons-notice';
+      n.innerHTML = '<p>Removemos ' + addonState.notice.join(', ') + ' do pedido porque dependia do produto que você retirou.</p>';
+      var x = document.createElement('button');
+      x.type = 'button'; x.setAttribute('aria-label', 'Fechar aviso'); x.textContent = '×';
+      x.addEventListener('click', function () { addonState.notice = []; renderAddons(); });
+      n.appendChild(x);
+      block.appendChild(n);
+    }
+    var list = document.createElement('div');
+    list.className = 'addon-list';
+    // Só as 3 sugestões; o que foi adicionado além delas aparece apenas no
+    // grupo "Adicionais" do resumo (e dentro do "Ver todos").
+    var shown = ADDON_ORDER.suggested;
+    shown.forEach(function (f) { list.appendChild(addonRowEl(f)); });
+    block.appendChild(list);
+    if (ADDON_ORDER.ordered.length > ADDON_ORDER.suggested.length) {
+      var more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'addons-link';
+      more.textContent = 'Ver todos os adicionais (' + ADDON_ORDER.ordered.length + ')';
+      more.addEventListener('click', openAddonsModal);
+      block.appendChild(more);
+    }
+    el.appendChild(block);
+  }
+
+  // ----- "Ver todos": bottom sheet (mobile) / modal (desktop) -----
+  function addonsModalFilters() {
+    var f = [{ key: 'todos', label: 'Todos' }];
+    // Chip por categoria do carrinho; um adicional vinculado a várias categorias
+    // aparece em cada chip dele (it.cats.indexOf).
+    ADDON_POOL.cats.forEach(function (c) {
+      if (ADDON_ORDER.ordered.some(function (fam) { return fam.cats.indexOf(c) !== -1; })) f.push({ key: c, label: ADDON_CAT_LABEL[c] || c });
+    });
+    return f.length > 2 ? f : [];
+  }
+  function renderAddonsModal() {
+    var chips = document.getElementById('addonsModalChips');
+    var filters = addonsModalFilters();
+    chips.hidden = !filters.length;
+    chips.innerHTML = '';
+    filters.forEach(function (f) {
+      var c = document.createElement('button');
+      c.type = 'button';
+      c.className = 'addons-chip' + (addonState.modalFilter === f.key ? ' active' : '');
+      c.textContent = f.label;
+      c.addEventListener('click', function () { addonState.modalFilter = f.key; renderAddonsModal(); });
+      chips.appendChild(c);
+    });
+    var q = addonState.modalQuery.trim().toLowerCase();
+    var items = ADDON_ORDER.ordered.filter(function (it) {
+      var f = addonState.modalFilter;
+      var matchesFilter = f === 'todos' || it.cats.indexOf(f) !== -1;
+      return matchesFilter && (!q || it.options.some(function (o) { return o.name.toLowerCase().indexOf(q) !== -1; }) ||
+        it.nome.toLowerCase().indexOf(q) !== -1);
+    });
+    var list = document.getElementById('addonsModalList');
+    var prevScroll = list.scrollTop;
+    list.innerHTML = '';
+    if (!items.length) {
+      var empty = document.createElement('p');
+      empty.className = 'addons-modal-empty';
+      empty.textContent = 'Nenhum adicional encontrado.';
+      list.appendChild(empty);
+    }
+    var prevGrupo = null;
+    items.forEach(function (it) {
+      var el = addonRowEl(it), g = it.options[0].grupo;
+      if (g === prevGrupo) el.classList.add('addon-card--chain');   // mesmo produto: cards colados
+      prevGrupo = g;
+      list.appendChild(el);
+    });
+    list.scrollTop = prevScroll;
+    var n = addonState.selected.length;
+    document.getElementById('addonsModalDone').textContent = n ? 'Concluir (' + n + ' ' + (n === 1 ? 'adicionado' : 'adicionados') + ')' : 'Concluir';
+  }
+  function handleAddonsModalKeydown(e) { if (e.key === 'Escape') closeAddonsModal(); }
+  function openAddonsModal() {
+    addonState.modalFilter = 'todos';
+    addonState.modalQuery = '';
+    document.getElementById('addonsModalSearch').value = '';
+    renderAddonsModal();
+    document.getElementById('addonsModalOverlay').hidden = false;
+    document.addEventListener('keydown', handleAddonsModalKeydown);
+  }
+  function closeAddonsModal() {
+    document.getElementById('addonsModalOverlay').hidden = true;
+    document.removeEventListener('keydown', handleAddonsModalKeydown);
+  }
+
+  function renderAddons() {
+    document.querySelectorAll('[data-role="addons-summary"]').forEach(renderAddonSummary);
+    document.querySelectorAll('[data-role="addons-section"]').forEach(renderAddonSection);
+    if (!document.getElementById('addonsModalOverlay').hidden) renderAddonsModal();
+    syncOrderTotal();
+  }
+
+  // Linha dentro do card da nova TV: os pontos acompanham o plano, com valor atual → novo.
+  // Sem lixeira/botão (não há como remover); o texto explica a causa sem soar negativo.
+  function pontosAdicionaisHtml() {
+    var n = PONTOS_ADICIONAIS.qtd;
+    var nome = n + (n === 1 ? ' ponto adicional' : ' pontos adicionais');
+    // Card próprio, logo abaixo do da TV e com hierarquia menor (sem preço grande), pra não
+    // competir com o plano principal. Sem data-action-card: não entra nas contas por produto
+    // (o valor entra em cartItems/finalizarPedido). Texto do alerta provisório (Eve ajusta).
+    return '<div class="action-card action-card--pontos">' +
+      '<span class="action-card-tag action-card-tag--info">Acompanha seu novo plano de TV</span>' +
+      '<div class="action-card-product"><div class="action-card-product-name"><div class="action-card-icon"><i class="mdn-Icon-tv"></i></div><p class="action-card-name">' + nome.charAt(0).toUpperCase() + nome.slice(1) + '</p></div></div>' +
+      '<div class="action-card-current-plan"><p><strong>Valor atual:</strong> R$ ' + formatBRL(PONTOS_ADICIONAIS.valorAtual) + '/mês</p></div>' +
+      '<div class="action-card-pontos-new"><p class="action-card-price-label">Valor com o novo plano</p><p class="action-card-pontos-value">R$ ' + formatBRL(PONTOS_ADICIONAIS.valorNovo) + '/mês</p></div>' +
+      '<div class="mdn-Alert mdn-Alert--danger mdn-Alert--light mdn-is-open action-card-pontos-alert" role="status">' +
+        '<div class="mdn-Alert-content"><p class="mdn-Text mdn-Text--contentSm">Você possui ' + nome + ' de TV e ' + (n === 1 ? 'ele será atualizado' : 'eles serão atualizados') + ' para acompanhar seu novo plano.</p></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function actionCardHtml(product) {
+    var isOwned = isOwnedCategory(product.categoria);
+    var tagText = isOwned ? 'Plano alterado' : 'Novo plano adicionado';
+    // Quando é troca de plano dentro de uma categoria já possuída, mostra o
+    // valor do plano atual (antes da troca) — Figma node 13214:5307. Some em
+    // silêncio se a posse ativa não tem valor/produto configurado pra essa
+    // categoria (currentCategoriaPreco retorna null).
+    var currentPrice = isOwned ? currentCategoriaPreco(product.categoria) : null;
+    var discountedPrice = bundleDiscount ? bundleDiscount.perProduct[product.id] : undefined;
+    var hasDiscount = discountedPrice !== undefined;
+    var displayPrice = hasDiscount ? discountedPrice : product.preco;
+    return '<div class="action-card" data-action-card data-base-price="' + displayPrice + '">' +
+      '<span class="action-card-tag">' + tagText + '</span>' +
+      (currentPrice !== null ? '<div class="action-card-current-plan"><p><strong>Valor do plano atual:</strong> R$ ' + formatBRL(currentPrice) + '/mês</p></div>' : '') +
+      '<div class="action-card-product">' +
+        '<div class="action-card-product-name"><div class="action-card-icon">' + iconHtml(product.icone) + '</div><p class="action-card-name">' + product.nome + '</p></div>' +
+        '<img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal(\'' + product.id + '\')">' +
+      '</div>' +
+      '<div class="action-card-divider"></div>' +
+      '<div class="action-card-price-row"><p class="action-card-price-label">' + (isOwned ? 'Valor do novo plano' : 'Valor do plano') + '</p>' +
+        '<div class="action-card-price">' +
+          (hasDiscount ? '<p class="action-card-price-was">De <s>R$ ' + formatBRL(product.preco) + '</s> por:</p>' : '') +
+          '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(displayPrice) + '<span class="price-suffix">/mês</span></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderActionCards() {
+    document.querySelectorAll('[data-role="action-cards-mount"]').forEach(function (mount) {
+      mount.innerHTML = products.map(function (p) {
+        return actionCardHtml(p) + (PONTOS_ADICIONAIS && p.categoria === 'tv' ? pontosAdicionaisHtml() : '');
+      }).join('') +
+        '<div data-role="addons-summary" hidden></div><div data-role="addons-section" hidden></div>';
+    });
+    document.querySelectorAll('[data-action-card]').forEach(function (root, idx) {
+      // Cada seção (mobile/desktop) repete os mesmos N produtos, na mesma
+      // ordem — idx % products.length mapeia de volta pro produto certo.
+      actionCardInstances.set(root, { product: products[idx % products.length] });
+    });
+    persistAddons();   // limpa o que ficou sem produto compatível
+    renderAddons();
+  }
+
+  // ===== Upsell — oferece o produto de menor valor entre Celular/Banda
+  // Larga/TV que a posse ainda não possui (nem já está neste pedido).
+  // Figma "Checkout exclusivo - M6", node 13214:6185. Regra de negócio
+  // (Eve, 2026-09-28): elegibilidade é sobre POSSE (mesma fonte que
+  // OWNED_CATEGORIES/isOwnedCategory acima), não sobre o pedido em si —
+  // mas um produto da categoria já presente NESTE pedido também conta como
+  // "possuído" pro cálculo, senão o componente ofereceria de novo algo que
+  // o cliente já está comprando agora mesmo (caso não coberto pelas regras
+  // da Eve porque ela descreveu só em termos de posse — extensão de bom
+  // senso, avisar se não for o esperado).
+  // Prioridade quando falta mais de 1 categoria: Banda Larga > Celular > TV
+  // — decorre da tabela que a Eve passou (ver [[upsell_checkout]] na
+  // memória do projeto pra a dedução completa, caso a regra precise mudar).
+  var UPSELL_PRIORITY = ['internet', 'celular', 'tv'];
+  var upsellDismissed = false;
+
+  function computeUpsellTarget() {
+    var possuiEfetivo = {};
+    OWNED_CATEGORIES.forEach(function (c) { possuiEfetivo[c] = true; });
+    products.forEach(function (p) { possuiEfetivo[p.categoria] = true; });
+    var faltando = UPSELL_PRIORITY.filter(function (c) { return !possuiEfetivo[c]; });
+    if (!faltando.length) return null;
+    var categoria = faltando[0];
+    var candidatos = Object.keys(PRODUCT_CATALOG)
+      .map(function (id) { return PRODUCT_CATALOG[id]; })
+      .filter(function (p) { return p.categoria === categoria; })
+      .sort(function (a, b) { return a.preco - b.preco; });
+    return candidatos.length ? candidatos[0] : null;
+  }
+
+  // Mesma regra de desconto por categoria de sempre (CATEGORY_DISCOUNTS,
+  // ver acima) — como o alvo do upsell nunca é uma categoria já presente no
+  // pedido (ver possuiEfetivo acima), adicioná-lo sempre resulta em 2+
+  // categorias distintas no carrinho, então o desconto da categoria alvo
+  // (se ela tiver uma, ver CATEGORY_DISCOUNTS — Internet nunca tem) sempre
+  // se aplica quando exibido, sem precisar checar de novo aqui.
+  function upsellCardHtml(product, rowActions) {
+    var desconto = CATEGORY_DISCOUNTS[product.categoria] || 0;
+    var precoFinal = desconto ? Math.round((product.preco - desconto) * 100) / 100 : product.preco;
+    var info = CATEGORIA_INFO[product.categoria] || {};
+    return '<div class="upsell-card">' +
+      '<div class="upsell-card-inner">' +
+        '<div class="upsell-top-row">' +
+          '<span class="upsell-tag"><i class="mdn-Icon-mais"></i>Aproveite e inclua</span>' +
+          '<button type="button" class="upsell-close" aria-label="Fechar" onclick="dismissUpsell()"><i class="mdn-Icon-circulo-fechar"></i></button>' +
+        '</div>' +
+        '<div class="upsell-product-row">' +
+          '<div class="upsell-product-icon">' + iconHtml(info.icon) + '</div>' +
+          '<p class="upsell-product-name">' + product.nome + '</p>' +
+        '</div>' +
+        '<div class="upsell-price">' +
+          (desconto ? '<p class="upsell-price-was">De R$ ' + formatBRL(product.preco) + ' por:</p>' : '') +
+          '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(precoFinal) + '<span class="price-suffix">/mês</span></div>' +
+        '</div>' +
+        '<div class="upsell-actions' + (rowActions ? ' upsell-actions--row' : '') + '">' +
+          '<button type="button" class="agendamento-btn agendamento-btn-secondary" onclick="addUpsellToOrder(\'' + product.id + '\')">Adicionar ao pedido</button>' +
+          '<button type="button" class="upsell-later" onclick="dismissUpsell()">Agora não</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderUpsell() {
+    var mounts = document.querySelectorAll('[data-role="upsell-mount"]');
+    if (!mounts.length) return;
+    var target = upsellDismissed ? null : computeUpsellTarget();
+    mounts.forEach(function (mount) {
+      if (!target) { mount.hidden = true; mount.innerHTML = ''; return; }
+      mount.hidden = false;
+      mount.innerHTML = upsellCardHtml(target, mount.dataset.variant === 'desktop');
+    });
+  }
+
+  // "Agora não" e o X fazem a mesma coisa: escondem o componente só nesta
+  // visualização da página (estado em memória, não persiste em storage —
+  // um reload por outro motivo, ex. remover produto, deixa o upsell
+  // reaparecer, o que é o esperado pra um aviso dispensável, não uma
+  // preferência permanente).
+  function dismissUpsell() {
+    upsellDismissed = true;
+    renderUpsell();
+  }
+
+  // "Adicionar ao pedido": funde o produto no pedido e recarrega — mesmo
+  // padrão já usado por confirmRemoveProduct() (reload em vez de tentar
+  // atualizar ao vivo cada peça dependente de `products`: Action Cards,
+  // installType, Agendamento/Entrega/Atualização/Ativação, totais, etc.).
+  function addUpsellToOrder(produtoId) {
+    var novos = pedidoIds.concat([produtoId]);
+    try { sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(novos)); } catch (e) {}
+    window.location.reload();
+  }
+
+  function toggleFooter() {
+    var info = document.querySelector('.footer-expanded-info');
+    var icon = document.getElementById('footerToggleIcon');
+    info.hidden = !info.hidden;
+    icon.className = info.hidden ? 'mdn-Icon-cima' : 'mdn-Icon-baixo';
+  }
+
+  // ===== Remover 1 produto do pedido =====
+  // O ícone de lixeira passa o id do produto daquele Action Card específico;
+  // guardamos em pendingRemoveProductId pra confirmRemoveProduct() saber qual
+  // remover (o modal é compartilhado por todos os cards, não é 1 por card).
+  var pendingRemoveProductId = null;
+  function handleRemoveModalKeydown(e) { if (e.key === 'Escape') closeRemoveModal(); }
+  function openRemoveModal(productId) {
+    pendingRemoveProductId = productId;
+    document.getElementById('removeModalOverlay').hidden = false;
+    document.addEventListener('keydown', handleRemoveModalKeydown);
+  }
+  function closeRemoveModal() {
+    document.getElementById('removeModalOverlay').hidden = true;
+    document.removeEventListener('keydown', handleRemoveModalKeydown);
+    pendingRemoveProductId = null;
+  }
+  // Atualiza pedidoEmAndamento de verdade (não só navega de volta) — mesma
+  // lógica de invalidação de pedidoOfertaId usada em vitrine.html
+  // (removeFromCart), pra o carrinho persistente da vitrine refletir a
+  // remoção em vez de continuar mostrando o produto removido.
+  function confirmRemoveProduct() {
+    var idToRemove = pendingRemoveProductId;
+    if (!idToRemove) { window.location.href = 'vitrine.html'; return; }
+
+    var remaining = pedidoIds.filter(function (id) { return id !== idToRemove; });
+    if (remaining.length) {
+      sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(remaining));
+    } else {
+      sessionStorage.removeItem('pedidoEmAndamento');
+    }
+
+    // Adicionais são do PEDIDO: só saem se ficarem sem produto compatível
+    // (ex.: ponto adicional sem nenhum produto de TV) — streamings ficam
+    // enquanto sobrar Internet ou TV. Os que saem viram aviso após o reload.
+    var remainingProducts = remaining.map(function (id) { return PRODUCT_CATALOG[id]; }).filter(Boolean);
+    var poolDepois = buildAddonPool(remainingProducts);
+    var perdidos = addonState.selected.filter(function (n) { return !poolDepois.byId[n]; });
+    if (!remaining.length) saveAdicionaisState({});
+    else if (perdidos.length) { try { sessionStorage.setItem('addonsAviso', JSON.stringify(perdidos)); } catch (e) {} }
+
+    var ofertaId = sessionStorage.getItem('pedidoOfertaId');
+    if (ofertaId && typeof OFERTAS_COMBINADAS !== 'undefined') {
+      var oferta = OFERTAS_COMBINADAS[ofertaId];
+      var ofertaIds = oferta ? oferta.produtos.map(function (p) { return p.id; }).slice().sort() : null;
+      var remainingSorted = remaining.slice().sort();
+      var stillMatches = ofertaIds && ofertaIds.length === remainingSorted.length &&
+        ofertaIds.every(function (id, i) { return id === remainingSorted[i]; });
+      if (!stillMatches) sessionStorage.removeItem('pedidoOfertaId');
+    }
+
+    // Ainda sobrou produto (pedido multi, ex: oferta com 2+ itens): fica no
+    // checkout com o que restou, não manda de volta pra vitrine — só o
+    // último item removido (carrinho fica vazio) manda pra vitrine, porque
+    // não sobra nada pra continuar comprando aqui. Recarrega em vez de tentar
+    // re-renderizar tudo na mão (carrosséis, termos, agendamento, desconto
+    // multi etc. dependem de `products`, resolvido 1x no load da página).
+    if (remaining.length) {
+      window.location.reload();
+    } else {
+      window.location.href = 'vitrine.html';
+    }
+  }
+
+  // ===== Concluir pedido: monta o objeto exato que conclusao.html espera
+  // (ver [[tv_checkout_conclusao_pattern]]) e navega. =====
+  function finalizarPedido(destino) {
+    if (showCadastroPrePago && !cadastroPPIsComplete()) return;
+    var summary = getVisibleOrderSummary();
+    var cards = summary.querySelectorAll('[data-action-card]');
+    var orderProducts = [];
+    var addons = [];
+    var total = 0;
+
+    cards.forEach(function (card) {
+      var inst = actionCardInstances.get(card);
+      if (!inst) return;
+      var basePrice = parseFloat(card.dataset.basePrice) || 0;
+      var iconEl = card.querySelector('.action-card-icon i');
+      var icon = iconEl ? iconEl.className : 'mdn-Icon-tv';
+      // id/categoria (2026-09-28): o upsell da tela de conclusão (ver
+      // [[upsell_conclusao]]) precisa saber a categoria de cada produto já
+      // comprado pra calcular quais categorias ainda faltam.
+      orderProducts.push({ id: inst.product.id, categoria: inst.product.categoria, name: inst.product.nome, icon: icon, price: basePrice });
+      total += basePrice;
+    });
+    // Adicionais são do pedido (lista simples nome/preço, mesmo formato de antes).
+    addonState.selected.forEach(function (id) {
+      var item = ADDON_POOL.byId[id];
+      addons.push({ name: item.name, price: item.preco, periodo: item.periodo });
+      total += item.preco;
+    });
+    if (pontosAtivos()) {
+      addons.push({ name: PONTOS_ADICIONAIS.qtd + (PONTOS_ADICIONAIS.qtd === 1 ? ' ponto adicional de TV' : ' pontos adicionais de TV'), price: PONTOS_ADICIONAIS.valorNovo, periodo: 'mensal' });
+      total += PONTOS_ADICIONAIS.valorNovo;
+    }
+    total = Math.round(total * 100) / 100;
+
+    var order = {
+      products: orderProducts,
+      shortName: (products.length === 1 && products[0].categoria === 'tv') ? products[0].nome : '',
+      installType: installType,
+      hasMobilePlan: hasMobilePlan,
+      hasCelularPlanChange: hasCelularPlanChange,
+      hasPhysicalDelivery: hasPhysicalDelivery,
+      total: total,
+      addons: addons,
+    };
+    try { sessionStorage.setItem('claroCheckoutOrder', JSON.stringify(order)); } catch (e) {}
+
+    if (installType === 'tecnico') {
+      var period = agendamentoState.confirmed.period;
+      var date = agendamentoState.confirmed.date;
+      try { localStorage.setItem('agendamentoConfirmado', JSON.stringify({ period: period, date: date.toISOString() })); } catch (e) {}
+    }
+
+    try { sessionStorage.removeItem('pedidoEmAndamento'); } catch (e) {}
+    try { sessionStorage.removeItem('pedidoAdicionais'); } catch (e) {}
+    try { sessionStorage.removeItem('configMovelEscolha'); } catch (e) {}
+    window.location.href = destino;
+  }
+
+  // ===== Inicialização =====
+  renderDescricaoGroup();
+  renderStreamingsServicos();
+  renderTermos();
+  renderActionCards();
+  renderUpsell();
+  renderPermanece();
+  initConfigMovel();
+  initCadastroPrePago();
+  updateCadastroFinalStepVisibility();
+  // "Instalação: Grátis" no resumo só faz sentido pra pedidos que exigem
+  // instalação técnica — produtos installType 'auto' (planos de Celular,
+  // TV Box/Soundbox sem cabo) não têm instalação nenhuma, então a linha
+  // some (mesmo critério de combo misto: Técnico prevalece, ver
+  // [[combo_install_type_rule]]).
+  document.querySelectorAll('[data-role="instalacao-row"], [data-role="instalacao-row-mobile"]').forEach(function (el) {
+    el.hidden = installType !== 'tecnico';
+  });
+
+  if (bundleDiscount) {
+    document.querySelectorAll('[data-role="desconto-multi-row"]').forEach(function (row) {
+      row.hidden = false;
+      row.querySelector('[data-role="desconto-multi-value"]').textContent = '-R$ ' + formatBRL(bundleDiscount.total);
+    });
+  }
+
+  document.querySelectorAll('.streaming-carousel, .services-carousel, .agendamento-calendar').forEach(makeDraggable);
+  initCarouselNav(document.querySelector('[data-role="streaming-carousel"]'), document.querySelector('[data-role="streaming-prev"]'), document.querySelector('[data-role="streaming-next"]'));
+  initCarouselNav(document.querySelector('[data-role="services-carousel"]'), document.querySelector('[data-role="services-prev"]'), document.querySelector('[data-role="services-next"]'));
+
+  if (installType === 'tecnico') {
+    renderAgendamentoSummary();
+    updateAgendamentoCalendarNav = initCarouselNav(
+      document.querySelector('[data-role="agendamento-calendar"]'),
+      document.querySelector('[data-role="agendamento-cal-prev"]'),
+      document.querySelector('[data-role="agendamento-cal-next"]')
+    );
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configure seu plano móvel · Simulador M6</title>
+
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/reset.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/tokens/claro-tokens-3.0.0.custom-properties.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/vanilla/mondrian-vanilla-6.0.7.css">
+<link rel="stylesheet" href="https://mondrian.claro.com.br/icons/mondrian-icons-latest.css">
+
+<style>
+  :root{
+    --red-dark:#b41e13;
+    --red:#da291c;
+    --yellow:#ffc722;
+    --ink:#1f1d1d;
+    --gray-dark:#525252;
+    --gray-line:#dbdbdb;
+    --green-bg:#ddf9ed;
+    --green-text:#006b4f;
+    --gray-tertiary:#dbdbdb;
+    --bg-page:#f8f8f8;
+    --red-lightest:#ffe3e3;
+    --teal-dark:#005c66;
+  }
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  /* Botões/inputs não herdam a fonte do body por padrão (caem em Arial do navegador) — força Roboto/AMX do Mondrian */
+  button,input,select,textarea{font-family:inherit;}
+  body{margin:0;font-family:'Roboto', sans-serif;background:var(--bg-page);color:var(--ink);}
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Topbar ===== */
+  .topbar-inner{width:100%;max-width:1440px;margin:0 auto;padding:0 80px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;}
+  .topbar-utility{background:var(--red-dark);height:46px;display:flex;}
+  .topbar-utility .topbar-inner{height:100%;}
+  .topbar-location{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+  .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-a11y{display:flex;align-items:center;gap:16px;}
+  .topbar-a11y i{font-size:16px;line-height:1;}
+  .topbar-brand{background:var(--red);height:70px;display:flex;}
+  .topbar-brand .topbar-inner{height:100%;}
+  .brand-logo img{height:38px;display:block;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .topbar-actions i{font-size:24px;line-height:1;}
+  .topbar-exit{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;}
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  button,input,select,textarea{font-family:inherit;}
+  body{margin:0;font-family:'Roboto', sans-serif;background:#fff;color:var(--ink);}
+  a{color:inherit;text-decoration:none;}
+  .content{max-width:1440px;margin:0 auto;padding:48px 80px 48px;}
+  .mdn-Breadcrumb{margin-bottom:48px;}
+  .page-title{font-family:'AMX', sans-serif;font-weight:700;font-size:24px;line-height:1.3;margin:0 0 24px;}
+
+  /* Card "Número do celular" (Figma 13033:2796 desktop / 13033:2352 mobile).
+     Reaproveita as classes .config-movel-* do checkout (mesmas variáveis de
+     seleção número/chip) — aqui só o invólucro e os ajustes de largura. */
+  .cfg-card{background:#fff;border:1px solid var(--gray-line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:24px;width:100%;}
+  .cfg-card-head{display:flex;align-items:center;gap:8px;}
+  .cfg-card-head i{font-size:24px;line-height:1;}
+  .cfg-card-title{font-family:'AMX', sans-serif;font-weight:500;font-size:24px;line-height:1.3;margin:0;color:#000;}
+  .cfg-card-body{display:flex;flex-direction:column;gap:16px;width:100%;padding-bottom:16px;}
+  .cfg-card .config-movel-option-title{font-size:20px;}
+  .cfg-card .config-movel-hint{font-size:14px;font-weight:500;padding:8px;}
+  .cfg-card .config-movel-chip-group{align-items:center;}
+  .cfg-card .config-movel-chip-card{max-width:600px;}
+  .cfg-card .config-movel-option > .config-movel-hint:last-child{padding:8px;}
+  .cfg-manter-fields{max-width:600px;align-self:center;}
+
+  /* Barra do carrinho — mesmo componente da vitrine (.vitrine-cart-*) */
+  .agendamento-container{background:#fff;border-radius:12px;padding:32px 16px;display:flex;flex-direction:column;gap:32px;}
+  .agendamento-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;margin:0 0 8px;}
+  .agendamento-subtitle{font-size:16px;color:var(--gray-dark);margin:0;}
+  .agendamento-section{display:flex;flex-direction:column;gap:8px;}
+  .agendamento-label{display:flex;align-items:flex-end;gap:8px;font-size:16px;font-weight:700;margin:0;}
+  .agendamento-label i{font-size:24px;line-height:1;}
+  .agendamento-value{font-size:16px;color:var(--ink);margin:0;}
+  [data-role="agendamento-summary"]{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .agendamento-summary-row{display:flex;gap:8px;font-size:16px;color:var(--ink);margin:0;}
+  .agendamento-summary-row strong{flex-shrink:0;font-weight:700;}
+  .agendamento-periods{display:flex;gap:24px;flex-wrap:wrap;width:100%;}
+  .agendamento-period{display:flex;flex-direction:column;gap:8px;background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;font-family:inherit;}
+  .agendamento-period-heading{display:flex;align-items:center;gap:16px;}
+  .agendamento-period-heading i{font-size:24px;line-height:1;color:var(--ink);}
+  .agendamento-period-heading span{font-size:20px;font-weight:500;color:var(--ink);}
+  .agendamento-period-radio{display:flex;align-items:center;gap:16px;font-size:16px;color:var(--ink);}
+  .agendamento-radio{width:24px;height:24px;flex-shrink:0;border:2px solid var(--gray-line);border-radius:50%;background:#fff;position:relative;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .agendamento-radio.active::after{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--teal-dark);}
+  /* Config móvel (novo número / manter número atual) */
+  .config-movel-option{border:2px solid var(--gray-line);border-radius:8px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;cursor:pointer;text-align:left;background:none;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .config-movel-option.selected{border-color:var(--green-text);}
+  .config-movel-option-head{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;position:relative;}
+  .config-movel-option-title{font-family:'AMX', sans-serif;font-weight:500;font-size:16px;color:var(--ink);margin:0;}
+  .config-movel-check{display:none;align-items:center;justify-content:center;padding:4px;border-radius:90px;background:var(--green-bg);position:absolute;right:0;}
+  .config-movel-option.selected .config-movel-check{display:flex;}
+  .config-movel-check i{font-size:24px;line-height:1;color:var(--green-text);}
+  .config-movel-divider{height:1px;background:var(--gray-line);width:100%;border:none;margin:0;}
+  .config-movel-hint{font-size:12px;color:var(--gray-dark);text-align:center;margin:0;width:100%;}
+  .config-movel-chip-group{display:flex;flex-direction:column;gap:16px;width:100%;}
+  .config-movel-chip-card{border:2px solid var(--gray-line);border-radius:12px;padding:24px;width:100%;cursor:pointer;position:relative;background:#fff;text-align:left;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .config-movel-chip-card.selected{border-color:var(--green-text);}
+  .config-movel-chip-head{display:flex;align-items:center;gap:16px;width:100%;}
+  .config-movel-chip-text{display:flex;flex-direction:column;gap:4px;}
+  .config-movel-chip-title{font-family:'AMX', sans-serif;font-weight:700;font-size:16px;color:var(--ink);margin:0;}
+  .config-movel-chip-sub{font-size:12px;color:var(--gray-dark);margin:4px 0 0;}
+  .config-movel-chip-sub strong{font-weight:700;}
+  .config-movel-divider-thin{border-top:1px solid var(--gray-line);margin-top:16px;padding-top:16px;display:flex;flex-direction:column;gap:16px;}
+  .config-movel-chip-info{display:flex;align-items:center;gap:16px;}
+  .config-movel-icon-pill{display:flex;align-items:center;justify-content:center;padding:8px;border-radius:500px;background:var(--red-lightest);flex-shrink:0;}
+  .config-movel-icon-pill i{font-size:24px;line-height:1;color:var(--red);}
+  .config-movel-chip-info p{font-size:14px;color:var(--ink);margin:0;}
+  .config-movel-tag{position:absolute;top:0;right:0;display:flex;align-items:center;gap:4px;padding:4px 8px;background:#fffaad;color:#b84d01;font-size:12px;font-weight:500;border-radius:0 10px 0 10px;}
+  .config-movel-tag i{font-size:16px;line-height:1;}
+  .config-movel-field-label{font-size:16px;color:var(--gray-dark);margin:0;}
+  .config-movel-input{width:100%;height:46px;border:1px solid var(--ink);border-radius:12px;padding:9px 17px;font-size:16px;color:var(--ink);font-family:inherit;background:#fff;appearance:none;-webkit-appearance:none;}
+  .config-movel-input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 1px var(--ink);}
+  .config-movel-select-wrap{position:relative;width:100%;}
+  .config-movel-select-wrap select{padding-right:40px;cursor:pointer;}
+  .config-movel-select-wrap i{position:absolute;right:17px;top:11px;font-size:24px;line-height:1;pointer-events:none;color:var(--ink);}
+
+  .vitrine-cart-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);border-radius:12px 12px 0 0;padding:12px 16px;gap:16px;flex-direction:column;z-index:100;}
+  .vitrine-cart-total-row{display:flex;gap:16px;align-items:center;width:100%;}
+  .vitrine-cart-toggle{width:24px;height:24px;flex-shrink:0;border:none;background:none;padding:0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .vitrine-cart-toggle:active{transform:scale(0.9);}
+  .vitrine-cart-toggle i{font-size:24px;line-height:1;}
+  .vitrine-cart-total-text{flex:1;min-width:0;}
+  .vitrine-cart-text{color:#fff;font-size:16px;font-weight:400;margin:0;}
+  .vitrine-cart-price{color:#fff;display:flex;align-items:baseline;gap:2px;margin:4px 0 0;}
+  .vitrine-cart-price-amount{font-size:24px;font-weight:700;font-family:'AMX';}
+  .vitrine-cart-price-prefix{font-size:16px;}
+  .vitrine-cart-price-cents{font-size:16px;}
+  .vitrine-cart-price-suffix{font-size:16px;font-weight:700;}
+  .vitrine-cart-adjusted{color:#fff;font-size:12px;font-weight:400;margin:0;}
+  .vitrine-cart-btn{background:var(--yellow);border:none;border-radius:500px;padding:16px 32px;height:48px;font-size:16px;font-weight:500;color:var(--ink);cursor:pointer;width:100%;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .vitrine-cart-btn:hover{filter:brightness(0.95);}
+  .vitrine-cart-btn:active{transform:scale(0.98);}
+  /* "Esvaziar carrinho" — Figma: logo abaixo do botão Continuar, ~12px de
+     espaço, texto sublinhado e centralizado na mesma largura do botão. O
+     gap vem do wrapper (.vitrine-cart-footer-actions/.vitrine-cart-bar-actions),
+     não de margin aqui — botão+link ficam num wrapper próprio, separado do
+     gap:16px do footer/barra (senão os dois gaps somavam e ficava longe). */
+  .vitrine-cart-clear{display:block;width:100%;background:none;border:none;padding:0;color:#fff;font-size:16px;font-weight:400;text-decoration:underline;text-align:center;cursor:pointer;}
+  .vitrine-cart-clear:hover{opacity:0.85;}
+  .vitrine-cart-footer-actions{display:flex;flex-direction:column;gap:12px;}
+
+  .vitrine-cart-expanded{display:flex;flex-direction:column;gap:12px;width:100%;}
+  .vitrine-cart-expanded[hidden]{display:none;}
+  .vitrine-cart-expanded:not([hidden]){animation:fade-in 0.3s cubic-bezier(0,0,0.2,1);}
+  @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+  .vitrine-cart-disclaimer{color:#fff;font-size:14px;font-weight:400;text-align:center;margin:0;}
+  /* Mobile: mantém o layout original — cada linha ocupa a largura toda do
+     card (mesma largura dos outros elementos, como o preço/disclaimer), com
+     o valor alinhado à direita via space-between. Eve pediu explicitamente
+     pra manter esse comportamento aqui, só o desktop mudou (ver
+     .vitrine-cart-bar-taxas logo abaixo, que usa grid pra aproximar as duas
+     colunas — mobile não teve esse pedido). */
+  .vitrine-cart-taxas{display:flex;flex-direction:column;gap:4px;width:100%;}
+  .vitrine-cart-taxas .vitrine-cart-taxa-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;width:100%;}
+  .vitrine-cart-taxa-label{font-weight:700;margin:0;color:#fff;font-size:14px;}
+  .vitrine-cart-taxa-value{font-weight:400;margin:0;color:#fff;font-size:14px;text-align:right;}
+  .vitrine-cart-divider{height:1px;background:var(--gray-line);width:100%;}
+
+  @media (max-width:599px){
+    .vitrine-cart-footer.is-visible{display:flex;}
+  }
+
+  /* Barra desktop — espaçamento medido direto no Figma (node 6724:13553):
+     gap uniforme de 80px entre TODOS os elementos (disclaimer → taxas →
+     divider → total → botão), cluster inteiro centralizado na barra (não é
+     um layout "space-between" com o botão grudado na borda direita — as
+     margens esquerda/direita batem exatamente quando o conjunto é
+     centralizado), e 12px de padding vertical (altura total da barra fecha
+     em 130px com o bloco de taxas, que é o mais alto, em 106px). */
+  .vitrine-cart-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);z-index:100;padding:12px 80px;align-items:center;justify-content:center;gap:80px;}
+  .vitrine-cart-bar-disclaimer{color:#fff;font-size:14px;font-weight:400;max-width:190px;margin:0;flex-shrink:0;}
+  /* Desktop: rótulo e valor formam duas colunas de verdade (grid), rótulos
+     à esquerda (coluna do tamanho do maior rótulo), valores à direita logo
+     em seguida — bem mais próximos do que o space-between original, que
+     esticava o valor até a borda dos 276px. */
+  .vitrine-cart-bar-taxas{display:grid;grid-template-columns:max-content max-content;column-gap:16px;row-gap:4px;flex-shrink:0;}
+  .vitrine-cart-bar-taxas .vitrine-cart-taxa-row{display:contents;}
+  .vitrine-cart-bar-taxas .vitrine-cart-taxa-value{justify-self:end;text-align:right;}
+  .vitrine-cart-bar-divider{width:1px;align-self:stretch;background:rgba(255,255,255,0.24);flex-shrink:0;}
+  .vitrine-cart-bar-total{flex-shrink:0;}
+  .vitrine-cart-bar-actions{display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0;}
+  .vitrine-cart-bar .vitrine-cart-btn{width:auto;}
+  .vitrine-cart-bar .vitrine-cart-clear{width:auto;}
+
+  @media (min-width:1024px){
+    .vitrine-cart-bar.is-visible{display:flex;}
+  }
+  .vitrine-cart-footer,.vitrine-cart-bar{border-radius:12px 12px 0 0;}
+  /* a faixa fixa cobre o fim da página: o vermelho do footer se estende por baixo dela (sem sobra branca) */
+  .mdn-Footer{padding-bottom:140px;}
+  @media (max-width:1300px){.topbar-inner{padding:0 24px;}.content{padding:32px 24px 32px;}}
+  @media (max-width:599px){
+    .topbar-inner{padding:0 16px;}
+    .content{padding:24px 16px 24px;}
+    .cfg-card-title{font-size:20px;}
+    .cfg-card .config-movel-option-title{font-size:16px;}
+    .cfg-card .config-movel-chip-card{padding:16px;}
+    .mdn-Footer{padding-bottom:130px;}
+  }
+  .vitrine-cart-btn.disabled{opacity:.32;cursor:not-allowed;}
+  .vitrine-cart-btn.disabled:hover{filter:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar-utility">
+    <div class="topbar-inner">
+      <div class="topbar-location">
+        <i class="mdn-Icon-localizacao mdn-Icon--md mdn-Icon--inverse"></i>
+        <span>Nome da Rua</span>
+        <i class="mdn-Icon-baixo mdn-Icon--sm mdn-Icon--inverse"></i>
+      </div>
+      <div class="topbar-a11y">
+        <i class="mdn-Icon-pessoa-pcd mdn-Icon--sm mdn-Icon--inverse" title="Pessoa PCD"></i>
+        <i class="mdn-Icon-libras mdn-Icon--sm mdn-Icon--inverse" title="Libras"></i>
+        <i class="mdn-Icon-alto-contraste mdn-Icon--sm mdn-Icon--inverse" title="Contraste"></i>
+        <i class="mdn-Icon-tamanho-diminuir mdn-Icon--sm mdn-Icon--inverse" title="Diminuir fonte"></i>
+        <i class="mdn-Icon-tamanho-aumentar mdn-Icon--sm mdn-Icon--inverse" title="Aumentar fonte"></i>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-brand">
+    <div class="topbar-inner">
+      <a href="vitrine.html" class="brand-logo">
+        <img src="https://mondrian.claro.com.br/brands/horizontal/inverse/minha-claro.svg" alt="MinhaClaro">
+      </a>
+      <div class="topbar-actions">
+        <a href="#" class="topbar-exit">
+          <i class="mdn-Icon-sair mdn-Icon--md mdn-Icon--inverse"></i>
+          Sair
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="content">
+  <nav aria-label="breadcrumbs" class="mdn-Breadcrumb mdn-Breadcrumb--mobile">
+    <a class="mdn-Breadcrumb-link" id="voltarLink" href="vitrine.html">
+      <i class="mdn-Breadcrumb-icon mdn-Icon-esquerda mdn-Icon--md" aria-hidden="true"></i>Voltar
+    </a>
+  </nav>
+
+  <h1 class="page-title">Configure seu novo plano móvel</h1>
+
+  <div class="cfg-card">
+    <div class="cfg-card-head">
+      <i class="mdn-Icon-celular-5g"></i>
+      <h2 class="cfg-card-title">Número do celular</h2>
+    </div>
+    <div class="config-movel-divider"></div>
+
+    <div class="cfg-card-body">
+      <div class="config-movel-option" data-role="config-movel-novo-card" onclick="selectConfigMovelNumero('novo')">
+        <div class="config-movel-option-head">
+          <p class="config-movel-option-title">Quero um novo número</p>
+          <span class="config-movel-check"><i class="mdn-Icon-check-circulo"></i></span>
+        </div>
+        <div class="config-movel-divider"></div>
+        <p class="config-movel-hint" data-role="config-movel-novo-hint">Escolha como quer receber seu novo número:</p>
+        <p class="config-movel-hint" data-role="config-movel-novo-collapsed-hint" hidden>Escolha entre chip físico, entregue no seu endereço, ou eSIM, com ativação imediata.</p>
+        <div data-role="config-movel-novo-chips-slot" style="width:100%">
+          <div id="configMovelChipGroup" class="config-movel-chip-group">
+            <div class="config-movel-chip-card" data-role="config-movel-chip-fisico" onclick="event.stopPropagation(); selectConfigMovelChip('fisico')">
+              <div class="config-movel-chip-head">
+                <span class="agendamento-radio" data-role="config-movel-radio-fisico"></span>
+                <div class="config-movel-chip-text">
+                  <p class="config-movel-chip-title">Chip comum (físico)</p>
+                  <p class="config-movel-chip-sub"><strong>Entregue pelo técnico</strong> na instalação da banda larga</p>
+                </div>
+              </div>
+              <div class="config-movel-divider-thin" data-role="config-movel-chip-fisico-extra">
+                <div class="config-movel-chip-info">
+                  <span class="config-movel-icon-pill"><i class="mdn-Icon-chip"></i></span>
+                  <p>Um chip físico enviado ao seu endereço e é usado <strong>direto no seu aparelho</strong>.</p>
+                </div>
+              </div>
+            </div>
+            <div class="config-movel-chip-card" data-role="config-movel-chip-esim" onclick="event.stopPropagation(); selectConfigMovelChip('esim')">
+              <span class="config-movel-tag"><i class="mdn-Icon-circulo-exclamacao"></i>Verifique a compatibilidade</span>
+              <div class="config-movel-chip-head">
+                <span class="agendamento-radio" data-role="config-movel-radio-esim"></span>
+                <div class="config-movel-chip-text">
+                  <p class="config-movel-chip-title">eSIM (chip virtual)</p>
+                  <p class="config-movel-chip-sub"><strong>Enviado por e-mail</strong> após a aprovação do pedido.</p>
+                </div>
+              </div>
+              <div class="config-movel-divider-thin" data-role="config-movel-chip-esim-extra" hidden>
+                <div class="config-movel-chip-info"><span class="config-movel-icon-pill"><i class="mdn-Icon-cpu"></i></span><p>É um chip virtual que funciona somente em <strong>aparelhos compatíveis com essa tecnologia</strong> e que substitui o chip físico.</p></div>
+                <div class="config-movel-chip-info"><span class="config-movel-icon-pill"><i class="mdn-Icon-qr-code"></i></span><p>A ativação é feita via <strong>QR Code</strong> e o código é enviado no seu e-mail após a aprovação do pedido.</p></div>
+                <div class="config-movel-chip-info"><span class="config-movel-icon-pill"><i class="mdn-Icon-celular-triangulo-exclamacao"></i></span><p>Antes de seguir, verifique se seu <strong>aparelho é compatível</strong> com a tecnologia eSIM.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-movel-option" data-role="config-movel-manter-card" onclick="selectConfigMovelNumero('manter')">
+        <div class="config-movel-option-head">
+          <p class="config-movel-option-title">Manter meu número atual</p>
+          <span class="config-movel-check"><i class="mdn-Icon-check-circulo"></i></span>
+        </div>
+        <div class="config-movel-divider"></div>
+        <p class="config-movel-hint">Mantenha seu número atual e aproveite os benefícios do novo plano escolhido.</p>
+        <div class="cfg-manter-fields" data-role="config-movel-manter-fields" hidden style="display:flex;flex-direction:column;gap:16px;width:100%" onclick="event.stopPropagation()">
+          <div>
+            <p class="config-movel-field-label">Número do titular do plano</p>
+          </div>
+          <input type="tel" inputmode="numeric" class="config-movel-input" placeholder="DDD + Celular" maxlength="11" data-role="config-movel-numero-input">
+          <div class="config-movel-select-wrap">
+            <select class="config-movel-input" data-role="config-movel-operadora-select">
+              <option value="">Operadora atual</option>
+              <option value="Claro">Claro</option>
+              <option value="Oi">Oi</option>
+              <option value="Tim">Tim</option>
+              <option value="Vivo">Vivo</option>
+            </select>
+            <i class="mdn-Icon-baixo"></i>
+          </div>
+          <div class="config-movel-divider"></div>
+          <p class="config-movel-hint">Escolha como quer receber seu novo número:</p>
+          <div data-role="config-movel-manter-chips-slot" style="width:100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Componente real Mondrian Footer, variante "Public Simple"
+     (https://mondrian.claro.com.br/snippets/vanilla/index.html?path=/story/componentes-web-footer--public-simple) -->
+<footer class="mdn-Footer mdn-Footer--default mdn-Footer--signature mdn-Footer--simple" role="contentinfo">
+  <div class="mdn-Container">
+    <div class="mdn-Footer-content">
+      <div class="mdn-Footer-disclaimer">
+        <ul class="mdn-Footer-list">
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Política de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-link mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse" href="#" target="_blank">Portal de Privacidade</a>
+          </li>
+          <li class="mdn-Footer-list-item">
+            <a class="mdn-Footer-disclaimer-librasLink" href="#" title="Libras">
+              <i class="mdn-Icon-libras mdn-Icon--sm" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="mdn-Text mdn-Text--body mdn-Text--xs mdn-Text--inverse">
+          <strong>© 2026 Claro. Todos os direitos reservados <span class="mdn-Text-dash">- </span>
+            <br>CNPJ: 40.432.544/0001-47 <span class="mdn-Text-dash">- </span>
+            <br>Rua Henri Dunant, 780 - São Paulo - SP
+          </strong>
+        </p>
+      </div>
+      <div class="mdn-Footer-logo">
+        <img class="mdn-Footer-logo-image" src="https://mondrian.claro.com.br/brands/nosvg/assinatura-claro.png" alt="Claro">
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- Resumo do pedido fixo: mesmo componente da vitrine (faixa preta) -->
+<div class="vitrine-cart-footer is-visible" id="vitrineCartFooter">
+  <div class="vitrine-cart-expanded" id="vitrineCartExpanded" hidden>
+    <p class="vitrine-cart-disclaimer">Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.</p>
+    <div class="vitrine-cart-taxas">
+      <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Fidelidade</p><p class="vitrine-cart-taxa-value">12 meses</p></div>
+      <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+      <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Instalação</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+      <div class="vitrine-cart-taxa-row" data-role="vitrine-desconto-row" hidden><p class="vitrine-cart-taxa-label">Desconto Multi</p><p class="vitrine-cart-taxa-value" data-role="vitrine-desconto-value"></p></div>
+    </div>
+    <div class="vitrine-cart-divider"></div>
+  </div>
+  <div class="vitrine-cart-total-row">
+    <button type="button" class="vitrine-cart-toggle" onclick="toggleCartFooter()" aria-label="Expandir">
+      <i class="mdn-Icon-cima" id="vitrineCartToggleIcon"></i>
+    </button>
+    <div class="vitrine-cart-total-text">
+      <p class="vitrine-cart-text">Total do seu carrinho:</p>
+      <div class="vitrine-cart-price">
+        <span class="vitrine-cart-price-amount" data-role="vitrine-cart-amount"></span>
+        <span class="vitrine-cart-price-suffix">/ mês</span>
+      </div>
+      <p class="vitrine-cart-adjusted">ajustado à sua fatura</p>
+    </div>
+  </div>
+  <div class="vitrine-cart-footer-actions">
+    <button type="button" class="vitrine-cart-btn" data-role="continuar-btn" onclick="confirmConfigMovel()">Continuar</button>
+  </div>
+</div>
+
+<div class="vitrine-cart-bar is-visible" id="vitrineCartBar">
+  <p class="vitrine-cart-bar-disclaimer">Os valores dos produtos adicionados ou alterados no seu carrinho serão atualizados em sua fatura.</p>
+  <div class="vitrine-cart-bar-taxas">
+    <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Fidelidade</p><p class="vitrine-cart-taxa-value">12 meses</p></div>
+    <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+    <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Instalação</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
+    <div class="vitrine-cart-taxa-row" data-role="vitrine-desconto-row" hidden><p class="vitrine-cart-taxa-label">Desconto Multi</p><p class="vitrine-cart-taxa-value" data-role="vitrine-desconto-value"></p></div>
+  </div>
+  <div class="vitrine-cart-bar-divider"></div>
+  <div class="vitrine-cart-bar-total">
+    <p class="vitrine-cart-text">Total do seu carrinho:</p>
+    <div class="vitrine-cart-price">
+      <span class="vitrine-cart-price-amount" data-role="vitrine-cart-amount"></span>
+      <span class="vitrine-cart-price-suffix">/ mês</span>
+    </div>
+    <p class="vitrine-cart-adjusted">ajustado à sua fatura</p>
+  </div>
+  <div class="vitrine-cart-bar-actions">
+    <button type="button" class="vitrine-cart-btn" data-role="continuar-btn" onclick="confirmConfigMovel()">Continuar</button>
+  </div>
+</div>
+
+<script src="product-catalog.js"></script>
+<script>
+  // ===== Tela intermediária "Configure seu novo plano móvel" =====
+  // Entre vitrine/detalhes e checkout.html, só para posses SEM plano móvel
+  // (Banda larga, TV...) que levam um Celular novo — checkout.html decide
+  // (hasNewCelularLine) e redireciona pra cá se não houver escolha salva
+  // pra esse pedido. Grava sessionStorage['configMovelEscolha'] =
+  // { pedido, numeroOption, chipType, numero, operadora }; o checkout só
+  // exibe o resumo. "Alterar" no checkout volta pra cá (?voltar=checkout).
+  var CONFIG_MOVEL_KEY = 'configMovelEscolha';
+  var params = new URLSearchParams(location.search);
+  var vindoDoCheckout = params.get('voltar') === 'checkout';
+  if (vindoDoCheckout) document.getElementById('voltarLink').setAttribute('href', 'checkout.html');
+
+  var pedidoIds;
+  try { pedidoIds = JSON.parse(sessionStorage.getItem('pedidoEmAndamento')); } catch (e) { pedidoIds = null; }
+  if (!Array.isArray(pedidoIds) || !pedidoIds.length) pedidoIds = ['tv-box'];
+  var products = pedidoIds.map(function (id) { return PRODUCT_CATALOG[id]; }).filter(Boolean);
+  var pedidoSig = pedidoIds.slice().sort().join('|');
+
+  var configMovelState = { draft: { numeroOption: 'novo', chipType: 'fisico', numero: '', operadora: '' } };
+  try {
+    var salvo = JSON.parse(sessionStorage.getItem(CONFIG_MOVEL_KEY));
+    if (salvo && salvo.pedido === pedidoSig) {
+      configMovelState.draft = { numeroOption: salvo.numeroOption, chipType: salvo.chipType, numero: salvo.numero || '', operadora: salvo.operadora || '' };
+    }
+  } catch (e) {}
+
+  function updateConfigMovelChipUI() {
+    var d = configMovelState.draft;
+    document.querySelector('[data-role="config-movel-chip-fisico"]').classList.toggle('selected', d.chipType === 'fisico');
+    document.querySelector('[data-role="config-movel-chip-esim"]').classList.toggle('selected', d.chipType === 'esim');
+    document.querySelector('[data-role="config-movel-radio-fisico"]').classList.toggle('active', d.chipType === 'fisico');
+    document.querySelector('[data-role="config-movel-radio-esim"]').classList.toggle('active', d.chipType === 'esim');
+    document.querySelector('[data-role="config-movel-chip-fisico-extra"]').hidden = d.chipType !== 'fisico';
+    document.querySelector('[data-role="config-movel-chip-esim-extra"]').hidden = d.chipType !== 'esim';
+  }
+  function updateContinueButtons() {
+    var d = configMovelState.draft;
+    var enabled = d.numeroOption !== 'manter' || (d.numero.length > 0 && !!d.operadora);
+    document.querySelectorAll('[data-role="continuar-btn"]').forEach(function (btn) {
+      btn.disabled = !enabled;
+      btn.classList.toggle('disabled', !enabled);
+    });
+  }
+  function updateConfigMovelUI() {
+    var d = configMovelState.draft;
+    var isManter = d.numeroOption === 'manter';
+    document.querySelector('[data-role="config-movel-novo-card"]').classList.toggle('selected', !isManter);
+    document.querySelector('[data-role="config-movel-manter-card"]').classList.toggle('selected', isManter);
+    document.querySelector('[data-role="config-movel-novo-hint"]').hidden = isManter;
+    document.querySelector('[data-role="config-movel-novo-collapsed-hint"]').hidden = !isManter;
+    document.querySelector('[data-role="config-movel-manter-fields"]').hidden = !isManter;
+    var chipGroupEl = document.getElementById('configMovelChipGroup');
+    var target = document.querySelector(isManter ? '[data-role="config-movel-manter-chips-slot"]' : '[data-role="config-movel-novo-chips-slot"]');
+    if (chipGroupEl.parentElement !== target) target.appendChild(chipGroupEl);
+    updateConfigMovelChipUI();
+    updateContinueButtons();
+  }
+  function selectConfigMovelNumero(option) { configMovelState.draft.numeroOption = option; updateConfigMovelUI(); }
+  function selectConfigMovelChip(type) { configMovelState.draft.chipType = type; updateConfigMovelChipUI(); }
+
+  function confirmConfigMovel() {
+    var d = configMovelState.draft;
+    if (d.numeroOption === 'manter' && !(d.numero.length > 0 && d.operadora)) return;
+    try {
+      sessionStorage.setItem(CONFIG_MOVEL_KEY, JSON.stringify({
+        pedido: pedidoSig, numeroOption: d.numeroOption, chipType: d.chipType,
+        numero: d.numeroOption === 'manter' ? d.numero : '', operadora: d.numeroOption === 'manter' ? d.operadora : '',
+      }));
+    } catch (e) {}
+    window.location.href = 'checkout.html';
+  }
+
+  var numeroInput = document.querySelector('[data-role="config-movel-numero-input"]');
+  numeroInput.value = configMovelState.draft.numero;
+  numeroInput.addEventListener('input', function (e) {
+    var digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+    e.target.value = digits;
+    configMovelState.draft.numero = digits;
+    updateContinueButtons();
+  });
+  var opSelect = document.querySelector('[data-role="config-movel-operadora-select"]');
+  opSelect.value = configMovelState.draft.operadora;
+  opSelect.addEventListener('change', function (e) { configMovelState.draft.operadora = e.target.value; updateContinueButtons(); });
+  updateConfigMovelUI();
+
+  // ===== Total do carrinho (mesma regra de renderCarrinhoPersistente da vitrine) =====
+  function fmtBRL(value) { var p = value.toFixed(2).split('.'); return { int: p[0], cents: p[1] }; }
+  function renderCart() {
+    if (!products.length) return;
+    var pedidoOfertaId = null;
+    try { pedidoOfertaId = sessionStorage.getItem('pedidoOfertaId'); } catch (e) {}
+    var bundleOferta = null;
+    if (pedidoOfertaId && typeof OFERTAS_COMBINADAS !== 'undefined') {
+      var o = OFERTAS_COMBINADAS[pedidoOfertaId];
+      if (o && o.precoRiscado && o.produtos.length === products.length) {
+        var a = o.produtos.map(function (p) { return p.id; }).sort();
+        var b = products.map(function (p) { return p.id; }).sort();
+        if (a.every(function (id, i) { return id === b[i]; })) bundleOferta = o;
+      }
+    }
+    var sum = products.reduce(function (s, p) { return s + p.preco; }, 0);
+    var total = sum, desconto = 0;
+    if (bundleOferta) {
+      var d = Math.round((sum - bundleOferta.precoTotal) * 100) / 100;
+      if (d > 0) { desconto = d; total = bundleOferta.precoTotal; }
+    } else {
+      var cats = {};
+      products.forEach(function (p) { cats[p.categoria] = true; });
+      if (Object.keys(cats).length >= 2) {
+        var CD = { tv: 20, celular: 40, telefone: 10 };
+        Object.keys(CD).forEach(function (c) { if (cats[c]) desconto += CD[c]; });
+      }
+      if (desconto > 0) total = Math.round((sum - desconto) * 100) / 100;
+    }
+    var ad; try { ad = JSON.parse(sessionStorage.getItem('pedidoAdicionais')) || {}; } catch (e) { ad = {}; }
+    products.forEach(function (p) {
+      (Array.isArray(ad[p.id]) ? ad[p.id] : []).forEach(function (nome) {
+        var addon = (p.adicionais || []).find(function (x) { return x.nome === nome; });
+        if (!addon) Object.keys(PRODUCT_CATALOG).some(function (id) {
+          addon = (PRODUCT_CATALOG[id].adicionais || []).find(function (x) { return x.nome === nome; });
+          return !!addon;
+        });
+        if (addon) total = Math.round((total + addon.preco) * 100) / 100;
+      });
+    });
+    var f = fmtBRL(total);
+    document.querySelectorAll('[data-role="vitrine-cart-amount"]').forEach(function (el) {
+      el.innerHTML = '<span class="vitrine-cart-price-prefix">R$</span> ' + f.int + '<span class="vitrine-cart-price-cents">,' + f.cents + '</span>';
+    });
+    if (desconto > 0) {
+      var fd = fmtBRL(desconto);
+      document.querySelectorAll('[data-role="vitrine-desconto-row"]').forEach(function (row) {
+        row.hidden = false;
+        row.querySelector('[data-role="vitrine-desconto-value"]').textContent = '-R$ ' + fd.int + ',' + fd.cents;
+      });
+    }
+  }
+  function toggleCartFooter() {
+    var ex = document.getElementById('vitrineCartExpanded');
+    var opening = ex.hidden;
+    ex.hidden = !opening;
+    document.getElementById('vitrineCartToggleIcon').className = opening ? 'mdn-Icon-baixo' : 'mdn-Icon-cima';
+  }
+  renderCart();
+</script>
+</body>
+</html>
