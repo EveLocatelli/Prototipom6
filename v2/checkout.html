@@ -2487,14 +2487,15 @@
     });
     return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, phases: phases };
   }
-  // Linhas "Valor do 1º ao 3º mês" / "Valor a partir do 3º mês" (texto do Figma).
+  // Linhas "Valor do 1º ao 3º mês" / "Valor a partir do 4º mês" (a nova fase começa no mês seguinte).
   function promoFeeRows(ph) {
-    var rows = [], prev = 1, cur = ph.now;
-    ph.phases.forEach(function (p, i) {
-      rows.push([i === 0 && p.meses === 1 ? 'Valor no 1º mês' : 'Valor do ' + prev + 'º ao ' + ordinalMes(p.meses), cur]);
+    var rows = [], prev = 0, cur = ph.now;
+    ph.phases.forEach(function (p) {
+      var from = prev + 1;
+      rows.push([from === p.meses ? 'Valor no ' + from + 'º mês' : 'Valor do ' + from + 'º ao ' + p.meses + 'º mês', cur]);
       prev = p.meses; cur = p.total;
     });
-    if (ph.phases.length) rows.push(['Valor a partir do ' + ordinalMes(prev), cur]);
+    if (ph.phases.length) rows.push(['Valor a partir do ' + (prev + 1) + 'º mês', cur]);
     return rows;
   }
   function pontosAtivos() { return !!PONTOS_ADICIONAIS && products.some(function (p) { return p.categoria === 'tv'; }); }
@@ -3064,7 +3065,7 @@
     // Adicionais são do pedido (lista simples nome/preço, mesmo formato de antes).
     addonState.selected.forEach(function (id) {
       var item = ADDON_POOL.byId[id];
-      addons.push({ name: item.name, price: item.preco, periodo: item.periodo });
+      addons.push({ name: item.name, price: item.preco, periodo: item.periodo, promo: item.promo || null });
       total += item.preco;
     });
     if (pontosAtivos()) {

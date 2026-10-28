@@ -208,6 +208,9 @@
   .summary-total-value .amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
   .summary-total-value .total-cents{font-size:16px;font-family:'Roboto',sans-serif;}
   .summary-total-value .suffix{margin-left:-4px;}
+  .summary-total-was{font-size:12px;font-weight:700;margin:0;}
+  .summary-addon-price-col{display:flex;flex-direction:column;align-items:flex-end;}
+  .summary-addon-note{font-size:12px;font-weight:400;margin:0;color:var(--gray-dark);text-align:right;white-space:nowrap;}
   .summary-total-note{font-size:12px;font-weight:400;margin:4px 0 0;}
 
   /* Cartões da coluna "Avisos" (agendamento + informativos) */
@@ -576,10 +579,6 @@
 
             <div class="summary-fees">
               <div class="summary-fee-row">
-                <p class="summary-fee-label">Fidelidade</p>
-                <p class="summary-fee-value">12 meses</p>
-              </div>
-              <div class="summary-fee-row">
                 <p class="summary-fee-label">Taxa de Adesão</p>
                 <p class="summary-fee-value">Grátis</p>
               </div>
@@ -587,6 +586,7 @@
                 <p class="summary-fee-label">Instalação</p>
                 <p class="summary-fee-value">Grátis</p>
               </div>
+              <div id="summaryPromoRows" style="display:contents"></div>
             </div>
           </div>
 
@@ -598,12 +598,13 @@
             <div class="summary-total">
               <p class="summary-total-label">Total do seu pedido</p>
               <div class="summary-total-price">
+                <p class="summary-total-was" id="summaryTotalWas" hidden></p>
                 <div class="summary-total-value">
                   <span class="prefix">R$</span>
                   <span class="amount" id="summaryTotalPrice">139,90</span>
                   <span class="suffix">/mês</span>
                 </div>
-                <p class="summary-total-note">ajustado à sua fatura</p>
+                <p class="summary-total-note" id="summaryTotalNote">ajustado à sua fatura</p>
               </div>
             </div>
           </div>
@@ -873,6 +874,52 @@
     return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  // ===== Preço promocional por N meses (mesma regra do checkout) =====
+  function promoAfterText(meses, apos, spaced) {
+    return 'Após ' + meses + (meses === 1 ? ' mês' : ' meses') + ', R$' + (spaced ? ' ' : '') + formatPriceBRL(apos) + '/mês';
+  }
+  function cartPhases(items) {
+    var now = 0, regular = 0, bounds = [];
+    items.forEach(function (it) {
+      now += it.preco;
+      regular += it.promo ? it.promo.apos : it.preco;
+      if (it.promo && bounds.indexOf(it.promo.meses) === -1) bounds.push(it.promo.meses);
+    });
+    bounds.sort(function (a, b) { return a - b; });
+    var phases = bounds.map(function (b) {
+      var t = 0;
+      items.forEach(function (it) { t += (it.promo && it.promo.meses <= b) ? it.promo.apos : it.preco; });
+      return { meses: b, total: Math.round(t * 100) / 100 };
+    });
+    return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, phases: phases };
+  }
+  function promoFeeRows(ph) {
+    var rows = [], prev = 0, cur = ph.now;
+    ph.phases.forEach(function (p) {
+      var from = prev + 1;
+      rows.push([from === p.meses ? 'Valor no ' + from + 'º mês' : 'Valor do ' + from + 'º ao ' + p.meses + 'º mês', cur]);
+      prev = p.meses; cur = p.total;
+    });
+    if (ph.phases.length) rows.push(['Valor a partir do ' + (prev + 1) + 'º mês', cur]);
+    return rows;
+  }
+  function renderPromoSummary(order) {
+    const products = Array.isArray(order.products) ? order.products : [];
+    const addons = Array.isArray(order.addons) ? order.addons : [];
+    const items = products.map(p => ({ preco: p.price, promo: null })).concat(addons.map(a => ({ preco: a.price, promo: a.promo || null })));
+    const ph = cartPhases(items);
+    const promo = ph.phases.length > 0;
+    document.getElementById('summaryPromoRows').innerHTML = promoFeeRows(ph).map(r =>
+      `<div class="summary-fee-row"><p class="summary-fee-label">${r[0]}</p><p class="summary-fee-value">R$ ${formatPriceBRL(r[1])}/mês</p></div>`).join('');
+    const was = document.getElementById('summaryTotalWas');
+    const cheaper = promo && ph.regular > ph.now;   // "De" só quando hoje está mais barato que depois
+    was.hidden = !cheaper;
+    was.innerHTML = cheaper ? 'De <s>R$ ' + formatPriceBRL(ph.regular) + '</s> por:' : '';
+    document.getElementById('summaryTotalNote').innerHTML = promo
+      ? ph.phases.map(p => promoAfterText(p.meses, p.total, true)).join('<br>')
+      : 'ajustado à sua fatura';
+  }
+
   function renderOrder() {
     const order = loadOrder();
 
@@ -904,7 +951,10 @@
       addonsEl.innerHTML = addons.map(addon => `
         <div class="summary-addon-row">
           <p class="summary-addon-name">${addon.name}</p>
-          <p class="summary-addon-price">R$ ${formatPriceBRL(addon.price)} / mês</p>
+          <div class="summary-addon-price-col">
+            <p class="summary-addon-price">R$ ${formatPriceBRL(addon.price)} / mês</p>
+            ${addon.promo ? `<p class="summary-addon-note">${promoAfterText(addon.promo.meses, addon.promo.apos, false)}</p>` : ''}
+          </div>
         </div>
       `).join('');
       addonsEl.hidden = false;
@@ -912,6 +962,8 @@
       addonsEl.hidden = true;
       addonsEl.innerHTML = '';
     }
+
+    renderPromoSummary(order);
 
     // Entrega (Box/Soundbox) vs. Agendamento da instalação (Box Cabo/Soundbox
     // Cabo): dois cards prontos no HTML, só alterna qual fica visível. O card
