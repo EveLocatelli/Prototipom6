@@ -4885,14 +4885,28 @@
   // imediatamente (caso o vendor já tenha inicializado de forma síncrona),
   // em DOMContentLoaded (caso dependa desse evento) e via setTimeout como
   // rede de segurança final. Chamar de novo em um Swiper já parado é inofensivo.
+  // Em conexão lenta o vendor inicializa os Swipers DEPOIS dessas três tentativas (o autoplay
+  // começava a andar sozinho), então: (1) cada Swiper ganha um gancho que desfaz qualquer
+  // "autoplayStart", (2) o parâmetro é desligado e (3) uma verificação periódica (10s) pega
+  // instâncias que apareçam tarde.
   function stopSwiperAutoplay() {
     document.querySelectorAll('.mdn-Swiper').forEach(function (el) {
-      if (el.swiper && el.swiper.autoplay) el.swiper.autoplay.stop();
+      var sw = el.swiper;
+      if (!sw || !sw.autoplay) return;
+      if (sw.params && sw.params.autoplay) sw.params.autoplay.enabled = false;
+      if (sw.autoplay.running) sw.autoplay.stop();
+      if (!el.__autoplayOff && sw.on) {
+        el.__autoplayOff = true;
+        sw.on('autoplayStart', function () { sw.autoplay.stop(); });
+      }
     });
   }
   stopSwiperAutoplay();
   document.addEventListener('DOMContentLoaded', stopSwiperAutoplay);
+  window.addEventListener('load', stopSwiperAutoplay);
   setTimeout(stopSwiperAutoplay, 300);
+  var autoplayChecks = setInterval(stopSwiperAutoplay, 250);
+  setTimeout(function () { clearInterval(autoplayChecks); }, 10000);
 
   // Material Design Motion: inicializa animações ao carregar
   (function(){
