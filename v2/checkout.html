@@ -400,13 +400,15 @@
   .addons-summary-remove img{width:100%;height:100%;display:block;}
   .addons-summary-total{display:flex;justify-content:space-between;gap:16px;width:100%;padding-top:12px;border-top:1px solid var(--gray-line);font-size:12px;font-weight:700;color:var(--ink);}
   .addons-summary-total + .addons-summary-total{padding-top:0;border-top:none;}
-  .addons-block{background:var(--bg-page);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:16px;width:100%;}
-  .addons-title{font-size:16px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  /* "Turbine seu pedido" (Figma): fundo #F8F8F8 no desktop e BRANCO no mobile; título AMX 20; gap 12. */
+  .addons-block{background:#f8f8f8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;width:100%;}
+  .order-summary-mobile .addons-block{background:#fff;}
+  .addons-title{font-size:20px;font-weight:700;line-height:1.3;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
   .addons-sub{font-size:12px;font-weight:400;color:var(--gray-dark);margin:2px 0 0;}
   .addons-notice{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--gray-line);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--ink);}
   .addons-notice p{flex:1;margin:0;}
   .addons-notice button{background:none;border:none;padding:0;font-size:16px;line-height:1;color:var(--gray-dark);cursor:pointer;}
-  .addons-link{background:none;border:none;padding:0;font:inherit;font-size:16px;color:var(--red);cursor:pointer;width:100%;text-align:center;}
+  .addons-link{background:none;border:none;padding:0;font:inherit;font-size:14px;color:var(--red);cursor:pointer;width:100%;text-align:center;}
   .addons-link:hover{text-decoration:underline;}
   /* Adicionado: botão secundário do Mondrian (mdn-Button--secondary, contorno vermelho da marca). */
   .mdn-Button.addon-added{flex-shrink:0;white-space:nowrap;font-weight:500;}
@@ -443,6 +445,35 @@
   .addon-price-note{font-size:12px;font-weight:400;color:var(--gray-dark);margin-bottom:2px;}
   .addon-info-panel{margin:0;padding:12px;border-radius:8px;background:var(--bg-page);font-size:14px;line-height:1.4;color:var(--ink);}
   .addon-info-panel{animation:content-fade 0.25s cubic-bezier(0,0,0.2,1);}
+  /* ----- Card de adicional: fiel ao Figma (Adicional / Card — desktop e mobile) -----
+     Desktop: logo 32 | texto (eyebrow, nome + ⓘ, preço) | botão 28px na mesma linha.
+     Mobile (cartão estreito, < 380px): logo + texto, botão em largura total abaixo.
+     "O que é?" abre numa caixa #F8F8F8 dentro do cartão; ⓘ fica vermelho aberto. */
+  .addon-list,.addons-modal-list{container-type:inline-size;}
+  .addon-card{padding:12px 16px;gap:12px;display:grid;grid-template-columns:32px minmax(0,1fr) auto;grid-template-areas:"logo text btn" "info info info";align-items:center;column-gap:12px;row-gap:12px;}
+  .addon-head{display:contents;}
+  .addon-icon{grid-area:logo;width:32px;height:32px;}
+  .addon-icon.boxed{padding:7px;border-radius:16px;}
+  .addon-icon.boxed img{width:18px;height:18px;}
+  .addon-icon.boxed i{font-size:18px;}
+  .addon-text{grid-area:text;}
+  .addon-head > .btn-add,.addon-head > .btn-added{grid-area:btn;}
+  .addon-info-panel{grid-area:info;}
+  .addon-eyebrow{font-size:12px;font-weight:400;line-height:1.3;letter-spacing:0;}
+  .addon-name-row{flex-wrap:nowrap;gap:4px;}
+  .addon-name-wrap{flex:1;min-width:0;}
+  .addon-name{line-height:1.3;}
+  .addon-info-btn{top:0;margin-left:0;}
+  .addon-card .price-amount{font-size:36px;line-height:1;}
+  .btn-add,.btn-added{height:28px;padding:8px 16px;font-size:12px;font-weight:500;line-height:1;border-radius:500px;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;}
+  .btn-added{background:transparent;border:1px solid var(--red);color:var(--red);transition:background 0.2s cubic-bezier(0.2,0,0,1);}
+  @media (hover:hover){.btn-added:hover{background:rgba(218,41,28,0.06);}}
+  .addon-info-panel{margin:0;padding:12px;border-radius:12px;background:#f8f8f8;font-size:12px;line-height:1.3;color:#000;}
+  @container (max-width:380px){
+    .addon-card{grid-template-columns:32px minmax(0,1fr);grid-template-areas:"logo text" "btn btn" "info info";row-gap:8px;}
+    .addon-card.has-info{row-gap:12px;}
+    .addon-head > .btn-add,.addon-head > .btn-added{width:100%;justify-self:stretch;}
+  }
   .addon-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;width:100%;padding-top:12px;border-top:1px solid var(--gray-line);}
   .addon-selectors{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
   .addon-stepper,.addon-seg{display:inline-flex;align-items:center;border:1px solid var(--gray-line);border-radius:500px;padding:2px;background:#fff;}
@@ -463,28 +494,32 @@
     .addon-controls .btn-add{width:100%;height:40px;font-size:14px;}
   }
 
+  /* Modal "Todos os adicionais" — fiel ao Figma: bottom sheet (640 no desktop, largura total no mobile),
+     branco, cantos superiores 24, padding 16, busca no estilo Mondrian, chips, lista e CTA fixo no rodapé. */
   .addons-modal-overlay{position:fixed;inset:0;background:rgba(31,29,29,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:999;}
   .addons-modal-overlay[hidden]{display:none;}
   .addons-modal-overlay:not([hidden]){animation:content-fade 0.2s cubic-bezier(0,0,0.2,1);}
-  .addons-modal{background:#fff;width:100%;max-width:560px;max-height:88vh;border-radius:24px 24px 0 0;display:flex;flex-direction:column;}
+  .addons-modal{background:#fff;width:100%;max-width:640px;max-height:92vh;border-radius:24px 24px 0 0;display:flex;flex-direction:column;gap:12px;padding:16px 16px 0;box-sizing:border-box;overflow:hidden;}
   .addons-modal-overlay:not([hidden]) .addons-modal{animation:slide-up 0.3s cubic-bezier(0.05,0.7,0.1,1);}
-  .addons-modal-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 24px 12px;}
-  .addons-modal-title{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
-  .addons-modal-close{background:none;border:none;font-size:24px;line-height:1;color:var(--ink);cursor:pointer;padding:0 4px;}
-  .addons-modal-tools{display:flex;flex-direction:column;gap:12px;padding:0 24px 12px;}
-  .addons-modal-search{width:100%;box-sizing:border-box;height:44px;border:1px solid var(--gray-line);border-radius:8px;padding:0 12px;font:inherit;font-size:16px;color:var(--ink);}
-  .addons-modal-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;}
+  .addons-modal-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0;}
+  .addons-modal-title{font-size:20px;font-weight:700;line-height:1.3;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .addons-modal-close{background:none;border:none;font-size:20px;font-weight:700;line-height:normal;color:var(--ink);cursor:pointer;padding:0;}
+  .addons-modal-tools{display:flex;flex-direction:column;gap:12px;padding:0;}
+  .addons-modal-search-wrap{position:relative;}
+  .addons-modal-search-wrap > i{position:absolute;left:17px;top:11px;font-size:24px;line-height:1;color:var(--ink);pointer-events:none;}
+  .addons-modal-search{width:100%;box-sizing:border-box;height:46px;border:1px solid var(--ink);border-radius:12px;padding:9px 17px 9px 49px;background:#fff;font:inherit;font-size:16px;font-weight:500;color:var(--ink);}
+  .addons-modal-search::placeholder{color:var(--ink);opacity:1;}
+  .addons-modal-chips{display:flex;flex-wrap:wrap;gap:8px;}
   .addons-modal-chips[hidden]{display:none;}
-  .addons-chip{flex-shrink:0;height:32px;padding:0 14px;border-radius:500px;border:1px solid var(--gray-line);background:#fff;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;}
-  .addons-chip.active{background:var(--ink);border-color:var(--ink);color:#fff;}
-  .addons-modal-list{flex:1;min-height:0;overflow-y:auto;padding:16px 24px;background:var(--bg-page);display:flex;flex-direction:column;gap:12px;}
+  .addons-chip{flex-shrink:0;padding:6px 16px;border-radius:100px;border:1px solid var(--gray-line);background:#fff;font:inherit;font-size:14px;font-weight:500;line-height:normal;color:var(--ink);cursor:pointer;}
+  .addons-chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+  .addons-modal-list{flex:1;min-height:0;overflow-y:auto;padding:0 0 8px;background:transparent;display:flex;flex-direction:column;gap:8px;}
+  .addons-modal-list .addon-card--chain{margin-top:0;}
   .addons-modal-empty{font-size:14px;color:var(--gray-dark);text-align:center;margin:24px 0;}
-  .addons-modal-footer{padding:16px 24px 24px;border-top:1px solid var(--gray-line);}
-  .addons-modal-done{width:100%;height:48px;border:none;border-radius:500px;background:var(--red);color:#fff;font:inherit;font-size:16px;font-weight:500;cursor:pointer;}
-  @media (min-width:600px){
-    .addons-modal-overlay{align-items:center;padding:16px;}
-    .addons-modal{border-radius:24px;}
-  }
+  /* CTA fixo no rodapé do modal (nos dois tamanhos): "Miniatura carrinho" branca com botão vermelho "Continuar". */
+  .addons-modal-footer{margin:0 -16px;padding:12px 16px;background:#fff;border-radius:12px 12px 0 0;box-shadow:0 -4px 12px rgba(0,0,0,0.08);flex-shrink:0;}
+  .addons-modal-done{width:100%;height:40px;border:1px solid var(--red);border-radius:500px;background:var(--red);color:#fff;font:inherit;font-size:16px;font-weight:500;line-height:1.3;cursor:pointer;padding:8px 24px;}
+  @container (min-width:381px){ .addons-modal-list .addon-name-wrap{flex:0 1 auto;} }
 
   /* ===== Upsell — produto de menor valor entre Celular/Banda Larga/TV que
      falta na posse (Figma "Checkout exclusivo - M6", node 13214:6185).
@@ -1235,14 +1270,14 @@
   <div class="addons-modal" role="dialog" aria-modal="true" aria-labelledby="addonsModalTitle">
     <div class="addons-modal-header">
       <h2 class="addons-modal-title" id="addonsModalTitle">Todos os adicionais</h2>
-      <button type="button" class="addons-modal-close" aria-label="Fechar" onclick="closeAddonsModal()">×</button>
+      <button type="button" class="addons-modal-close" aria-label="Fechar" onclick="closeAddonsModal()">✕</button>
     </div>
     <div class="addons-modal-tools">
-      <input type="search" class="addons-modal-search" id="addonsModalSearch" placeholder="Buscar adicional" aria-label="Buscar adicional" oninput="addonState.modalQuery=this.value;renderAddonsModal()">
+      <div class="addons-modal-search-wrap"><i class="mdn-Icon-lupa"></i><input type="search" class="addons-modal-search" id="addonsModalSearch" placeholder="Buscar adicional" aria-label="Buscar adicional" oninput="addonState.modalQuery=this.value;renderAddonsModal()"></div>
       <div class="addons-modal-chips" id="addonsModalChips"></div>
     </div>
     <div class="addons-modal-list" id="addonsModalList"></div>
-    <div class="addons-modal-footer"><button type="button" class="addons-modal-done" id="addonsModalDone" onclick="closeAddonsModal()">Concluir</button></div>
+    <div class="addons-modal-footer"><button type="button" class="addons-modal-done" id="addonsModalDone" onclick="closeAddonsModal()">Continuar</button></div>
   </div>
 </div>
 
@@ -2569,7 +2604,7 @@
     var showScope = ADDON_POOL.cats.length > 1 && !fam.universal;   // vinculado a várias categorias: sem etiqueta
     var annual = addonIsAnnual(cur);
     var card = document.createElement('div');
-    card.className = 'addon-card' + (added ? ' is-added' : '');
+    card.className = 'addon-card' + (added ? ' is-added' : '') + ((fam.descricao && addonState.info[fam.id]) ? ' has-info' : '');
 
     var head = document.createElement('div');
     head.className = 'addon-head';
@@ -2578,9 +2613,8 @@
     text.className = 'addon-text';
     var nameRow = document.createElement('div');
     nameRow.className = 'addon-name-row';
-    var nameWords = fam.nome.split(' '), nameLast = nameWords.pop();
-    // Última palavra + ícone ⓘ juntos (nowrap): o ícone nunca fica sozinho na linha.
-    nameRow.innerHTML = '<span class="addon-name-wrap"><span class="addon-name">' + (nameWords.length ? nameWords.join(' ') + ' ' : '') + '<span class="addon-nowrap">' + nameLast + '</span></span></span>';
+    // Figma "Adicional / Card": nome ocupa a linha e o ⓘ (20px) fica na ponta direita da coluna de texto.
+    nameRow.innerHTML = '<span class="addon-name-wrap"><span class="addon-name">' + fam.nome + '</span></span>';
     // Escopo (Para Internet / Para TV): linha pequena ACIMA do nome, só quando o
     // carrinho tem mais de uma categoria — não disputa espaço com nome/ícone.
     if (showScope) {
@@ -2594,9 +2628,11 @@
     priceRow.className = 'addon-price-row';
     // Mesmo formato de preço do card do produto: R$ menor, inteiro grande,
     // ,centavos e /mês no tamanho do R$ (classes .price-* do site).
-    priceRow.innerHTML = (cur.precoDe ? '<p class="action-card-price-was addon-price-was">De <s>R$ ' + formatBRL(cur.precoDe) + '</s> por:</p>' : '') +
+    // Cobrança por prazo que acaba (promo.apos === 0, ex. Ponto Ultra): prefixo "3x de" em vez da nota "Após N meses".
+    var parcelado = !!(cur.promo && cur.promo.apos === 0);
+    priceRow.innerHTML = (cur.precoDe ? '<p class="action-card-price-was addon-price-was">De <s>R$ ' + formatBRL(cur.precoDe) + '</s> por:</p>' : (parcelado ? '<p class="action-card-price-was addon-price-was">' + cur.promo.meses + 'x de</p>' : '')) +
       '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(cur.preco) + '<span class="price-suffix">' + (cur.sufixo || '/mês') + '</span></div>' +
-      (cur.promo ? '<p class="addon-price-note">' + promoAfterText(cur.promo.meses, cur.promo.apos, false) + '</p>' : (cur.nota ? '<p class="addon-price-note">' + cur.nota + '</p>' : ''));
+      ((cur.promo && !parcelado) ? '<p class="addon-price-note">' + promoAfterText(cur.promo.meses, cur.promo.apos, false) + '</p>' : (cur.nota ? '<p class="addon-price-note">' + cur.nota + '</p>' : ''));
     text.appendChild(priceRow);
     if (fam.descricao) {
       var open = !!addonState.info[fam.id];
@@ -2607,14 +2643,14 @@
       info.setAttribute('aria-label', 'O que é ' + fam.nome + '?');
       info.innerHTML = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.75" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7.25" y="7" width="1.5" height="4.5" rx=".75" fill="currentColor"/><circle cx="8" cy="4.75" r="1" fill="currentColor"/></svg>';
       info.addEventListener('click', function () { addonState.info[fam.id] = !open; renderAddons(); });
-            nameRow.querySelector('.addon-nowrap').appendChild(info);   // inline: acompanha a última palavra do nome
+      nameRow.appendChild(info);
     }
     head.appendChild(text);
 
     function addButton() {
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = added ? 'mdn-Button mdn-Button--secondary mdn-Button--sm addon-added' : 'btn-add';
+      btn.className = added ? 'btn-added' : 'btn-add';
       btn.setAttribute('aria-pressed', added ? 'true' : 'false');
       btn.setAttribute('aria-label', (added ? 'Remover ' : 'Adicionar ') + cur.name);
       btn.textContent = added ? 'Adicionado' : 'Adicionar';
@@ -2627,8 +2663,7 @@
     if (fam.descricao && addonState.info[fam.id]) {
       var panel = document.createElement('p');
       panel.className = 'addon-info-panel';
-      panel.innerHTML = '<strong>O que é?</strong> ';
-      panel.appendChild(document.createTextNode(fam.descricao));
+      panel.textContent = 'O que é? ' + fam.descricao;
       card.appendChild(panel);
     }
 
@@ -2799,7 +2834,7 @@
     });
     list.scrollTop = prevScroll;
     var n = addonState.selected.length;
-    document.getElementById('addonsModalDone').textContent = n ? 'Concluir (' + n + ' ' + (n === 1 ? 'adicionado' : 'adicionados') + ')' : 'Concluir';
+    document.getElementById('addonsModalDone').textContent = 'Continuar';   // Figma: sempre "Continuar"
   }
   function handleAddonsModalKeydown(e) { if (e.key === 'Escape') closeAddonsModal(); }
   function openAddonsModal() {
