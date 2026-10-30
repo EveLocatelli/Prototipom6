@@ -269,35 +269,33 @@
   .permanece-item i{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;}
   .permanece-item-text{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .permanece-item-name{font-size:16px;font-weight:700;color:var(--ink);margin:0;}
-  /* Proposta v2: um cartão único (cinza claro, sem borda de ação), linhas separadas por
-     divisória fina. ?permanece=atual no endereço volta ao layout anterior. */
-  .permanece-card{display:flex;flex-direction:column;width:100%;background:#f1f1f1;border-radius:12px;padding:4px 16px;box-sizing:border-box;}
-  .permanece-card-head{display:flex;align-items:center;gap:8px;padding:12px 0;font-size:14px;color:var(--gray-dark);margin:0;border-bottom:1px solid var(--gray-line);}
-  .permanece-card-head i{font-size:20px;line-height:1;color:var(--ink);flex-shrink:0;}
-  .permanece-row{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--gray-line);}
-  .permanece-row:last-of-type{border-bottom:none;}
+  /* Permanece no seu plano — fiel ao Figma (Permanece / Acordeão): cartão #DBDBDB, cabeçalho com
+     divisor vertical + total + seta, divisores #525252, lista que expande com animação.
+     ?permanece=atual no endereço volta ao layout anterior. */
+  .permanece-card{display:flex;flex-direction:column;width:100%;background:#dbdbdb;border-radius:12px;padding:0 16px;box-sizing:border-box;color:var(--ink);}
+  .permanece-acc-head{display:flex;align-items:center;gap:16px;width:100%;padding:24px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);}
+  .permanece-acc-head--static{cursor:default;}
+  .permanece-acc-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .permanece-acc-title{font-size:16px;font-weight:500;line-height:normal;margin:0;color:var(--ink);}
+  .permanece-acc-sub{font-size:12px;line-height:1.3;color:var(--gray-dark);}
+  .permanece-acc-total{font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;padding-left:16px;border-left:1px solid #525252;align-self:stretch;display:flex;align-items:center;}
+  .permanece-acc-chev{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1;flex-shrink:0;transition:transform 0.3s cubic-bezier(0.2,0,0,1);}
+  .permanece-card.is-open .permanece-acc-chev{transform:rotate(180deg);}
+  /* expansão animada: a lista fica sempre no DOM e a altura anima de 0 a auto (grid 0fr -> 1fr) */
+  .permanece-acc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.3s cubic-bezier(0.2,0,0,1);}
+  .permanece-card.is-open .permanece-acc-panel,.permanece-acc-panel--static{grid-template-rows:1fr;}
+  .permanece-acc-inner{overflow:hidden;min-height:0;}
+  .permanece-acc-inner > .permanece-row:first-child{border-top:1px solid #525252;}
+  @media (prefers-reduced-motion:reduce){.permanece-acc-panel,.permanece-acc-chev{transition:none;}}
+  .permanece-row{display:flex;align-items:center;gap:16px;padding:12px 0;}
+  .permanece-row + .permanece-row{border-top:1px solid #525252;}
   .permanece-row > i{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;}
   .permanece-row-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
-  .permanece-row-name{font-size:16px;font-weight:700;color:var(--ink);margin:0;line-height:1.25;}
-  .permanece-row-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-dark);margin:0;}
+  .permanece-row-name{font-size:16px;font-weight:700;color:var(--ink);margin:0;line-height:normal;}
+  .permanece-row-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-dark);margin:0;line-height:normal;}
   .permanece-row-status i{font-size:14px;line-height:1;}
   .permanece-row-price{font-size:14px;color:var(--gray-dark);margin:0;white-space:nowrap;flex-shrink:0;}
-  .permanece-card-title{padding:16px 0 12px;border-bottom:1px solid var(--gray-line);}
-  .permanece-card--acc{padding:0 16px;}
-  .permanece-acc-head{display:flex;align-items:center;gap:16px;width:100%;padding:24px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);}
-  .permanece-acc-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1;flex-shrink:0;}
-  .permanece-acc-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
-  .permanece-acc-title{font-size:16px;font-weight:500;line-height:1.25;}
-  .permanece-acc-sub{font-size:12px;color:var(--gray-dark);}
-  .permanece-acc-total{font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;padding-left:12px;border-left:1px solid var(--gray-line);align-self:stretch;display:flex;align-items:center;}
-  .permanece-acc-chev{width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin-left:8px;font-size:24px;line-height:1;flex-shrink:0;transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
-  .permanece-card--acc.is-open .permanece-acc-chev{transform:rotate(180deg);}
-  @media (max-width:480px){.permanece-acc-title{font-size:16px;}.permanece-acc-total{font-size:13px;}}
-  .permanece-acc-body{border-top:1px solid var(--gray-line);}
-  .permanece-total{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;}
-  .permanece-total-label{font-size:14px;font-weight:700;color:var(--ink);margin:0;}
-  .permanece-total-value{font-size:14px;font-weight:700;color:var(--ink);margin:0;white-space:nowrap;}
-  .permanece-card-note{font-size:12px;color:var(--gray-dark);margin:0;padding:0 0 12px;}
+  .permanece-card-note{font-size:12px;color:var(--gray-dark);margin:0;padding:8px 0 12px;line-height:normal;}
   .permanece-item-price{font-size:14px;font-weight:400;color:var(--gray-dark);margin:0;white-space:nowrap;}
 
   /* Action Card (produto adicionado) */
@@ -2014,6 +2012,14 @@
 
   // ===== Permanece no seu plano: categorias possuídas pela posse ATIVA
   // (ver OWNED_CATEGORIES/CATEGORIA_INFO acima) que esse pedido não toca. =====
+  // Abre/fecha sem re-renderizar, para a altura animar (CSS: grid-template-rows 0fr -> 1fr).
+  function togglePermanece(btn) {
+    var card = btn.closest('.permanece-card');
+    var open = !card.classList.contains('is-open');
+    card.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    window.__permaneceOpen = open;
+  }
   function renderPermanece() {
     var touched = {};
     products.forEach(function (p) { touched[p.categoria] = true; });
@@ -2038,25 +2044,25 @@
           (preco != null ? '<p class="permanece-row-price">R$ ' + formatBRL(preco) + '/mês</p>' : '') +
           '</div>';
       }).join('');
-      // Título dentro do cartão cinza; uma só frase de apoio (a do valor) logo abaixo dele.
       container.querySelector('.permanece-title').hidden = true;
-      // Vários produtos: cartão fechado (título, "N produtos" e a soma) que expande a lista.
-      // Um produto só: título no singular e a linha direto, sem acordeão.
+      // Vários produtos: cartão que abre FECHADO (título, "N produtos · sem alteração" e a soma) e
+      // expande a lista com animação ao clicar. Um produto só: mesmo cartão, lista sempre visível.
       var plural = remaining.length > 1;
       somaPermanece = Math.round(somaPermanece * 100) / 100;
       var noteHtml = '<p class="permanece-card-note">Seguem na sua fatura atual e não entram no total do seu carrinho.</p>';
+      var titleHtml = '<span class="permanece-acc-title">' + (plural ? 'Permanecem' : 'Permanece') + ' no seu plano</span>' +
+        '<span class="permanece-acc-sub">' + remaining.length + (plural ? ' produtos' : ' produto') + ' · sem alteração</span>';
+      var panelHtml = function (cls) { return '<div class="permanece-acc-panel ' + cls + '" id="permaneceList"><div class="permanece-acc-inner">' + rowsHtml + noteHtml + '</div></div>'; };
       if (!plural) {
-        listEl.innerHTML = '<div class="permanece-card"><h3 class="permanece-title permanece-card-title">Produto que permanece no seu plano</h3>' + rowsHtml + noteHtml + '</div>';
+        listEl.innerHTML = '<div class="permanece-card is-open"><div class="permanece-acc-head permanece-acc-head--static"><span class="permanece-acc-text">' + titleHtml + '</span></div>' + panelHtml('permanece-acc-panel--static') + '</div>';
       } else {
         var open = !!window.__permaneceOpen;
-        listEl.innerHTML = '<div class="permanece-card permanece-card--acc' + (open ? ' is-open' : '') + '">' +
-          '<button type="button" class="permanece-acc-head" aria-expanded="' + open + '" onclick="window.__permaneceOpen=!window.__permaneceOpen;renderPermanece();">' +
-            '<i class="mdn-Icon-quatro-quadrados mdn-Icon--md permanece-acc-icon"></i>' +
-            '<span class="permanece-acc-text"><span class="permanece-acc-title">Produtos que permanecem no seu plano</span>' +
-            '<span class="permanece-acc-sub">' + remaining.length + ' produtos · sem alteração</span></span>' +
+        listEl.innerHTML = '<div class="permanece-card' + (open ? ' is-open' : '') + '">' +
+          '<button type="button" class="permanece-acc-head" aria-expanded="' + open + '" aria-controls="permaneceList" onclick="togglePermanece(this)">' +
+            '<span class="permanece-acc-text">' + titleHtml + '</span>' +
             (comPreco > 0 ? '<span class="permanece-acc-total">R$ ' + formatBRL(somaPermanece) + '/mês</span>' : '') +
             '<i class="mdn-Icon-baixo mdn-Icon--md permanece-acc-chev"></i></button>' +
-          (open ? '<div class="permanece-acc-body">' + rowsHtml + noteHtml + '</div>' : '') + '</div>';
+          panelHtml('') + '</div>';
       }
       container.hidden = false;
       return;
