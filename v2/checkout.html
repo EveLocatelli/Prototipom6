@@ -569,6 +569,8 @@
   }
 
   .order-details{display:flex;flex-direction:column;gap:4px;font-size:14px;}
+  .combo-desconto-value{color:var(--green-text);font-weight:400;}
+  .footer-taxa-value.combo-desconto-value{color:#fff;}
   .order-detail-row{display:flex;justify-content:space-between;align-items:center;}
   [data-role="desconto-multi-value"]{color:var(--green-text);font-weight:700;}
   /* No footer flutuante mobile (fundo preto), o verde do valor do desconto
@@ -1193,12 +1195,13 @@
         <div data-role="action-cards-mount"></div>
 
         <p style="font-size:14px;color:var(--gray-dark);text-align:center;margin:0;">
-          Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.
+          Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.
         </p>
 
         <div class="order-details">
           <div class="order-detail-row"><span class="order-detail-label">Taxa de Adesão</span><span class="order-detail-value">Grátis</span></div>
           <div class="order-detail-row" data-role="instalacao-row"><span class="order-detail-label">Instalação</span><span class="order-detail-value">Grátis</span></div>
+          <div data-role="combo-rows" style="display:contents"></div>
           <div data-role="promo-rows" style="display:contents"></div>
           <div class="order-detail-row" data-role="desconto-multi-row" hidden><span class="order-detail-label">Desconto Multi</span><span class="order-detail-value" data-role="desconto-multi-value"></span></div>
         </div>
@@ -1227,10 +1230,11 @@
 
 <div class="checkout-footer">
   <div class="footer-expanded-info" hidden>
-    <p class="footer-disclaimer">Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.</p>
+    <p class="footer-disclaimer">Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.</p>
     <div class="footer-taxas">
       <div class="footer-taxa-row"><p class="footer-taxa-label">Taxa de Adesão</p><p class="footer-taxa-value">Grátis</p></div>
       <div class="footer-taxa-row" data-role="instalacao-row-mobile"><p class="footer-taxa-label">Instalação</p><p class="footer-taxa-value">Grátis</p></div>
+      <div data-role="combo-rows" data-mobile style="display:contents"></div>
       <div data-role="promo-rows" data-mobile style="display:contents"></div>
       <div class="footer-taxa-row" data-role="desconto-multi-row" hidden><p class="footer-taxa-label">Desconto Multi</p><p class="footer-taxa-value" data-role="desconto-multi-value"></p></div>
     </div>
@@ -1379,43 +1383,9 @@
     }
   }
 
-  // ===== Desconto multi (regra geral por combinação de categorias) =====
-  // Regra de negócio (Eve, 2026-09-22, versão final simplificada): cada
-  // categoria abaixo tem um valor fixo de desconto, aplicado no próprio
-  // produto dela, sempre que o carrinho tiver 2+ categorias diferentes —
-  // não importa QUAL outra categoria está junto, nem a ordem em que os
-  // produtos foram adicionados. Internet nunca tem desconto próprio, só
-  // "conta" como uma das categorias presentes. Os valores de categorias
-  // presentes somam entre si (TV+Celular+Telefone juntos = 20+40+10=70).
-  // Só entra em jogo quando NÃO há uma oferta curada válida pro carrinho
-  // (bundleDiscount acima) — evita dar desconto dobrado quando o carrinho é
-  // exatamente uma oferta de "Melhores ofertas" com precoTotal próprio já
-  // definido à mão. Valores hardcoded aqui (não na planilha) porque foram
-  // passados como regra de negócio direta, não como dado de catálogo — dá
-  // pra mover pra planilha depois se precisar ajustar com frequência.
-  var CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
-  if (!bundleDiscount) {
-    var categoriasNoCarrinho = {};
-    products.forEach(function (p) { categoriasNoCarrinho[p.categoria] = true; });
-    if (Object.keys(categoriasNoCarrinho).length >= 2) {
-      var descontoPorProduto = {};
-      var descontoGeralTotal = 0;
-      Object.keys(CATEGORY_DISCOUNTS).forEach(function (categoria) {
-        if (!categoriasNoCarrinho[categoria]) return;
-        var alvo = products.find(function (p) { return p.categoria === categoria; });
-        if (!alvo) return;
-        descontoPorProduto[alvo.id] = CATEGORY_DISCOUNTS[categoria];
-        descontoGeralTotal += CATEGORY_DISCOUNTS[categoria];
-      });
-      if (descontoGeralTotal > 0) {
-        var perProductGeral = {};
-        Object.keys(descontoPorProduto).forEach(function (pid) {
-          perProductGeral[pid] = Math.round((PRODUCT_CATALOG[pid].preco - descontoPorProduto[pid]) * 100) / 100;
-        });
-        bundleDiscount = { total: descontoGeralTotal, perProduct: perProductGeral };
-      }
-    }
-  }
+  // CATEGORY_DISCOUNTS (regra antiga por categoria no carrinho) foi substituída pela regra de
+  // combinação por POSSE (R$ 10 por produto que o cliente já tem — ver comboLinhas abaixo).
+  var CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };   // só referência histórica
 
   // ===== Plano alterado vs. novo plano adicionado =====
   // Quais categorias já são "possuídas" (e o "plano atual" de cada uma)
@@ -1482,6 +1452,32 @@
     var produto = produtoId && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[produtoId];
     return produto ? produto.preco : null;
   }
+  // ===== Desconto por combinação (posse) — Eve, 2026-11-03 =====
+  // R$ 10,00/mês de desconto por produto que o cliente JÁ TEM na posse e que continua no plano
+  // (mesma lista do "Permanece no seu plano": categoria possuída que este pedido não troca),
+  // sempre que há um produto novo no pedido. Cada linha vira "Desconto por combinação com TV /
+  // plano Móvel / Banda Larga / Telefone fixo" nas taxas. O total é dividido entre os produtos do
+  // pedido proporcionalmente ao preço (o card mostra "De R$ X por: R$ Y"). Oferta curada de
+  // "Melhores ofertas" (bundleDiscount acima) mantém o preço fechado dela e não recebe este desconto.
+  var COMBO_DESCONTO = 10;
+  var COMBO_LABEL = { tv: 'TV', celular: 'plano Móvel', internet: 'Banda Larga', telefone: 'Telefone fixo' };
+  var comboLinhas = [];
+  if (!bundleDiscount && products.length) {
+    var catsNoPedido = {};
+    products.forEach(function (p) { catsNoPedido[p.categoria] = true; });
+    OWNED_CATEGORIES.forEach(function (cat) {
+      if (catsNoPedido[cat]) return;   // essa categoria está sendo trocada: não combina consigo mesma
+      comboLinhas.push({ categoria: cat, label: 'Desconto por combinação com ' + (COMBO_LABEL[cat] || cat), valor: COMBO_DESCONTO });
+    });
+    var comboTotal = comboLinhas.length * COMBO_DESCONTO;
+    var somaPrecos = products.reduce(function (sum, p) { return sum + p.preco; }, 0);
+    if (comboTotal > 0 && somaPrecos > 0) {
+      comboTotal = Math.min(comboTotal, somaPrecos);
+      // O card mostra o preço cheio do produto; o desconto aparece como linhas nas taxas e abate do TOTAL.
+      bundleDiscount = { total: comboTotal, perProduct: {}, linhas: comboLinhas };
+    }
+  }
+
 
   // ===== Config móvel: aparece só quando o pedido inclui um plano de
   // Celular que é linha NOVA pra essa posse (categoria não possuída — mesma
@@ -2521,10 +2517,11 @@
   }
   function ordinalMes(n) { return n + 'º mês'; }
   function cartPhases(items) {
-    var now = 0, regular = 0, bounds = [];
+    var now = 0, regular = 0, gross = 0, bounds = [];
     items.forEach(function (it) {
       now += it.preco;
       regular += it.promo ? it.promo.apos : it.preco;
+      if (!it.desconto) gross += it.promo ? it.promo.apos : it.preco;   // sem os descontos de combinação
       if (it.promo && bounds.indexOf(it.promo.meses) === -1) bounds.push(it.promo.meses);
     });
     bounds.sort(function (a, b) { return a - b; });
@@ -2533,7 +2530,7 @@
       items.forEach(function (it) { t += (it.promo && it.promo.meses <= b) ? it.promo.apos : it.preco; });
       return { meses: b, total: Math.round(t * 100) / 100 };
     });
-    return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, phases: phases };
+    return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, gross: Math.round(gross * 100) / 100, phases: phases };
   }
   // Linhas "Valor do 1º ao 3º mês" / "Valor a partir do 4º mês" (a nova fase começa no mês seguinte).
   function promoFeeRows(ph) {
@@ -2554,6 +2551,8 @@
     });
     addonState.selected.forEach(function (id) { var o = ADDON_POOL.byId[id]; items.push({ preco: o.preco, promo: o.promo || null }); });
     if (pontosAtivos()) items.push({ preco: PONTOS_ADICIONAIS.valorNovo, promo: null });
+    // Desconto por combinação com a posse: abate do total (valor negativo, em todas as fases).
+    if (bundleDiscount && bundleDiscount.linhas) items.push({ preco: -bundleDiscount.total, promo: null, desconto: true });
     return items;
   }
   function renderPromoCart(ph) {
@@ -2572,9 +2571,9 @@
     });
     // "De R$ X por:" acima do total + "Após N meses, R$ Y/mês" no lugar do "ajustado à sua fatura".
     document.querySelectorAll('[data-role="total-was"]').forEach(function (el) {
-      var cheaper = promo && ph.regular > ph.now;   // "De" só quando hoje está mais barato que depois
+      var cheaper = ph.gross > ph.now;   // "De" (sem descontos) só quando o total de hoje ficou mais barato
       el.hidden = !cheaper;
-      el.innerHTML = cheaper ? 'De <s>R$ ' + formatBRL(ph.regular) + '</s> por:' : '';
+      el.innerHTML = cheaper ? 'De <s>R$ ' + formatBRL(ph.gross) + '</s> por:' : '';
     });
     document.querySelectorAll('.order-adjusted, .footer-adjusted').forEach(function (el) {
       if (!el.hasAttribute('data-default')) el.setAttribute('data-default', el.textContent);
@@ -2963,7 +2962,7 @@
   // (se ela tiver uma, ver CATEGORY_DISCOUNTS — Internet nunca tem) sempre
   // se aplica quando exibido, sem precisar checar de novo aqui.
   function upsellCardHtml(product, rowActions) {
-    var desconto = CATEGORY_DISCOUNTS[product.categoria] || 0;
+    var desconto = 0;   // regra antiga por categoria saiu; o desconto agora é por combinação com a posse
     var precoFinal = desconto ? Math.round((product.preco - desconto) * 100) / 100 : product.preco;
     var info = CATEGORIA_INFO[product.categoria] || {};
     return '<div class="upsell-card">' +
@@ -3121,6 +3120,7 @@
       addons.push({ grupo: 'pontos', name: PONTOS_ADICIONAIS.qtd + (PONTOS_ADICIONAIS.qtd === 1 ? ' ponto adicional de TV' : ' pontos adicionais de TV'), price: PONTOS_ADICIONAIS.valorNovo, periodo: 'mensal' });
       total += PONTOS_ADICIONAIS.valorNovo;
     }
+    if (bundleDiscount && bundleDiscount.linhas) total -= bundleDiscount.total;   // desconto por combinação
     total = Math.round(total * 100) / 100;
 
     var order = {
@@ -3132,6 +3132,7 @@
       hasPhysicalDelivery: hasPhysicalDelivery,
       total: total,
       addons: addons,
+      descontos: (bundleDiscount && bundleDiscount.linhas) ? bundleDiscount.linhas.map(function (l) { return { label: l.label, valor: l.valor }; }) : [],
     };
     try { sessionStorage.setItem('claroCheckoutOrder', JSON.stringify(order)); } catch (e) {}
 
@@ -3166,7 +3167,17 @@
     el.hidden = installType !== 'tecnico';
   });
 
-  if (bundleDiscount) {
+  if (bundleDiscount && bundleDiscount.linhas) {
+    // Combinação por posse: uma linha por produto que continua na posse (valor positivo em verde, como no Figma).
+    document.querySelectorAll('[data-role="combo-rows"]').forEach(function (box) {
+      var mobile = box.hasAttribute('data-mobile');
+      box.innerHTML = bundleDiscount.linhas.map(function (l) {
+        return mobile
+          ? '<div class="footer-taxa-row"><p class="footer-taxa-label">' + l.label + '</p><p class="footer-taxa-value combo-desconto-value">R$ ' + formatBRL(l.valor) + '/mês</p></div>'
+          : '<div class="order-detail-row"><span class="order-detail-label">' + l.label + '</span><span class="order-detail-value combo-desconto-value">R$ ' + formatBRL(l.valor) + '/mês</span></div>';
+      }).join('');
+    });
+  } else if (bundleDiscount) {
     document.querySelectorAll('[data-role="desconto-multi-row"]').forEach(function (row) {
       row.hidden = false;
       row.querySelector('[data-role="desconto-multi-value"]').textContent = '-R$ ' + formatBRL(bundleDiscount.total);

@@ -191,6 +191,7 @@
   .summary-fees{display:flex;flex-direction:column;gap:4px;font-size:14px;}
   .summary-fee-row{display:flex;justify-content:space-between;gap:8px;}
   .summary-fee-label{font-weight:700;margin:0;}
+  .summary-fee-value--desconto{color:var(--green-text,#006b4f);}
   .summary-fee-value{font-weight:400;margin:0;text-align:right;}
   .summary-card-ticket{width:100%;height:33px;display:block;}
   .summary-card-ticket img{width:100%;height:100%;display:block;}
@@ -589,6 +590,7 @@
                 <p class="summary-fee-label">Instalação</p>
                 <p class="summary-fee-value">Grátis</p>
               </div>
+              <div id="summaryComboRows" style="display:contents"></div>
               <div id="summaryPromoRows" style="display:contents"></div>
             </div>
           </div>
@@ -882,10 +884,11 @@
     return 'Após ' + meses + (meses === 1 ? ' mês' : ' meses') + ', R$' + (spaced ? ' ' : '') + formatPriceBRL(apos) + '/mês';
   }
   function cartPhases(items) {
-    var now = 0, regular = 0, bounds = [];
+    var now = 0, regular = 0, gross = 0, bounds = [];
     items.forEach(function (it) {
       now += it.preco;
       regular += it.promo ? it.promo.apos : it.preco;
+      if (!it.desconto) gross += it.promo ? it.promo.apos : it.preco;
       if (it.promo && bounds.indexOf(it.promo.meses) === -1) bounds.push(it.promo.meses);
     });
     bounds.sort(function (a, b) { return a - b; });
@@ -894,7 +897,7 @@
       items.forEach(function (it) { t += (it.promo && it.promo.meses <= b) ? it.promo.apos : it.preco; });
       return { meses: b, total: Math.round(t * 100) / 100 };
     });
-    return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, phases: phases };
+    return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, gross: Math.round(gross * 100) / 100, phases: phases };
   }
   function promoFeeRows(ph) {
     var rows = [], prev = 0, cur = ph.now;
@@ -907,17 +910,23 @@
     return rows;
   }
   function renderPromoSummary(order) {
+    // Descontos por combinação com a posse (R$ 10,00/mês por produto que continua na posse).
+    const descontos = Array.isArray(order.descontos) ? order.descontos : [];
+    document.getElementById('summaryComboRows').innerHTML = descontos.map(d =>
+      `<div class="summary-fee-row"><p class="summary-fee-label">${d.label}</p><p class="summary-fee-value summary-fee-value--desconto">R$ ${formatPriceBRL(d.valor)}/mês</p></div>`).join('');
     const products = Array.isArray(order.products) ? order.products : [];
     const addons = Array.isArray(order.addons) ? order.addons : [];
     const items = products.map(p => ({ preco: p.price, promo: null })).concat(addons.map(a => ({ preco: a.price, promo: a.promo || null })));
+    const descontoTotal = (Array.isArray(order.descontos) ? order.descontos : []).reduce((sum, d) => sum + d.valor, 0);
+    if (descontoTotal > 0) items.push({ preco: -descontoTotal, promo: null, desconto: true });
     const ph = cartPhases(items);
     const promo = ph.phases.length > 0;
     document.getElementById('summaryPromoRows').innerHTML = promoFeeRows(ph).map(r =>
       `<div class="summary-fee-row"><p class="summary-fee-label">${r[0]}</p><p class="summary-fee-value">R$ ${formatPriceBRL(r[1])}/mês</p></div>`).join('');
     const was = document.getElementById('summaryTotalWas');
-    const cheaper = promo && ph.regular > ph.now;   // "De" só quando hoje está mais barato que depois
+    const cheaper = ph.gross > ph.now;   // "De" (sem descontos) só quando o total de hoje ficou mais barato
     was.hidden = !cheaper;
-    was.innerHTML = cheaper ? 'De <s>R$ ' + formatPriceBRL(ph.regular) + '</s> por:' : '';
+    was.innerHTML = cheaper ? 'De <s>R$ ' + formatPriceBRL(ph.gross) + '</s> por:' : '';
     document.getElementById('summaryTotalNote').innerHTML = promo
       ? ph.phases.map(p => promoAfterText(p.meses, p.total, true)).join('<br>')
       : 'ajustado à sua fatura';
@@ -1379,7 +1388,8 @@
     var novoHasPhysicalDelivery = order.hasPhysicalDelivery !== false || selecionados.some(function (p) { return p.installType === 'auto'; });
 
     var novoAddonsTotal = Array.isArray(order.addons) ? order.addons.reduce(function (s, a) { return s + a.price; }, 0) : 0;
-    var novoTotal = todosProdutos.reduce(function (s, p) { return s + p.price; }, 0) + novoAddonsTotal;
+    var novoDescontos = Array.isArray(order.descontos) ? order.descontos.reduce(function (s, d) { return s + d.valor; }, 0) : 0;
+    var novoTotal = todosProdutos.reduce(function (s, p) { return s + p.price; }, 0) + novoAddonsTotal - novoDescontos;
 
     var novoOrder = Object.assign({}, order, {
       products: todosProdutos,

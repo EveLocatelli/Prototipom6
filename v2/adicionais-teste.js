@@ -34,7 +34,7 @@
     A("Apple TV", ["tv", "internet"], 29.9, { icon: "https://mondrian.claro.com.br/brands/app/32px-alternative/apple-tv.svg" }),
     A("Brasileirinhas", "tv", 24.9),
     A("Claro Shows", "tv", 0.0, { de: 14.9, promo: [1, 14.9], icon: "claro-shows" }),
-    A("Combo Telecine e Universal+ Anual", "tv", 24.9, { familia: "Combo Telecine e Universal+", periodo: "anual", suf: "/mês por 12 meses", icon: "telecine" }),
+    A("Combo Telecine e Universal+ Anual", "tv", 24.9, { familia: "Combo Telecine e Universal+", periodo: "anual", icon: "telecine" }),
     A("Combo Telecine e Universal+ Mensal", "tv", 34.9, { familia: "Combo Telecine e Universal+", icon: "telecine" }),
     A("Crunchyroll Fan", "tv", 17.9, { familia: "Crunchyroll", variante: "Fan", icon: "crunchyroll" }),
     A("Crunchyroll Mega Fan", "tv", 24.9, { familia: "Crunchyroll", variante: "Mega Fan", icon: "crunchyroll" }),

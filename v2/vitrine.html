@@ -3561,7 +3561,7 @@
      produto salvo em pedidoEmAndamento. ===== -->
 <div class="vitrine-cart-footer" id="vitrineCartFooter">
   <div class="vitrine-cart-expanded" id="vitrineCartExpanded" hidden>
-    <p class="vitrine-cart-disclaimer">Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.</p>
+    <p class="vitrine-cart-disclaimer">Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.</p>
     <div class="vitrine-cart-taxas">
       <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
       <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Instalação</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
@@ -3594,7 +3594,7 @@
      Barra horizontal fixa, Figma node 6724:13553. Mesmos dados do componente
      mobile acima, só que sempre expandido (sem toggle) e em linha. ===== -->
 <div class="vitrine-cart-bar" id="vitrineCartBar">
-  <p class="vitrine-cart-bar-disclaimer">Os valores dos produtos adicionados ou alterados no seu carrinho serão atualizados em sua fatura.</p>
+  <p class="vitrine-cart-bar-disclaimer">Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.</p>
   <div class="vitrine-cart-bar-taxas">
     <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
     <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Instalação</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
@@ -4681,6 +4681,7 @@
     var sumFullPrice = products.reduce(function (sum, p) { return sum + p.preco; }, 0);
     var total = sumFullPrice;
     var descontoTotal = 0;
+    var comboLinhas = [];
     if (bundleOferta) {
       var ofertaDiscount = Math.round((sumFullPrice - bundleOferta.precoTotal) * 100) / 100;
       if (ofertaDiscount > 0) {
@@ -4688,21 +4689,20 @@
         total = bundleOferta.precoTotal;
       }
     } else {
-      // Regra geral por combinação de categorias (ver checkout.html —
-      // CATEGORY_DISCOUNTS — mesma regra, duplicada aqui pra o carrinho
-      // persistente mostrar o total já com desconto sem precisar ir pro
-      // checkout). TV=-20, Celular=-40, Telefone=-10, cada uma aplicada no
-      // próprio produto sempre que o carrinho tiver 2+ categorias
-      // diferentes (Internet nunca tem desconto próprio, só conta como
-      // categoria presente) — todas as que se aplicarem somam.
-      var categoriasNoCarrinho = {};
-      products.forEach(function (p) { categoriasNoCarrinho[p.categoria] = true; });
-      if (Object.keys(categoriasNoCarrinho).length >= 2) {
-        var CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
-        Object.keys(CATEGORY_DISCOUNTS).forEach(function (categoria) {
-          if (categoriasNoCarrinho[categoria]) descontoTotal += CATEGORY_DISCOUNTS[categoria];
-        });
-      }
+      // Combinação por POSSE (mesma regra do checkout.html): R$ 10,00/mês por produto que o
+      // cliente já tem e que este pedido não troca. Cada um vira uma linha "Desconto por combinação
+      // com TV / plano Móvel / Banda Larga / Telefone fixo".
+      var catsNoPedido = {};
+      products.forEach(function (p) { catsNoPedido[p.categoria] = true; });
+      var ownedCats = [];
+      try { ownedCats = resolvePosseCfg(POSSE_CONFIGS[getPosseAtiva()] || {}).categoriasPossui || []; } catch (e) {}
+      var COMBO_LABEL = { tv: 'TV', celular: 'plano Móvel', internet: 'Banda Larga', telefone: 'Telefone fixo' };
+      ownedCats.forEach(function (cat) {
+        if (catsNoPedido[cat]) return;
+        comboLinhas.push({ label: 'Desconto por combinação com ' + (COMBO_LABEL[cat] || cat), valor: 10 });
+        descontoTotal += 10;
+      });
+      descontoTotal = Math.min(descontoTotal, sumFullPrice);
       if (descontoTotal > 0) total = Math.round((sumFullPrice - descontoTotal) * 100) / 100;
     }
 
@@ -4737,10 +4737,22 @@
       el.innerHTML = vitrineCartFormatCentsHtml(total);
     });
 
+    document.querySelectorAll('.vitrine-cart-taxa-row[data-generated="combo"]').forEach(function (el) { el.remove(); });
     if (descontoTotal > 0) {
       document.querySelectorAll('[data-role="vitrine-desconto-row"]').forEach(function (row) {
-        row.hidden = false;
-        row.querySelector('[data-role="vitrine-desconto-value"]').textContent = '-R$ ' + vitrineFormatBRL(descontoTotal).int + ',' + vitrineFormatBRL(descontoTotal).cents;
+        if (comboLinhas.length) {
+          // uma linha por produto da posse (valor positivo, como no checkout)
+          comboLinhas.forEach(function (l) {
+            var c = row.cloneNode(true);
+            c.hidden = false; c.removeAttribute('data-role'); c.setAttribute('data-generated', 'combo');
+            c.querySelector('.vitrine-cart-taxa-label').textContent = l.label;
+            c.querySelector('[data-role="vitrine-desconto-value"]').textContent = 'R$ ' + vitrineFormatBRL(l.valor).int + ',' + vitrineFormatBRL(l.valor).cents + '/mês';
+            row.parentNode.insertBefore(c, row);
+          });
+        } else {
+          row.hidden = false;
+          row.querySelector('[data-role="vitrine-desconto-value"]').textContent = '-R$ ' + vitrineFormatBRL(descontoTotal).int + ',' + vitrineFormatBRL(descontoTotal).cents;
+        }
       });
     }
 
