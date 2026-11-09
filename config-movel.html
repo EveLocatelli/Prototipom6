@@ -372,7 +372,7 @@
 <!-- Resumo do pedido fixo: mesmo componente da vitrine (faixa preta) -->
 <div class="vitrine-cart-footer is-visible" id="vitrineCartFooter">
   <div class="vitrine-cart-expanded" id="vitrineCartExpanded" hidden>
-    <p class="vitrine-cart-disclaimer">Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.</p>
+    <p class="vitrine-cart-disclaimer">Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.</p>
     <div class="vitrine-cart-taxas">
       <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Fidelidade</p><p class="vitrine-cart-taxa-value">12 meses</p></div>
       <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
@@ -400,7 +400,7 @@
 </div>
 
 <div class="vitrine-cart-bar is-visible" id="vitrineCartBar">
-  <p class="vitrine-cart-bar-disclaimer">Os valores dos produtos adicionados ou alterados no seu carrinho serão atualizados em sua fatura.</p>
+  <p class="vitrine-cart-bar-disclaimer">Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.</p>
   <div class="vitrine-cart-bar-taxas">
     <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Fidelidade</p><p class="vitrine-cart-taxa-value">12 meses</p></div>
     <div class="vitrine-cart-taxa-row"><p class="vitrine-cart-taxa-label">Taxa de Adesão</p><p class="vitrine-cart-taxa-value">Grátis</p></div>
@@ -541,6 +541,10 @@
     products.forEach(function (p) {
       (Array.isArray(ad[p.id]) ? ad[p.id] : []).forEach(function (nome) {
         var addon = (p.adicionais || []).find(function (x) { return x.nome === nome; });
+        if (!addon) Object.keys(PRODUCT_CATALOG).some(function (id) {
+          addon = (PRODUCT_CATALOG[id].adicionais || []).find(function (x) { return x.nome === nome; });
+          return !!addon;
+        });
         if (addon) total = Math.round((total + addon.preco) * 100) / 100;
       });
     });

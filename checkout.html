@@ -58,7 +58,7 @@
 
   /* Detalhes Container (expandível) */
   .detalhes-container{min-width:0;border-radius:12px;}
-  .detalhes-header{display:flex;align-items:center;gap:24px;padding:24px;background:#fff;border-radius:12px;cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);}
+  .detalhes-header{display:flex;align-items:center;gap:24px;padding:24px 16px;background:#fff;border-radius:12px;cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);}
   @media (hover:hover){.detalhes-header:hover{box-shadow:0 8px 16px rgba(0,0,0,0.12);}}
   .detalhes-header.open{border-radius:12px 12px 0 0;}
   .detalhes-text{flex:1;min-width:0;font-size:16px;font-weight:500;color:var(--ink);margin:0;}
@@ -237,7 +237,7 @@
 
   /* Termos Container (expandível) */
   .termos-container{border-radius:12px;}
-  .termos-header{display:flex;align-items:center;gap:24px;padding:24px;background:#fff;border-radius:12px;cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);}
+  .termos-header{display:flex;align-items:center;gap:24px;padding:24px 16px;background:#fff;border-radius:12px;cursor:pointer;user-select:none;transition:box-shadow 0.2s cubic-bezier(0.2,0,0,1);}
   @media (hover:hover){.termos-header:hover{box-shadow:0 8px 16px rgba(0,0,0,0.12);}}
   .termos-header.open{border-radius:12px 12px 0 0;}
   .termos-header-text{display:flex;flex:1;min-width:0;align-items:center;gap:16px;}
@@ -245,7 +245,7 @@
   .termos-text{flex:1;font-size:16px;font-weight:500;color:var(--ink);margin:0;}
   .termos-toggle-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink);line-height:1;transition:transform 0.2s cubic-bezier(0.2,0,0,1);background:none;border:none;padding:0;cursor:pointer;}
   .termos-header.open .termos-toggle-icon{transform:rotate(180deg);}
-  .termos-content{display:none;padding:24px;background:#fff;border-radius:0 0 12px 12px;}
+  .termos-content{display:none;padding:24px 16px;background:#fff;border-radius:0 0 12px 12px;}
   .termos-content.open{display:flex;flex-direction:column;gap:8px;}
   .termos-item{display:flex;flex-direction:column;gap:16px;padding:24px;border:1px solid var(--gray-line);border-radius:12px;background:#fff;}
   .termos-row{display:flex;align-items:center;gap:16px;width:100%;}
@@ -269,6 +269,33 @@
   .permanece-item i{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;}
   .permanece-item-text{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .permanece-item-name{font-size:16px;font-weight:700;color:var(--ink);margin:0;}
+  /* Permanece no seu plano — fiel ao Figma (Permanece / Acordeão): cartão #DBDBDB, cabeçalho com
+     divisor vertical + total + seta, divisores #525252, lista que expande com animação.
+     ?permanece=atual no endereço volta ao layout anterior. */
+  .permanece-card{display:flex;flex-direction:column;width:100%;background:#dbdbdb;border-radius:12px;padding:0 16px;box-sizing:border-box;color:var(--ink);}
+  .permanece-acc-head{display:flex;align-items:center;gap:16px;width:100%;padding:24px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);}
+  .permanece-acc-head--static{cursor:default;}
+  .permanece-acc-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .permanece-acc-title{font-size:16px;font-weight:500;line-height:normal;margin:0;color:var(--ink);}
+  .permanece-acc-sub{font-size:12px;line-height:1.3;color:var(--gray-dark);}
+  .permanece-acc-total{font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;padding-left:16px;border-left:1px solid #525252;align-self:stretch;display:flex;align-items:center;}
+  .permanece-acc-chev{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1;flex-shrink:0;transition:transform 0.3s cubic-bezier(0.2,0,0,1);}
+  .permanece-card.is-open .permanece-acc-chev{transform:rotate(180deg);}
+  /* expansão animada: a lista fica sempre no DOM e a altura anima de 0 a auto (grid 0fr -> 1fr) */
+  .permanece-acc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.3s cubic-bezier(0.2,0,0,1);}
+  .permanece-card.is-open .permanece-acc-panel,.permanece-acc-panel--static{grid-template-rows:1fr;}
+  .permanece-acc-inner{overflow:hidden;min-height:0;}
+  .permanece-acc-inner > .permanece-row:first-child{border-top:1px solid #525252;}
+  @media (prefers-reduced-motion:reduce){.permanece-acc-panel,.permanece-acc-chev{transition:none;}}
+  .permanece-row{display:flex;align-items:center;gap:16px;padding:12px 0;}
+  .permanece-row + .permanece-row{border-top:1px solid #525252;}
+  .permanece-row > i{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;}
+  .permanece-row-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .permanece-row-name{font-size:16px;font-weight:700;color:var(--ink);margin:0;line-height:normal;}
+  .permanece-row-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-dark);margin:0;line-height:normal;}
+  .permanece-row-status i{font-size:14px;line-height:1;}
+  .permanece-row-price{font-size:14px;color:var(--gray-dark);margin:0;white-space:nowrap;flex-shrink:0;}
+  .permanece-card-note{font-size:12px;color:var(--gray-dark);margin:0;padding:8px 0 12px;line-height:normal;}
   .permanece-item-price{font-size:14px;font-weight:400;color:var(--gray-dark);margin:0;white-space:nowrap;}
 
   /* Action Card (produto adicionado) */
@@ -281,6 +308,12 @@
   [data-role="action-cards-mount"]{width:100%;display:flex;flex-direction:column;gap:24px;}
   .action-card{width:100%;border:1px solid var(--gray-line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:24px;background:#fff;align-items:flex-start;}
   .action-card-tag{background:var(--green-bg);border:1px solid var(--green-bg);border-radius:4px;padding:4px 8px;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--green-text);width:fit-content;}
+  .action-card-pontos-alert{width:100%;box-sizing:border-box;}
+  .action-card-pontos-alert .mdn-Alert-content{display:flex;align-items:center;gap:8px;padding-right:0;}
+  .action-card-pontos-alert .mdn-Text{font-size:12px;font-weight:500;line-height:1.3;color:#b84d01;margin:0;}
+  .action-card-pontos-alert-icon{font-size:16px;line-height:1;color:#b84d01;flex-shrink:0;}
+  .action-card-tag--info{background:#fff;border:1px solid var(--ink);color:var(--ink);border-radius:4px;}
+  .action-card-icon i{font-size:18px;line-height:1;}
   .action-card-current-plan{background:#f8f8f8;border-radius:12px;padding:12px;width:100%;}
   .action-card-current-plan p{font-size:12px;line-height:1.3;color:var(--ink);margin:0;}
   .action-card-current-plan strong{font-weight:700;}
@@ -350,6 +383,149 @@
   .action-card-vermais{text-align:center;font-size:16px;font-weight:400;color:var(--red);cursor:pointer;width:100%;}
   .action-card-vermais:hover{text-decoration:underline;}
 
+  /* ===== Teste (2026-10-27): adicionais são do PEDIDO, não do produto =====
+     Uma seção "Turbine seu pedido" depois dos cards (com os adicionais
+     compatíveis com tudo que está no carrinho, sem repetir) + um grupo
+     "Adicionais" no resumo. "Ver todos" abre bottom sheet (mobile) / modal
+     (desktop) com filtros por categoria e busca. */
+  .addons-summary-card{width:100%;border:1px solid var(--gray-line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px;background:#fff;}
+  .addons-summary-title{font-size:16px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .addons-summary-line{display:flex;align-items:center;gap:8px;width:100%;font-size:14px;color:var(--ink);}
+  .addons-summary-line-name{flex:1;min-width:0;font-weight:500;}
+  .addons-summary-line-price{white-space:nowrap;font-weight:400;display:flex;flex-direction:column;align-items:flex-end;}
+  .addons-summary-line-note{font-size:12px;color:var(--gray-dark);}
+  .addons-summary-remove{width:16px;height:16px;flex-shrink:0;cursor:pointer;border:none;background:none;padding:0;transition:transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .addons-summary-remove:active{transform:scale(0.9);}
+  .addons-summary-remove img{width:100%;height:100%;display:block;}
+  .addons-summary-total{display:flex;justify-content:space-between;gap:16px;width:100%;padding-top:12px;border-top:1px solid var(--gray-line);font-size:12px;font-weight:700;color:var(--ink);}
+  .addons-summary-total + .addons-summary-total{padding-top:0;border-top:none;}
+  /* "Turbine seu pedido" (Figma): fundo #F8F8F8 no desktop e BRANCO no mobile; título AMX 20; gap 12. */
+  .addons-block{background:#f8f8f8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;width:100%;}
+  .order-summary-mobile .addons-block{background:#fff;}
+  .addons-title{font-size:20px;font-weight:700;line-height:1.3;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .addons-sub{font-size:12px;font-weight:400;color:var(--gray-dark);margin:2px 0 0;}
+  .addons-notice{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--gray-line);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--ink);}
+  .addons-notice p{flex:1;margin:0;}
+  .addons-notice button{background:none;border:none;padding:0;font-size:16px;line-height:1;color:var(--gray-dark);cursor:pointer;}
+  .addons-link{background:none;border:none;padding:0;font:inherit;font-size:14px;color:var(--red);cursor:pointer;width:100%;text-align:center;}
+  .addons-link:hover{text-decoration:underline;}
+  /* Adicionado: botão secundário do Mondrian (mdn-Button--secondary, contorno vermelho da marca). */
+  .mdn-Button.addon-added{flex-shrink:0;white-space:nowrap;font-weight:500;}
+
+  /* ----- Card de adicional (1 por família) -----
+     Hierarquia: nome (700) > preço (valor grande + periodicidade pequena) >
+     etiqueta de escopo / "O que é?" (apoio) > seletores. Fica branco sobre o
+     fundo cinza do bloco; ao adicionar ganha borda de destaque. */
+  .addon-list{display:flex;flex-direction:column;gap:12px;width:100%;}
+  .addon-card{background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;width:100%;box-sizing:border-box;transition:border-color 0.2s cubic-bezier(0.2,0,0,1);}
+  .addon-card.is-added{border-color:var(--red);}
+  .addon-card--chain{margin-top:-6px;}
+  .addon-head{display:flex;align-items:center;gap:12px;width:100%;}
+  .addon-icon{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .addon-icon img{width:100%;height:100%;display:block;}
+  .addon-icon i{font-size:32px;line-height:1;color:var(--red);}
+  .addon-icon.boxed{border:1px solid var(--gray-line);border-radius:20px;background:#fff;padding:9px;box-sizing:border-box;}
+  .addon-icon.boxed img{width:20px;height:20px;}
+  .addon-icon.boxed i{font-size:20px;}
+  .addon-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .addon-name-row{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;}
+  .addon-name{font-size:16px;font-weight:700;line-height:1.25;color:var(--ink);}
+  .addon-eyebrow{font-size:11px;font-weight:500;line-height:1.2;letter-spacing:0.04em;text-transform:uppercase;color:var(--gray-dark);}
+  .addon-name-wrap{min-width:0;}
+  .addon-nowrap{white-space:nowrap;display:inline-flex;align-items:center;}
+  .addon-info-btn{display:inline-flex;flex-shrink:0;position:relative;top:-2px;margin-left:6px;align-items:center;justify-content:center;width:20px;height:20px;background:none;border:none;padding:0;color:var(--gray-dark);cursor:pointer;border-radius:50%;transition:color 0.2s cubic-bezier(0.2,0,0,1);}
+  .addon-info-btn[aria-expanded="true"]{color:var(--red);}
+  @media (hover:hover){.addon-info-btn:hover{color:var(--red);}}
+  .addon-price-row{display:flex;align-items:flex-end;flex-wrap:wrap;gap:0 8px;}
+  .addon-price-was{flex-basis:100%;margin:0;}
+  .addon-price-note{flex-basis:100%;margin:2px 0 0;font-size:12px;color:var(--gray-dark);}
+  .addon-price{font-size:20px;font-weight:700;font-family:'AMX', sans-serif;color:var(--ink);}
+  .addon-period{font-size:12px;font-weight:400;color:var(--gray-dark);}
+  .addon-price-note{font-size:12px;font-weight:400;color:var(--gray-dark);margin-bottom:2px;}
+  .addon-info-panel{margin:0;padding:12px;border-radius:8px;background:var(--bg-page);font-size:14px;line-height:1.4;color:var(--ink);}
+  .addon-info-panel{animation:content-fade 0.25s cubic-bezier(0,0,0.2,1);}
+  /* ----- Card de adicional: fiel ao Figma (Adicional / Card — desktop e mobile) -----
+     Desktop: logo 32 | texto (eyebrow, nome + ⓘ, preço) | botão 28px na mesma linha.
+     Mobile (cartão estreito, < 380px): logo + texto, botão em largura total abaixo.
+     "O que é?" abre numa caixa #F8F8F8 dentro do cartão; ⓘ fica vermelho aberto. */
+  .addon-list,.addons-modal-list{container-type:inline-size;}
+  .addon-card{padding:12px 16px;gap:12px;display:grid;grid-template-columns:32px minmax(0,1fr) auto;grid-template-areas:"logo text btn" "info info info";align-items:center;column-gap:12px;row-gap:12px;}
+  .addon-head{display:contents;}
+  .addon-icon{grid-area:logo;width:32px;height:32px;}
+  .addon-icon.boxed{padding:7px;border-radius:16px;}
+  .addon-icon.boxed img{width:18px;height:18px;}
+  .addon-icon.boxed i{font-size:18px;}
+  .addon-text{grid-area:text;}
+  .addon-head > .btn-add,.addon-head > .btn-added{grid-area:btn;}
+  .addon-info-panel{grid-area:info;}
+  .addon-eyebrow{font-size:12px;font-weight:400;line-height:1.3;letter-spacing:0;}
+  .addon-name-row{flex-wrap:nowrap;gap:4px;}
+  .addon-name-wrap{flex:1;min-width:0;}
+  .addon-name{line-height:1.3;}
+  .addon-info-btn{top:0;margin-left:0;}
+  .addon-card .price-amount{font-size:36px;line-height:1;}
+  .btn-add,.btn-added{height:28px;padding:8px 16px;font-size:12px;font-weight:500;line-height:1;border-radius:500px;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;}
+  .btn-added{background:transparent;border:1px solid var(--red);color:var(--red);transition:background 0.2s cubic-bezier(0.2,0,0,1);}
+  @media (hover:hover){.btn-added:hover{background:rgba(218,41,28,0.06);}}
+  .addon-info-panel{margin:0;padding:12px;border-radius:12px;background:#f8f8f8;font-size:12px;line-height:1.3;color:#000;}
+  @container (max-width:380px){
+    .addon-card{grid-template-columns:32px minmax(0,1fr);grid-template-areas:"logo text" "btn btn" "info info";row-gap:8px;}
+    .addon-card.has-info{row-gap:12px;}
+    .addon-head > .btn-add,.addon-head > .btn-added{width:100%;justify-self:stretch;}
+  }
+  .addon-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;width:100%;padding-top:12px;border-top:1px solid var(--gray-line);}
+  .addon-selectors{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+  .addon-stepper,.addon-seg{display:inline-flex;align-items:center;border:1px solid var(--gray-line);border-radius:500px;padding:2px;background:#fff;}
+  .addon-stepper button{width:28px;height:28px;border:none;border-radius:50%;background:var(--bg-page);font:inherit;font-size:18px;line-height:1;color:var(--ink);cursor:pointer;padding:0;}
+  .addon-stepper button:disabled{opacity:0.35;cursor:default;}
+  .addon-stepper-value{min-width:84px;text-align:center;font-size:14px;font-weight:500;color:var(--ink);}
+  .addon-seg{flex-wrap:wrap;}
+  .addon-seg button{flex:1 1 auto;min-height:28px;padding:4px 12px;border:none;border-radius:500px;background:none;font:inherit;font-size:13px;line-height:1.2;color:var(--ink);cursor:pointer;transition:background 0.2s cubic-bezier(0.2,0,0,1),color 0.2s cubic-bezier(0.2,0,0,1);}
+  .addon-seg button.active{background:var(--ink);color:#fff;}
+  .addon-seg button:disabled{opacity:0.35;cursor:default;}
+  /* Mobile: seletor ocupa a largura toda e o botão vem embaixo (evita o botão
+     quebrar de linha sozinho à esquerda quando o segmentado é largo). */
+  @media (max-width:599px){
+    .addon-selectors{width:100%;}
+    .addon-stepper,.addon-seg{width:100%;box-sizing:border-box;}
+    .addon-stepper{justify-content:space-between;}
+    .addon-seg button{flex:1;}
+    .addon-controls .btn-add{width:100%;height:40px;font-size:14px;}
+  }
+
+  /* Modal "Todos os adicionais" — fiel ao Figma: bottom sheet (640 no desktop, largura total no mobile),
+     branco, cantos superiores 24, padding 16, busca no estilo Mondrian, chips, lista e CTA fixo no rodapé. */
+  .addons-modal-overlay{position:fixed;inset:0;background:rgba(31,29,29,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:999;}
+  .addons-modal-overlay[hidden]{display:none;}
+  .addons-modal-overlay:not([hidden]){animation:content-fade 0.2s cubic-bezier(0,0,0.2,1);}
+  .addons-modal{background:#fff;width:100%;max-width:640px;max-height:92vh;border-radius:24px 24px 0 0;display:flex;flex-direction:column;gap:12px;padding:16px 16px 0;box-sizing:border-box;overflow:hidden;}
+  .addons-modal-overlay:not([hidden]) .addons-modal{animation:slide-up 0.3s cubic-bezier(0.05,0.7,0.1,1);}
+  .addons-modal-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0;}
+  .addons-modal-title{font-size:20px;font-weight:700;line-height:1.3;font-family:'AMX', sans-serif;color:var(--ink);margin:0;}
+  .addons-modal-close{background:none;border:none;font-size:20px;font-weight:700;line-height:normal;color:var(--ink);cursor:pointer;padding:0;}
+  .addons-modal-tools{display:flex;flex-direction:column;gap:12px;padding:0;}
+  .addons-modal-search-wrap{position:relative;}
+  .addons-modal-search-wrap > i{position:absolute;left:17px;top:11px;font-size:24px;line-height:1;color:var(--ink);pointer-events:none;}
+  .addons-modal-search{width:100%;box-sizing:border-box;height:46px;border:1px solid var(--ink);border-radius:12px;padding:9px 17px 9px 49px;background:#fff;font:inherit;font-size:16px;font-weight:500;color:var(--ink);}
+  .addons-modal-search::placeholder{color:var(--ink);opacity:1;}
+  .addons-modal-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .addons-modal-chips[hidden]{display:none;}
+  .addons-chip{flex-shrink:0;padding:6px 16px;border-radius:100px;border:1px solid var(--gray-line);background:#fff;font:inherit;font-size:14px;font-weight:500;line-height:normal;color:var(--ink);cursor:pointer;}
+  .addons-chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+  .addons-modal-list{flex:1;min-height:0;overflow-y:auto;padding:0 0 8px;background:transparent;display:flex;flex-direction:column;gap:8px;}
+  .addons-modal-list .addon-card--chain{margin-top:0;}
+  .addons-modal-empty{font-size:14px;color:var(--gray-dark);text-align:center;margin:24px 0;}
+  /* CTA fixo no rodapé do modal (nos dois tamanhos): "Miniatura carrinho" branca com botão vermelho "Continuar". */
+  .addons-modal-footer{margin:0 -16px;padding:12px 16px;background:#fff;border-radius:12px 12px 0 0;box-shadow:0 -4px 12px rgba(0,0,0,0.08);flex-shrink:0;}
+  .addons-modal-done{width:100%;height:40px;border:1px solid var(--red);border-radius:500px;background:var(--red);color:#fff;font:inherit;font-size:16px;font-weight:500;line-height:1.3;cursor:pointer;padding:8px 24px;}
+  @container (min-width:381px){ .addons-modal-list .addon-name-wrap{flex:0 1 auto;} }
+  /* Desktop: o modal fica centralizado (horizontal e vertical) com os 4 cantos arredondados; no mobile segue como bottom sheet. */
+  @media (min-width:768px){
+    .addons-modal-overlay{align-items:center;padding:24px;box-sizing:border-box;}
+    .addons-modal{border-radius:24px;max-height:min(908px,calc(100vh - 48px));}
+    .addons-modal-footer{border-radius:0;}
+  }
+
   /* ===== Upsell — produto de menor valor entre Celular/Banda Larga/TV que
      falta na posse (Figma "Checkout exclusivo - M6", node 13214:6185).
      Mesmo markup nos dois mounts (mobile/desktop) — só a classe
@@ -392,6 +568,8 @@
   }
 
   .order-details{display:flex;flex-direction:column;gap:4px;font-size:14px;}
+  .combo-desconto-value{color:var(--green-text);font-weight:400;}
+  .footer-taxa-value.combo-desconto-value{color:#fff;}
   .order-detail-row{display:flex;justify-content:space-between;align-items:center;}
   [data-role="desconto-multi-value"]{color:var(--green-text);font-weight:700;}
   /* No footer flutuante mobile (fundo preto), o verde do valor do desconto
@@ -409,6 +587,8 @@
   .total-prefix{font-size:16px;font-weight:700;}
   .total-amount{font-size:36px;font-weight:700;font-family:'AMX';line-height:1;}
   .total-suffix{font-size:16px;font-weight:700;}
+  .total-was{font-size:12px;font-weight:700;color:var(--ink);margin:0;}
+  .total-was--footer{color:#fff;}
   .order-adjusted{font-size:12px;font-weight:400;color:var(--gray-dark);margin:0;}
 
   .btn-sale{background:var(--yellow);border:none;border-radius:500px;padding:16px 32px;height:48px;font-size:16px;font-weight:500;color:var(--ink);cursor:pointer;width:100%;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
@@ -1014,13 +1194,14 @@
         <div data-role="action-cards-mount"></div>
 
         <p style="font-size:14px;color:var(--gray-dark);text-align:center;margin:0;">
-          Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.
+          Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.
         </p>
 
         <div class="order-details">
-          <div class="order-detail-row"><span class="order-detail-label">Fidelidade</span><span class="order-detail-value">12 meses</span></div>
           <div class="order-detail-row"><span class="order-detail-label">Taxa de Adesão</span><span class="order-detail-value">Grátis</span></div>
           <div class="order-detail-row" data-role="instalacao-row"><span class="order-detail-label">Instalação</span><span class="order-detail-value">Grátis</span></div>
+          <div data-role="combo-rows" style="display:contents"></div>
+          <div data-role="promo-rows" style="display:contents"></div>
           <div class="order-detail-row" data-role="desconto-multi-row" hidden><span class="order-detail-label">Desconto Multi</span><span class="order-detail-value" data-role="desconto-multi-value"></span></div>
         </div>
 
@@ -1029,6 +1210,7 @@
         <div class="order-total">
           <p class="order-total-label">Total do seu carrinho</p>
           <div class="order-total-price">
+            <p class="total-was" data-role="total-was" hidden></p>
             <div class="order-total-value">
               <span class="total-prefix">R$</span>
               <span class="total-amount">0,00</span>
@@ -1047,11 +1229,12 @@
 
 <div class="checkout-footer">
   <div class="footer-expanded-info" hidden>
-    <p class="footer-disclaimer">Os valores dos produtos adicionados no seu carrinho serão atualizados em sua fatura.</p>
+    <p class="footer-disclaimer">Os valores dos produtos contratados, serão atualizados em sua fatura, e podem sofrer reajuste de acordo com a política comercial vigente.</p>
     <div class="footer-taxas">
-      <div class="footer-taxa-row"><p class="footer-taxa-label">Fidelidade</p><p class="footer-taxa-value">12 meses</p></div>
       <div class="footer-taxa-row"><p class="footer-taxa-label">Taxa de Adesão</p><p class="footer-taxa-value">Grátis</p></div>
       <div class="footer-taxa-row" data-role="instalacao-row-mobile"><p class="footer-taxa-label">Instalação</p><p class="footer-taxa-value">Grátis</p></div>
+      <div data-role="combo-rows" data-mobile style="display:contents"></div>
+      <div data-role="promo-rows" data-mobile style="display:contents"></div>
       <div class="footer-taxa-row" data-role="desconto-multi-row" hidden><p class="footer-taxa-label">Desconto Multi</p><p class="footer-taxa-value" data-role="desconto-multi-value"></p></div>
     </div>
     <div class="footer-divider"></div>
@@ -1064,6 +1247,7 @@
     <div class="footer-total-text">
       <p class="footer-cart-text">Total do seu carrinho:</p>
       <div class="footer-price-group">
+        <p class="total-was total-was--footer" data-role="total-was" hidden></p>
         <div class="footer-price">
           <span class="footer-price-amount"><span class="footer-price-prefix">R$</span> 0,00</span>
           <span class="footer-price-suffix">/mês</span>
@@ -1091,7 +1275,24 @@
   </div>
 </div>
 
+<div class="addons-modal-overlay" id="addonsModalOverlay" hidden onclick="if(event.target===this)closeAddonsModal()">
+  <div class="addons-modal" role="dialog" aria-modal="true" aria-labelledby="addonsModalTitle">
+    <div class="addons-modal-header">
+      <h2 class="addons-modal-title" id="addonsModalTitle">Todos os adicionais</h2>
+      <button type="button" class="addons-modal-close" aria-label="Fechar" onclick="closeAddonsModal()">✕</button>
+    </div>
+    <div class="addons-modal-tools">
+      <div class="addons-modal-search-wrap"><i class="mdn-Icon-lupa"></i><input type="search" class="addons-modal-search" id="addonsModalSearch" placeholder="Buscar adicional" aria-label="Buscar adicional" oninput="addonState.modalQuery=this.value;renderAddonsModal()"></div>
+      <div class="addons-modal-chips" id="addonsModalChips"></div>
+    </div>
+    <div class="addons-modal-list" id="addonsModalList"></div>
+    <div class="addons-modal-footer"><button type="button" class="addons-modal-done" id="addonsModalDone" onclick="closeAddonsModal()">Continuar</button></div>
+  </div>
+</div>
+
 <script src="product-catalog.js"></script>
+<script src="adicionais-teste.js"></script>
+<script src="posse-extras-teste.js"></script>
 <script>
   // ===== Resolução do pedido a partir do sessionStorage =====
   // Gravado por detalhes.html (startCheckout, 1 produto) ou pelo "Monte seu
@@ -1181,43 +1382,9 @@
     }
   }
 
-  // ===== Desconto multi (regra geral por combinação de categorias) =====
-  // Regra de negócio (Eve, 2026-09-22, versão final simplificada): cada
-  // categoria abaixo tem um valor fixo de desconto, aplicado no próprio
-  // produto dela, sempre que o carrinho tiver 2+ categorias diferentes —
-  // não importa QUAL outra categoria está junto, nem a ordem em que os
-  // produtos foram adicionados. Internet nunca tem desconto próprio, só
-  // "conta" como uma das categorias presentes. Os valores de categorias
-  // presentes somam entre si (TV+Celular+Telefone juntos = 20+40+10=70).
-  // Só entra em jogo quando NÃO há uma oferta curada válida pro carrinho
-  // (bundleDiscount acima) — evita dar desconto dobrado quando o carrinho é
-  // exatamente uma oferta de "Melhores ofertas" com precoTotal próprio já
-  // definido à mão. Valores hardcoded aqui (não na planilha) porque foram
-  // passados como regra de negócio direta, não como dado de catálogo — dá
-  // pra mover pra planilha depois se precisar ajustar com frequência.
-  var CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };
-  if (!bundleDiscount) {
-    var categoriasNoCarrinho = {};
-    products.forEach(function (p) { categoriasNoCarrinho[p.categoria] = true; });
-    if (Object.keys(categoriasNoCarrinho).length >= 2) {
-      var descontoPorProduto = {};
-      var descontoGeralTotal = 0;
-      Object.keys(CATEGORY_DISCOUNTS).forEach(function (categoria) {
-        if (!categoriasNoCarrinho[categoria]) return;
-        var alvo = products.find(function (p) { return p.categoria === categoria; });
-        if (!alvo) return;
-        descontoPorProduto[alvo.id] = CATEGORY_DISCOUNTS[categoria];
-        descontoGeralTotal += CATEGORY_DISCOUNTS[categoria];
-      });
-      if (descontoGeralTotal > 0) {
-        var perProductGeral = {};
-        Object.keys(descontoPorProduto).forEach(function (pid) {
-          perProductGeral[pid] = Math.round((PRODUCT_CATALOG[pid].preco - descontoPorProduto[pid]) * 100) / 100;
-        });
-        bundleDiscount = { total: descontoGeralTotal, perProduct: perProductGeral };
-      }
-    }
-  }
+  // CATEGORY_DISCOUNTS (regra antiga por categoria no carrinho) foi substituída pela regra de
+  // combinação por POSSE (R$ 10 por produto que o cliente já tem — ver comboLinhas abaixo).
+  var CATEGORY_DISCOUNTS = { tv: 20, celular: 40, telefone: 10 };   // só referência histórica
 
   // ===== Plano alterado vs. novo plano adicionado =====
   // Quais categorias já são "possuídas" (e o "plano atual" de cada uma)
@@ -1252,9 +1419,26 @@
       categoriasPossui: fallbackList('categoriasPossui'),
       categoriaAtual: fallbackMap('categoriaAtual'),
       categoriaAtualValor: fallbackMap('categoriaAtualValor'),
+      pontosAdicionais: cfg.pontosAdicionais || null,   // sem herança: só a posse que os tem
     };
   }
   var POSSE_CHECKOUT_CFG = getPosseCheckoutCfg();
+  // ===== Pontos adicionais de TV (reajuste compulsório na troca do plano de TV) =====
+  // Posse com TV + N pontos adicionais: ao contratar um novo plano de TV os pontos
+  // acompanham o plano novo e passam a custar o valor novo (sem opção de remover).
+  // Dado de posse: pontosAdicionais { qtd, valorAtual } (valorAtual = total/mês dos pontos
+  // hoje) — hoje só a Posse TV, definido em posse-extras-teste.js. Valor novo = qtd × "Ponto
+  // adicional TV" (placeholder — a regra real, baseada no valor da TV principal, não existe).
+  var PONTOS_ADICIONAIS = null;
+  var MAX_PONTOS_TV = 3;
+  (function () {
+    var raw = POSSE_CHECKOUT_CFG.pontosAdicionais;
+    if (raw && raw.qtd > 0) {
+      var unit = 69.9;
+      (window.ADICIONAIS_TESTE || []).some(function (a) { if (a.nome === '1 Ponto adicional TV') { unit = a.preco; return true; } });
+      PONTOS_ADICIONAIS = { qtd: raw.qtd, valorAtual: raw.valorAtual, valorNovo: Math.round(unit * raw.qtd * 100) / 100 };
+    }
+  })();
   var OWNED_CATEGORIES = POSSE_CHECKOUT_CFG.categoriasPossui;
   function isOwnedCategory(categoria) { return OWNED_CATEGORIES.indexOf(categoria) !== -1; }
   // Valor manual (categoriaAtualValor) tem prioridade sobre o produto do
@@ -1267,6 +1451,32 @@
     var produto = produtoId && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[produtoId];
     return produto ? produto.preco : null;
   }
+  // ===== Desconto por combinação (posse) — Eve, 2026-11-03 =====
+  // R$ 10,00/mês de desconto por produto que o cliente JÁ TEM na posse e que continua no plano
+  // (mesma lista do "Permanece no seu plano": categoria possuída que este pedido não troca),
+  // sempre que há um produto novo no pedido. Cada linha vira "Desconto por combinação com TV /
+  // plano Móvel / Banda Larga / Telefone fixo" nas taxas. O total é dividido entre os produtos do
+  // pedido proporcionalmente ao preço (o card mostra "De R$ X por: R$ Y"). Oferta curada de
+  // "Melhores ofertas" (bundleDiscount acima) mantém o preço fechado dela e não recebe este desconto.
+  var COMBO_DESCONTO = 10;
+  var COMBO_LABEL = { tv: 'TV', celular: 'plano Móvel', internet: 'Banda Larga', telefone: 'Telefone fixo' };
+  var comboLinhas = [];
+  if (!bundleDiscount && products.length) {
+    var catsNoPedido = {};
+    products.forEach(function (p) { catsNoPedido[p.categoria] = true; });
+    OWNED_CATEGORIES.forEach(function (cat) {
+      if (catsNoPedido[cat]) return;   // essa categoria está sendo trocada: não combina consigo mesma
+      comboLinhas.push({ categoria: cat, label: 'Desconto por combinação com ' + (COMBO_LABEL[cat] || cat), valor: COMBO_DESCONTO });
+    });
+    var comboTotal = comboLinhas.length * COMBO_DESCONTO;
+    var somaPrecos = products.reduce(function (sum, p) { return sum + p.preco; }, 0);
+    if (comboTotal > 0 && somaPrecos > 0) {
+      comboTotal = Math.min(comboTotal, somaPrecos);
+      // O card mostra o preço cheio do produto; o desconto aparece como linhas nas taxas e abate do TOTAL.
+      bundleDiscount = { total: comboTotal, perProduct: {}, linhas: comboLinhas };
+    }
+  }
+
 
   // ===== Config móvel: aparece só quando o pedido inclui um plano de
   // Celular que é linha NOVA pra essa posse (categoria não possuída — mesma
@@ -1838,6 +2048,14 @@
 
   // ===== Permanece no seu plano: categorias possuídas pela posse ATIVA
   // (ver OWNED_CATEGORIES/CATEGORIA_INFO acima) que esse pedido não toca. =====
+  // Abre/fecha sem re-renderizar, para a altura animar (CSS: grid-template-rows 0fr -> 1fr).
+  function togglePermanece(btn) {
+    var card = btn.closest('.permanece-card');
+    var open = !card.classList.contains('is-open');
+    card.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    window.__permaneceOpen = open;
+  }
   function renderPermanece() {
     var touched = {};
     products.forEach(function (p) { touched[p.categoria] = true; });
@@ -1846,6 +2064,42 @@
     var container = document.getElementById('permaneceContainer');
     if (!remaining.length) { container.hidden = true; return; }
 
+    var listEl = container.querySelector('[data-role="permanece-list"]');
+    if (!/[?&]permanece=atual/.test(location.search)) {
+      // Nome do plano atual (produto do catálogo) quando existir; senão só a categoria.
+      var somaPermanece = 0, comPreco = 0;
+      var rowsHtml = remaining.map(function (cat) {
+        var info = CATEGORIA_INFO[cat];
+        var pid = POSSE_CHECKOUT_CFG.categoriaAtual[cat];
+        var prod = pid && typeof PRODUCT_CATALOG !== 'undefined' && PRODUCT_CATALOG[pid];
+        var preco = currentCategoriaPreco(cat);
+        if (preco != null) { somaPermanece += preco; comPreco++; }
+        return '<div class="permanece-row">' + iconHtml(info.icon) +
+          '<div class="permanece-row-text"><p class="permanece-row-name">' + (prod ? prod.nome : info.label) + '</p>' +
+          '<p class="permanece-row-status"><i class="mdn-Icon-check"></i>' + 'Sem alteração</p></div>' +
+          (preco != null ? '<p class="permanece-row-price">R$ ' + formatBRL(preco) + '/mês</p>' : '') +
+          '</div>';
+      }).join('');
+      container.querySelector('.permanece-title').hidden = true;
+      // Vários produtos: cartão que abre FECHADO (título, "N produtos · sem alteração" e a soma) e
+      // expande a lista com animação ao clicar. Um produto só: mesmo cartão, lista sempre visível.
+      var plural = remaining.length > 1;
+      somaPermanece = Math.round(somaPermanece * 100) / 100;
+      var noteHtml = '<p class="permanece-card-note">Seguem na sua fatura atual e não entram no total do seu carrinho.</p>';
+      var titleHtml = '<span class="permanece-acc-title">' + (plural ? 'Permanecem' : 'Permanece') + ' no seu plano</span>' +
+        '<span class="permanece-acc-sub">' + remaining.length + (plural ? ' produtos' : ' produto') + ' · sem alteração</span>';
+      var panelHtml = function (cls) { return '<div class="permanece-acc-panel ' + cls + '" id="permaneceList"><div class="permanece-acc-inner">' + rowsHtml + noteHtml + '</div></div>'; };
+      // Sempre acordeão e SEMPRE fechado ao abrir a página (Figma: "Fechado" / "Aberto"); abre ao clicar.
+      var open = !!window.__permaneceOpen;
+      listEl.innerHTML = '<div class="permanece-card' + (open ? ' is-open' : '') + '">' +
+        '<button type="button" class="permanece-acc-head" aria-expanded="' + open + '" aria-controls="permaneceList" onclick="togglePermanece(this)">' +
+          '<span class="permanece-acc-text">' + titleHtml + '</span>' +
+          (comPreco > 0 ? '<span class="permanece-acc-total">R$ ' + formatBRL(somaPermanece) + '/mês</span>' : '') +
+          '<i class="mdn-Icon-baixo mdn-Icon--md permanece-acc-chev"></i></button>' +
+        panelHtml('') + '</div>';
+      container.hidden = false;
+      return;
+    }
     var itemsHtml = remaining.map(function (cat) {
       var info = CATEGORIA_INFO[cat];
       var preco = currentCategoriaPreco(cat);
@@ -2013,160 +2267,622 @@
   // Cada Action Card tem seu PRÓPRIO catálogo de adicionais — vem de
   // product.adicionais (aba Adicionais_Checkout da planilha), diferente do
   // checkout-600mega-100gb.html original (que usava 1 catálogo global pra
-  // todos os cards). actionCardInstances guarda {getSelected, catalog, product}
+  // todos os cards). actionCardInstances guarda {product}
   // por card, pra syncOrderTotal/finalizarPedido lerem o certo de cada um.
-  var actionCardInstances = new Map();
-  var ACTION_CARD_PAGE_SIZE = 6;
+  var actionCardInstances = new Map();   // card -> { product }
+  var ADDONS_SUGGESTED_COUNT = 3;
+  var ADDON_CAT_LABEL = { internet: 'Internet', tv: 'TV', celular: 'Celular', telefone: 'Telefone' };
 
-  function syncOrderTotal(root) {
-    var orderSummary = root.closest('.order-summary');
-    var cards = orderSummary ? orderSummary.querySelectorAll('[data-action-card]') : [root];
-    var total = 0;
-    cards.forEach(function (card) {
-      var inst = actionCardInstances.get(card);
-      if (!inst) return;
-      var basePrice = parseFloat(card.dataset.basePrice) || 0;
-      var selected = inst.getSelected();
-      var extra = selected.reduce(function (sum, id) {
-        var item = inst.catalog.find(function (i) { return i.id === id; });
-        return sum + (item ? item.preco : 0);
-      }, 0);
-      total += basePrice + extra;
-    });
-    if (orderSummary && orderSummary.classList.contains('order-summary-mobile')) {
-      document.querySelectorAll('.footer-price-amount').forEach(function (el) { el.innerHTML = '<span class="footer-price-prefix">R$</span> ' + splitCentsHtml(total, 'footer-price-cents'); });
-    } else {
-      document.querySelectorAll('.total-amount').forEach(function (el) { el.innerHTML = splitCentsHtml(total, 'total-cents'); });
-    }
-  }
-
-  function actionCardAddonIconHtml(item, extraClass) {
+  function actionCardAddonIconHtml(item) {
     if (item.icone && item.icone.kind === 'img') return '<img src="' + item.icone.src + '" alt="">';
     if (item.icone && item.icone.kind === 'mdn' && item.icone.class) return '<i class="' + item.icone.class + '"></i>';
     return '';
   }
 
-  function initActionCard(root, product) {
-    var catalog = product.adicionais.map(function (a) {
-      return { id: a.nome, name: a.nome, preco: a.preco, icone: a.icone, boxed: a.boxed };
+  // ===== Adicionais do PEDIDO (teste 2026-10-27) =====
+  // Fonte: adicionais-teste.js (lista do time). Cada adicional é atrelado a
+  // UMA categoria principal (Banda Larga/internet, TV ou Celular) e só
+  // aparece se o carrinho tiver um produto dessa categoria.
+  //
+  // FAMÍLIA x OPÇÃO: um card na tela = uma FAMÍLIA (Wi-Fi Mesh, HBO Max,
+  // Netflix…); cada família tem 1+ OPÇÕES (as linhas da lista do time) que
+  // variam em até 3 eixos — quantidade (stepper), variante (com/sem anúncios,
+  // padrão/premium…) e periodicidade (mensal/anual). O estado guardado
+  // continua sendo o NOME da opção, então sessionStorage/pedido salvo não
+  // mudam de formato. Quando a planilha trouxer essas colunas, só a origem
+  // dos dados muda (ADICIONAIS_TESTE).
+  var ADDON_ICON_BASE = { kind: 'mdn', class: 'mdn-Icon-pacote-adicional' };
+  // false = cada linha da lista do time vira UM card (sem seletores de
+  // quantidade/variante/periodicidade). true = agrupa por "familia" com
+  // seletores (versão anterior; continua no código para estudo futuro).
+  var ADDON_GROUPED = false;
+
+  // Textos do "O que é?" — vêm de adicionais-teste.js (provisórios).
+  var ADDON_DESCRIPTIONS = window.ADICIONAIS_TESTE_DESCRICOES || {};
+  var ADDON_UNITS = { 'wi-fi mesh': ['extensor', 'extensores'], 'ponto ultra': ['ponto', 'pontos'] };
+  // Ordem de prioridade dos eixos: ao mudar um eixo, os de MENOR prioridade
+  // (à direita) se ajustam sozinhos; os de maior prioridade nunca mudam.
+  var ADDON_DIM_ORDER = ['qtd', 'variante', 'periodo'];
+
+  function buildAddonPool(prods) {
+    var cats = [];
+    prods.forEach(function (p) { if (cats.indexOf(p.categoria) === -1) cats.push(p.categoria); });
+    var byId = {}, options = [], seq = 0;
+    (window.ADICIONAIS_TESTE || []).forEach(function (a) {
+      // "cat" pode ser uma categoria ('tv') ou uma lista (['internet','tv'], p/ streamings
+      // vinculados a mais de um produto principal): aparece se QUALQUER uma estiver no carrinho.
+      var acats = Array.isArray(a.cat) ? a.cat : [a.cat];
+      if (!acats.some(function (c) { return cats.indexOf(c) !== -1; }) || byId[a.nome]) return;
+      // Regra: no máximo 3 pontos adicionais de TV por cliente — some quem passaria disso.
+      if (PONTOS_ADICIONAIS && a.familia === 'Ponto Adicional' && a.qtd > MAX_PONTOS_TV - PONTOS_ADICIONAIS.qtd) return;
+      var o = { id: a.nome, name: a.nome, preco: a.preco,
+        icone: a.icone || ADDON_ICON_BASE, boxed: !a.icone,
+        cats: acats, universal: acats.length > 1, sugestao: a.sugestao || null, seq: seq++,
+        familia: ADDON_GROUPED ? (a.familia || a.nome) : a.nome, grupo: a.familia || a.nome,
+        qtd: a.qtd || null, variante: a.variante || null,
+        periodo: a.periodo || 'mensal', descricao: a.descricao || null,
+        precoDe: a.precoDe || null, sufixo: a.sufixo || '/mês', nota: a.nota || null,
+        promo: a.promoMeses ? { meses: a.promoMeses, apos: a.promoApos } : null };
+      byId[a.nome] = o; options.push(o);
     });
 
-    var els = {
-      selectedList: root.querySelector('[data-role="selected-list"]'),
-      toggle: root.querySelector('[data-role="toggle"]'),
-      toggleText: root.querySelector('[data-role="toggle-text"]'),
-      addlist: root.querySelector('[data-role="addlist"]'),
-      addlistItems: root.querySelector('[data-role="addlist-items"]'),
-      vermais: root.querySelector('[data-role="vermais"]'),
-    };
-
-    var savedSelected = loadAdicionaisState()[product.id];
-    var initialSelected = Array.isArray(savedSelected)
-      ? savedSelected.filter(function (id) { return catalog.some(function (i) { return i.id === id; }); })
-      : [];
-    var state = { expanded: false, selected: initialSelected, visibleCount: ACTION_CARD_PAGE_SIZE };
-
-    function persistSelected() {
-      var s = loadAdicionaisState();
-      if (state.selected.length) { s[product.id] = state.selected.slice(); } else { delete s[product.id]; }
-      saveAdicionaisState(s);
-    }
-    actionCardInstances.set(root, { getSelected: function () { return state.selected; }, catalog: catalog, product: product });
-
-    function iconEl(item, extraClass) {
-      var wrap = document.createElement('div');
-      wrap.className = extraClass + (item.boxed ? ' boxed' : '');
-      wrap.innerHTML = actionCardAddonIconHtml(item);
-      return wrap;
-    }
-
-    function renderSelectedItem(item) {
-      var row = document.createElement('div');
-      row.className = 'action-card-selected-item';
-      row.appendChild(iconEl(item, 'action-card-selected-icon'));
-      var text = document.createElement('div');
-      text.className = 'action-card-selected-text';
-      text.innerHTML = '<p class="action-card-selected-name">' + item.name + '</p><p class="action-card-selected-price">R$ ' + formatBRL(item.preco) + ' / mês</p>';
-      row.appendChild(text);
-      var del = document.createElement('button');
-      del.type = 'button';
-      del.className = 'action-card-selected-delete';
-      del.setAttribute('aria-label', 'Remover ' + item.name);
-      del.innerHTML = '<img src="assets/action-card/lixeira.svg" alt="">';
-      del.addEventListener('click', function () {
-        state.selected = state.selected.filter(function (id) { return id !== item.id; });
-        persistSelected();
-        render();
+    // Agrupa opções em famílias (1 card por família).
+    var famMap = {}, families = [];
+    options.forEach(function (o) {
+      var key = o.familia.toLowerCase();
+      var f = famMap[key];
+      if (!f) {
+        f = famMap[key] = { id: key, nomeBase: o.familia, options: [], cats: o.cats, universal: o.universal,
+          sugestao: null, seq: o.seq, icone: o.icone, boxed: o.boxed, descricao: null };
+        families.push(f);
+      }
+      o.fam = f;
+      f.options.push(o);
+      if (o.sugestao && (!f.sugestao || o.sugestao < f.sugestao)) f.sugestao = o.sugestao;
+      if (o.descricao && !f.descricao) f.descricao = o.descricao;
+    });
+    families.forEach(function (f) {
+      f.nome = f.options.length > 1 ? f.nomeBase : f.options[0].name;
+      f.descricao = f.descricao || ADDON_DESCRIPTIONS[f.options[0].grupo.toLowerCase()] || null;
+      f.unit = ADDON_UNITS[f.id] || null;
+      // Ordena as opções: quantidade, depois mensal antes de anual, depois a ordem da lista.
+      f.options.sort(function (x, y) {
+        return ((x.qtd || 0) - (y.qtd || 0)) || ((x.periodo === 'anual') - (y.periodo === 'anual')) || (x.seq - y.seq);
       });
-      row.appendChild(del);
-      return row;
-    }
+      // Eixos que realmente variam dentro da família.
+      f.dims = {};
+      ADDON_DIM_ORDER.forEach(function (dim) {
+        var vals = [];
+        f.options.forEach(function (o) { if (o[dim] != null && vals.indexOf(o[dim]) === -1) vals.push(o[dim]); });
+        if (vals.length > 1) f.dims[dim] = vals;
+      });
+      f.hasControls = Object.keys(f.dims).length > 0;
+    });
+    return { cats: cats, byId: byId, list: options, families: families };
+  }
 
-    function renderAddlistItem(item) {
-      var row = document.createElement('div');
-      row.className = 'action-card-addlist-item';
-      var left = document.createElement('div');
-      left.className = 'action-card-addlist-item-left';
-      left.appendChild(iconEl(item, 'action-card-addlist-icon'));
-      var text = document.createElement('div');
-      text.className = 'action-card-addlist-text';
-      text.innerHTML = '<p class="action-card-addlist-name">' + item.name + '</p><p class="action-card-addlist-price">R$ ' + formatBRL(item.preco) + ' / mês</p>';
-      left.appendChild(text);
-      row.appendChild(left);
+  // 3 sugestões em rodízio entre as categorias do carrinho — com Internet + TV
+  // vem Internet, TV, Internet…
+  // Dentro do grupo: coluna Sugestão (1..n), senão ordem da planilha.
+  function orderAddons(pool) {
+    var buckets = pool.cats.map(function (c) { return { key: c, items: [] }; });
+    buckets.push({ key: 'universal', items: [] });   // vinculados a mais de uma categoria
+    pool.families.forEach(function (it) {
+      var key = it.universal ? 'universal' : it.cats.filter(function (c) { return pool.cats.indexOf(c) !== -1; })[0];
+      buckets.filter(function (b) { return b.key === key; })[0].items.push(it);
+    });
+    buckets.forEach(function (b) {
+      b.items.sort(function (x, y) { return ((x.sugestao || 999) - (y.sugestao || 999)) || (x.seq - y.seq); });
+    });
+    var suggested = [], i = 0, progressed = true;
+    while (suggested.length < ADDONS_SUGGESTED_COUNT && progressed) {
+      progressed = false;
+      buckets.forEach(function (b) {
+        if (suggested.length < ADDONS_SUGGESTED_COUNT && b.items[i]) { suggested.push(b.items[i]); progressed = true; }
+      });
+      i++;
+    }
+    // Lista completa ("Ver todos"): ordem da lista do time, mas com as opções do
+    // MESMO produto juntas e em sequência (2, 3, 4 extensores…).
+    var groupSeq = {};
+    pool.families.forEach(function (f) {
+      var g = f.options[0].grupo;
+      if (groupSeq[g] === undefined || f.seq < groupSeq[g]) groupSeq[g] = f.seq;
+    });
+    var all = pool.families.slice().sort(function (x, y) {
+      return (groupSeq[x.options[0].grupo] - groupSeq[y.options[0].grupo]) || (x.seq - y.seq);
+    });
+    return { suggested: suggested, ordered: all, buckets: buckets };
+  }
+
+  var ADDON_POOL = buildAddonPool(products);
+  var ADDON_ORDER = orderAddons(ADDON_POOL);
+  // choice: opção exibida por família enquanto ainda não foi adicionada.
+  var addonState = { selected: [], notice: [], choice: {}, info: {}, modalFilter: 'todos', modalQuery: '' };
+
+  // Carrega o que estava salvo (formato legado { produtoId: [nomes] } —
+  // vitrine/config-movel ainda leem assim) e descarta o que ficou sem produto
+  // compatível no carrinho (e opções repetidas da mesma família).
+  (function loadAddonSelection() {
+    var saved = loadAdicionaisState(), seen = {}, famSeen = {};
+    Object.keys(saved).forEach(function (pid) {
+      if (!Array.isArray(saved[pid])) return;
+      saved[pid].forEach(function (n) {
+        var o = ADDON_POOL.byId[n];
+        if (o && !seen[n] && !famSeen[o.grupo]) { seen[n] = true; famSeen[o.grupo] = true; addonState.selected.push(n); }
+      });
+    });
+    try {
+      var aviso = JSON.parse(sessionStorage.getItem('addonsAviso'));
+      if (Array.isArray(aviso) && aviso.length) addonState.notice = aviso;
+      sessionStorage.removeItem('addonsAviso');
+    } catch (e) {}
+  })();
+
+  // Salva no formato legado atribuindo cada adicional a um produto "dono"
+  // (um que o liste na planilha, senão o primeiro compatível do carrinho).
+  function persistAddons() {
+    var legacy = {};
+    addonState.selected.forEach(function (id) {
+      var it = ADDON_POOL.byId[id]; if (!it) return;
+      var owner = products.filter(function (p) {
+        return it.cats.indexOf(p.categoria) !== -1 && (p.adicionais || []).some(function (a) { return a.nome === id; });
+      })[0] || products.filter(function (p) { return it.cats.indexOf(p.categoria) !== -1; })[0];
+      if (!owner) return;
+      (legacy[owner.id] = legacy[owner.id] || []).push(id);
+    });
+    saveAdicionaisState(legacy);
+  }
+
+  function famSelectedOption(fam) {
+    return fam.options.filter(function (o) { return addonState.selected.indexOf(o.id) !== -1; })[0] || null;
+  }
+  function famCurrentOption(fam) {
+    var sel = famSelectedOption(fam);
+    if (sel) return sel;
+    var c = addonState.choice[fam.id];
+    return (c && ADDON_POOL.byId[c]) || fam.options[0];
+  }
+  // Opções do MESMO produto (mesmo "grupo" na lista do time: 2/3/4 extensores,
+  // mensal/anual, com/sem anúncios…) são excludentes: escolher uma tira a outra.
+  function addonGroupMates(opt) {
+    return ADDON_POOL.list.filter(function (o) { return o.grupo === opt.grupo && o !== opt; });
+  }
+  function addonMateSelected(opt) {
+    return addonGroupMates(opt).filter(function (o) { return addonState.selected.indexOf(o.id) !== -1; })[0] || null;
+  }
+  function toggleFamily(fam) {
+    var sel = famSelectedOption(fam);
+    if (sel) addonState.selected.splice(addonState.selected.indexOf(sel.id), 1);
+    else {
+      var opt = famCurrentOption(fam);
+      addonGroupMates(opt).forEach(function (m) {
+        var i = addonState.selected.indexOf(m.id);
+        if (i !== -1) addonState.selected.splice(i, 1);
+      });
+      addonState.selected.push(opt.id);
+    }
+    persistAddons();
+    renderAddons();
+  }
+  function removeAddonOption(id) {
+    var i = addonState.selected.indexOf(id);
+    if (i !== -1) addonState.selected.splice(i, 1);
+    persistAddons();
+    renderAddons();
+  }
+  // Troca a opção da família (stepper/segmentado). Se já estava adicionada,
+  // a opção nova substitui a antiga no pedido e o preço atualiza na hora.
+  function chooseFamilyOption(fam, opt) {
+    addonState.choice[fam.id] = opt.id;
+    var sel = famSelectedOption(fam);
+    if (sel) { addonState.selected[addonState.selected.indexOf(sel.id)] = opt.id; persistAddons(); }
+    renderAddons();
+  }
+  // Opções que existem para (dim = value) mantendo os eixos de MAIOR prioridade
+  // como estão. Vazio = combinação inexistente (botão fica desabilitado).
+  function famDimCandidates(fam, dim, value) {
+    var cur = famCurrentOption(fam);
+    var higher = ADDON_DIM_ORDER.slice(0, ADDON_DIM_ORDER.indexOf(dim)).filter(function (d) { return fam.dims[d]; });
+    return fam.options.filter(function (o) {
+      return o[dim] === value && higher.every(function (d) { return o[d] === cur[d]; });
+    });
+  }
+  function setFamilyDim(fam, dim, value) {
+    var cand = famDimCandidates(fam, dim, value);
+    if (!cand.length) return;
+    var cur = famCurrentOption(fam);
+    var lower = ADDON_DIM_ORDER.slice(ADDON_DIM_ORDER.indexOf(dim) + 1).filter(function (d) { return fam.dims[d]; });
+    var best = cand[0], bestScore = -1;
+    cand.forEach(function (o) {
+      var sc = lower.filter(function (d) { return o[d] === cur[d]; }).length;
+      if (sc > bestScore) { bestScore = sc; best = o; }
+    });
+    chooseFamilyOption(fam, best);
+  }
+
+  function addonIsAnnual(o) { return o.periodo === 'anual'; }
+
+  // ===== Preço promocional por N meses ("De R$ 30 por R$ 0 · Após 3 meses, R$ 30/mês") =====
+  // Cada item do carrinho tem preço atual (preco) e, opcionalmente, promo {meses, apos}:
+  // vale "preco" por `meses` meses e depois passa a "apos". cartPhases() agrupa os itens
+  // por prazo e devolve o total de cada fase — é a única regra, usada pelo total, pelo
+  // texto "Após N meses" e pelas linhas de taxas (desktop e mobile).
+  function promoAfterText(meses, apos, spaced) {
+    return 'Após ' + meses + (meses === 1 ? ' mês' : ' meses') + ', R$' + (spaced ? ' ' : '') + formatBRL(apos) + '/mês';
+  }
+  function ordinalMes(n) { return n + 'º mês'; }
+  function cartPhases(items) {
+    var now = 0, regular = 0, gross = 0, bounds = [];
+    items.forEach(function (it) {
+      now += it.preco;
+      regular += it.promo ? it.promo.apos : it.preco;
+      if (!it.desconto) gross += it.promo ? it.promo.apos : it.preco;   // sem os descontos de combinação
+      if (it.promo && bounds.indexOf(it.promo.meses) === -1) bounds.push(it.promo.meses);
+    });
+    bounds.sort(function (a, b) { return a - b; });
+    var phases = bounds.map(function (b) {
+      var t = 0;
+      items.forEach(function (it) { t += (it.promo && it.promo.meses <= b) ? it.promo.apos : it.preco; });
+      return { meses: b, total: Math.round(t * 100) / 100 };
+    });
+    return { now: Math.round(now * 100) / 100, regular: Math.round(regular * 100) / 100, gross: Math.round(gross * 100) / 100, phases: phases };
+  }
+  // Linhas "Valor do 1º ao 3º mês" / "Valor a partir do 4º mês" (a nova fase começa no mês seguinte).
+  function promoFeeRows(ph) {
+    var rows = [], prev = 0, cur = ph.now;
+    ph.phases.forEach(function (p) {
+      var from = prev + 1;
+      rows.push([from === p.meses ? 'Valor no ' + from + 'º mês' : 'Valor do ' + from + 'º ao ' + p.meses + 'º mês', cur]);
+      prev = p.meses; cur = p.total;
+    });
+    if (ph.phases.length) rows.push(['Valor a partir do ' + (prev + 1) + 'º mês', cur]);
+    return rows;
+  }
+  function pontosAtivos() { return !!PONTOS_ADICIONAIS && products.some(function (p) { return p.categoria === 'tv'; }); }
+  function cartItems() {
+    var items = [];
+    document.querySelectorAll('.order-summary-desktop [data-action-card]').forEach(function (card) {
+      items.push({ preco: parseFloat(card.dataset.basePrice) || 0, promo: null });
+    });
+    addonState.selected.forEach(function (id) { var o = ADDON_POOL.byId[id]; items.push({ preco: o.preco, promo: o.promo || null }); });
+    if (pontosAtivos()) items.push({ preco: PONTOS_ADICIONAIS.valorNovo, promo: null });
+    // Desconto por combinação com a posse: abate do total (valor negativo, em todas as fases).
+    if (bundleDiscount && bundleDiscount.linhas) items.push({ preco: -bundleDiscount.total, promo: null, desconto: true });
+    return items;
+  }
+  function renderPromoCart(ph) {
+    var promo = ph.phases.length > 0;
+    var rows = promoFeeRows(ph);
+    document.querySelectorAll('[data-role="promo-rows"]').forEach(function (box) {
+      var mobile = box.hasAttribute('data-mobile');
+      box.innerHTML = '';
+      rows.forEach(function (r) {
+        var row = document.createElement('div');
+        row.className = mobile ? 'footer-taxa-row' : 'order-detail-row';
+        row.innerHTML = '<' + (mobile ? 'p' : 'span') + ' class="' + (mobile ? 'footer-taxa-label' : 'order-detail-label') + '">' + r[0] + '</' + (mobile ? 'p' : 'span') + '>' +
+          '<' + (mobile ? 'p' : 'span') + ' class="' + (mobile ? 'footer-taxa-value' : 'order-detail-value') + '">R$ ' + formatBRL(r[1]) + '/mês</' + (mobile ? 'p' : 'span') + '>';
+        box.appendChild(row);
+      });
+    });
+    // "De R$ X por:" acima do total + "Após N meses, R$ Y/mês" no lugar do "ajustado à sua fatura".
+    document.querySelectorAll('[data-role="total-was"]').forEach(function (el) {
+      var cheaper = ph.gross > ph.now;   // "De" (sem descontos) só quando o total de hoje ficou mais barato
+      el.hidden = !cheaper;
+      el.innerHTML = cheaper ? 'De <s>R$ ' + formatBRL(ph.gross) + '</s> por:' : '';
+    });
+    document.querySelectorAll('.order-adjusted, .footer-adjusted').forEach(function (el) {
+      if (!el.hasAttribute('data-default')) el.setAttribute('data-default', el.textContent);
+      el.innerHTML = promo ? ph.phases.map(function (p) { return promoAfterText(p.meses, p.total, true); }).join('<br>') : el.getAttribute('data-default');
+    });
+  }
+  function syncOrderTotal() {
+    // Anual = valor mensal (R$ 10 mais barato que o mensal): entra no total mensal.
+    // Total = preço de hoje (promocional); as fases futuras saem de cartPhases().
+    var ph = cartPhases(cartItems());
+    var total = ph.now;
+    renderPromoCart(ph);
+    document.querySelectorAll('.footer-price-amount').forEach(function (el) { el.innerHTML = '<span class="footer-price-prefix">R$</span> ' + splitCentsHtml(total, 'footer-price-cents'); });
+    document.querySelectorAll('.total-amount').forEach(function (el) { el.innerHTML = splitCentsHtml(total, 'total-cents'); });
+  }
+
+  function addonIconEl(item) {
+    var wrap = document.createElement('div');
+    wrap.className = 'addon-icon' + (item.boxed ? ' boxed' : '');
+    wrap.innerHTML = actionCardAddonIconHtml(item);
+    return wrap;
+  }
+  function addonUnitLabel(fam, qtd) {
+    return fam.unit ? (qtd === 1 ? fam.unit[0] : fam.unit[1]) : '';
+  }
+
+  // Card de 1 família: ícone + nome + etiqueta de escopo + "O que é?",
+  // preço em destaque (valor grande, periodicidade pequena), seletores
+  // (quantidade / variante / periodicidade) e o botão Adicionar.
+  function addonRowEl(fam) {
+    var cur = famCurrentOption(fam);
+    var added = !!famSelectedOption(fam);
+    var showScope = ADDON_POOL.cats.length > 1 && !fam.universal;   // vinculado a várias categorias: sem etiqueta
+    var annual = addonIsAnnual(cur);
+    var card = document.createElement('div');
+    card.className = 'addon-card' + (added ? ' is-added' : '') + ((fam.descricao && addonState.info[fam.id]) ? ' has-info' : '');
+
+    var head = document.createElement('div');
+    head.className = 'addon-head';
+    head.appendChild(addonIconEl(fam));
+    var text = document.createElement('div');
+    text.className = 'addon-text';
+    var nameRow = document.createElement('div');
+    nameRow.className = 'addon-name-row';
+    // Figma "Adicional / Card": nome ocupa a linha e o ⓘ (20px) fica na ponta direita da coluna de texto.
+    nameRow.innerHTML = '<span class="addon-name-wrap"><span class="addon-name">' + fam.nome + '</span></span>';
+    // Escopo (Para Internet / Para TV): linha pequena ACIMA do nome, só quando o
+    // carrinho tem mais de uma categoria — não disputa espaço com nome/ícone.
+    if (showScope) {
+      var eyebrow = document.createElement('span');
+      eyebrow.className = 'addon-eyebrow';
+      eyebrow.textContent = 'Para ' + (ADDON_CAT_LABEL[fam.cats[0]] || fam.cats[0]);
+      text.appendChild(eyebrow);
+    }
+    text.appendChild(nameRow);
+    var priceRow = document.createElement('div');
+    priceRow.className = 'addon-price-row';
+    // Mesmo formato de preço do card do produto: R$ menor, inteiro grande,
+    // ,centavos e /mês no tamanho do R$ (classes .price-* do site).
+    // Cobrança por prazo que acaba (promo.apos === 0, ex. Ponto Ultra): prefixo "3x de" em vez da nota "Após N meses".
+    var parcelado = !!(cur.promo && cur.promo.apos === 0);
+    priceRow.innerHTML = (cur.precoDe ? '<p class="action-card-price-was addon-price-was">De <s>R$ ' + formatBRL(cur.precoDe) + '</s> por:</p>' : (parcelado ? '<p class="action-card-price-was addon-price-was">' + cur.promo.meses + 'x de</p>' : '')) +
+      '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(cur.preco) + '<span class="price-suffix">' + (cur.sufixo || '/mês') + '</span></div>' +
+      ((cur.promo && !parcelado) ? '<p class="addon-price-note">' + promoAfterText(cur.promo.meses, cur.promo.apos, false) + '</p>' : (cur.nota ? '<p class="addon-price-note">' + cur.nota + '</p>' : ''));
+    text.appendChild(priceRow);
+    if (fam.descricao) {
+      var open = !!addonState.info[fam.id];
+      var info = document.createElement('button');
+      info.type = 'button';
+      info.className = 'addon-info-btn';
+      info.setAttribute('aria-expanded', open ? 'true' : 'false');
+      info.setAttribute('aria-label', 'O que é ' + fam.nome + '?');
+      info.innerHTML = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.75" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7.25" y="7" width="1.5" height="4.5" rx=".75" fill="currentColor"/><circle cx="8" cy="4.75" r="1" fill="currentColor"/></svg>';
+      info.addEventListener('click', function () { addonState.info[fam.id] = !open; renderAddons(); });
+      nameRow.appendChild(info);
+    }
+    head.appendChild(text);
+
+    function addButton() {
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'btn-add';
-      btn.textContent = 'Adicionar';
-      btn.addEventListener('click', function () {
-        if (state.selected.indexOf(item.id) === -1) state.selected.push(item.id);
-        persistSelected();
-        render();
-      });
-      row.appendChild(btn);
-      return row;
+      btn.className = added ? 'btn-added' : 'btn-add';
+      btn.setAttribute('aria-pressed', added ? 'true' : 'false');
+      btn.setAttribute('aria-label', (added ? 'Remover ' : 'Adicionar ') + cur.name);
+      btn.textContent = added ? 'Adicionado' : 'Adicionar';
+      btn.addEventListener('click', function () { toggleFamily(fam); });
+      return btn;
+    }
+    if (!fam.hasControls) head.appendChild(addButton());
+    card.appendChild(head);
+
+    if (fam.descricao && addonState.info[fam.id]) {
+      var panel = document.createElement('p');
+      panel.className = 'addon-info-panel';
+      panel.textContent = 'O que é? ' + fam.descricao;
+      card.appendChild(panel);
     }
 
-    function render() {
-      els.selectedList.innerHTML = '';
-      state.selected.forEach(function (id) {
-        var item = catalog.find(function (i) { return i.id === id; });
-        if (item) els.selectedList.appendChild(renderSelectedItem(item));
-      });
-      els.selectedList.hidden = state.selected.length === 0;
-
-      // Produtos sem adicionais (ex.: planos de Celular hoje, ver
-      // Adicionais_Checkout na planilha) não renderizam a UI de "Incluir
-      // adicionais" — els.toggle/addlist/vermais ficam null nesse caso.
-      if (els.toggle) {
-        els.toggleText.textContent = state.expanded ? 'Ocultar adicionais' : 'Incluir adicionais';
-        els.toggle.classList.toggle('open', state.expanded);
-
-        els.addlist.hidden = !state.expanded;
-        if (state.expanded) {
-          var available = catalog.filter(function (i) { return state.selected.indexOf(i.id) === -1; });
-          var visible = available.slice(0, state.visibleCount);
-          els.addlistItems.innerHTML = '';
-          visible.forEach(function (item) { els.addlistItems.appendChild(renderAddlistItem(item)); });
-          els.vermais.hidden = visible.length >= available.length;
-        }
+    if (fam.hasControls) {
+      var controls = document.createElement('div');
+      controls.className = 'addon-controls';
+      var left = document.createElement('div');
+      left.className = 'addon-selectors';
+      if (fam.dims.qtd) {
+        var vals = fam.dims.qtd, idx = vals.indexOf(cur.qtd);
+        var st = document.createElement('div');
+        st.className = 'addon-stepper';
+        var minus = document.createElement('button');
+        minus.type = 'button'; minus.textContent = '−'; minus.disabled = idx <= 0;
+        minus.setAttribute('aria-label', 'Diminuir quantidade');
+        minus.addEventListener('click', function () { setFamilyDim(fam, 'qtd', vals[idx - 1]); });
+        var val = document.createElement('span');
+        val.className = 'addon-stepper-value';
+        val.textContent = cur.qtd + ' ' + addonUnitLabel(fam, cur.qtd);
+        var plus = document.createElement('button');
+        plus.type = 'button'; plus.textContent = '+'; plus.disabled = idx >= vals.length - 1;
+        plus.setAttribute('aria-label', 'Aumentar quantidade');
+        plus.addEventListener('click', function () { setFamilyDim(fam, 'qtd', vals[idx + 1]); });
+        st.appendChild(minus); st.appendChild(val); st.appendChild(plus);
+        left.appendChild(st);
       }
-
-      var hasSelected = state.selected.length > 0;
-      root.dataset.state = (state.expanded ? 'expanded' : 'collapsed') + '-' + (hasSelected ? 'selected' : 'default');
-
-      syncOrderTotal(root);
+      ['variante', 'periodo'].forEach(function (dim) {
+        if (!fam.dims[dim]) return;
+        var seg = document.createElement('div');
+        seg.className = 'addon-seg';
+        seg.setAttribute('role', 'group');
+        fam.dims[dim].forEach(function (v) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = cur[dim] === v ? 'active' : '';
+          b.setAttribute('aria-pressed', cur[dim] === v ? 'true' : 'false');
+          if (!famDimCandidates(fam, dim, v).length) b.disabled = true;
+          b.textContent = dim === 'periodo' ? (v === 'anual' ? 'Anual' : 'Mensal') : v;
+          b.addEventListener('click', function () { setFamilyDim(fam, dim, v); });
+          seg.appendChild(b);
+        });
+        left.appendChild(seg);
+      });
+      controls.appendChild(left);
+      controls.appendChild(addButton());
+      card.appendChild(controls);
     }
+    return card;
+  }
 
-    if (els.toggle) {
-      els.toggle.addEventListener('click', function () { state.expanded = !state.expanded; render(); });
-      els.vermais.addEventListener('click', function () { state.visibleCount += ACTION_CARD_PAGE_SIZE; render(); });
+  function renderAddonSummary(el) {
+    if (!addonState.selected.length) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    el.innerHTML = '';
+    var card = document.createElement('div');
+    card.className = 'addons-summary-card';
+    card.innerHTML = '<p class="addons-summary-title">Adicionais</p>';
+    var monthly = 0;
+    addonState.selected.forEach(function (id) {
+      var it = ADDON_POOL.byId[id];
+      var annual = addonIsAnnual(it);
+      monthly += it.preco;
+      var line = document.createElement('div');
+      line.className = 'addons-summary-line';
+      line.innerHTML = '<span class="addons-summary-line-name">+ ' + it.name + '</span><span class="addons-summary-line-price">R$ ' + formatBRL(it.preco) + '/mês' +
+        (it.promo ? '<small class="addons-summary-line-note">' + promoAfterText(it.promo.meses, it.promo.apos, false) + '</small>' : '') + '</span>';
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'addons-summary-remove';
+      del.setAttribute('aria-label', 'Remover ' + it.name);
+      del.innerHTML = '<img src="assets/action-card/lixeira.svg" alt="">';
+      del.addEventListener('click', function () { removeAddonOption(id); });
+      line.appendChild(del);
+      card.appendChild(line);
+    });
+    function totalRow(label, value, suffix) {
+      var tot = document.createElement('div');
+      tot.className = 'addons-summary-total';
+      tot.innerHTML = '<span>' + label + '</span><span>R$ ' + formatBRL(Math.round(value * 100) / 100) + suffix + '</span>';
+      card.appendChild(tot);
     }
+    if (monthly > 0) totalRow('Total mensal de adicionais', monthly, '/mês');
+    el.appendChild(card);
+  }
 
-    render();
+  function renderAddonSection(el) {
+    if (!ADDON_ORDER.ordered.length) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    el.innerHTML = '';
+    var block = document.createElement('div');
+    block.className = 'addons-block';
+    var head = document.createElement('div');
+    head.innerHTML = '<p class="addons-title">Turbine seu pedido</p>';
+    block.appendChild(head);
+    if (addonState.notice.length) {
+      var n = document.createElement('div');
+      n.className = 'addons-notice';
+      n.innerHTML = '<p>Removemos ' + addonState.notice.join(', ') + ' do pedido porque dependia do produto que você retirou.</p>';
+      var x = document.createElement('button');
+      x.type = 'button'; x.setAttribute('aria-label', 'Fechar aviso'); x.textContent = '×';
+      x.addEventListener('click', function () { addonState.notice = []; renderAddons(); });
+      n.appendChild(x);
+      block.appendChild(n);
+    }
+    var list = document.createElement('div');
+    list.className = 'addon-list';
+    // Só as 3 sugestões; o que foi adicionado além delas aparece apenas no
+    // grupo "Adicionais" do resumo (e dentro do "Ver todos").
+    var shown = ADDON_ORDER.suggested;
+    shown.forEach(function (f) { list.appendChild(addonRowEl(f)); });
+    block.appendChild(list);
+    if (ADDON_ORDER.ordered.length > ADDON_ORDER.suggested.length) {
+      var more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'addons-link';
+      more.textContent = 'Ver todos os adicionais (' + ADDON_ORDER.ordered.length + ')';
+      more.addEventListener('click', openAddonsModal);
+      block.appendChild(more);
+    }
+    el.appendChild(block);
+  }
+
+  // ----- "Ver todos": bottom sheet (mobile) / modal (desktop) -----
+  function addonsModalFilters() {
+    var f = [{ key: 'todos', label: 'Todos' }];
+    // Chip por categoria do carrinho; um adicional vinculado a várias categorias
+    // aparece em cada chip dele (it.cats.indexOf).
+    ADDON_POOL.cats.forEach(function (c) {
+      if (ADDON_ORDER.ordered.some(function (fam) { return fam.cats.indexOf(c) !== -1; })) f.push({ key: c, label: ADDON_CAT_LABEL[c] || c });
+    });
+    return f.length > 2 ? f : [];
+  }
+  function renderAddonsModal() {
+    var chips = document.getElementById('addonsModalChips');
+    var filters = addonsModalFilters();
+    chips.hidden = !filters.length;
+    chips.innerHTML = '';
+    filters.forEach(function (f) {
+      var c = document.createElement('button');
+      c.type = 'button';
+      c.className = 'addons-chip' + (addonState.modalFilter === f.key ? ' active' : '');
+      c.textContent = f.label;
+      c.addEventListener('click', function () { addonState.modalFilter = f.key; renderAddonsModal(); });
+      chips.appendChild(c);
+    });
+    var q = addonState.modalQuery.trim().toLowerCase();
+    var items = ADDON_ORDER.ordered.filter(function (it) {
+      var f = addonState.modalFilter;
+      var matchesFilter = f === 'todos' || it.cats.indexOf(f) !== -1;
+      return matchesFilter && (!q || it.options.some(function (o) { return o.name.toLowerCase().indexOf(q) !== -1; }) ||
+        it.nome.toLowerCase().indexOf(q) !== -1);
+    });
+    var list = document.getElementById('addonsModalList');
+    var prevScroll = list.scrollTop;
+    list.innerHTML = '';
+    if (!items.length) {
+      var empty = document.createElement('p');
+      empty.className = 'addons-modal-empty';
+      empty.textContent = 'Nenhum adicional encontrado.';
+      list.appendChild(empty);
+    }
+    var prevGrupo = null;
+    items.forEach(function (it) {
+      var el = addonRowEl(it), g = it.options[0].grupo;
+      if (g === prevGrupo) el.classList.add('addon-card--chain');   // mesmo produto: cards colados
+      prevGrupo = g;
+      list.appendChild(el);
+    });
+    list.scrollTop = prevScroll;
+    var n = addonState.selected.length;
+    document.getElementById('addonsModalDone').textContent = 'Continuar';   // Figma: sempre "Continuar"
+  }
+  function handleAddonsModalKeydown(e) { if (e.key === 'Escape') closeAddonsModal(); }
+  function openAddonsModal() {
+    addonState.modalFilter = 'todos';
+    addonState.modalQuery = '';
+    document.getElementById('addonsModalSearch').value = '';
+    renderAddonsModal();
+    document.getElementById('addonsModalOverlay').hidden = false;
+    document.addEventListener('keydown', handleAddonsModalKeydown);
+  }
+  function closeAddonsModal() {
+    document.getElementById('addonsModalOverlay').hidden = true;
+    document.removeEventListener('keydown', handleAddonsModalKeydown);
+  }
+
+  function renderAddons() {
+    document.querySelectorAll('[data-role="addons-summary"]').forEach(renderAddonSummary);
+    document.querySelectorAll('[data-role="addons-section"]').forEach(renderAddonSection);
+    if (!document.getElementById('addonsModalOverlay').hidden) renderAddonsModal();
+    syncOrderTotal();
+  }
+
+  // Linha dentro do card da nova TV: os pontos acompanham o plano, com valor atual → novo.
+  // Sem lixeira/botão (não há como remover); o texto explica a causa sem soar negativo.
+  function pontosAdicionaisHtml() {
+    var n = PONTOS_ADICIONAIS.qtd;
+    var nome = n + (n === 1 ? ' ponto adicional' : ' pontos adicionais');
+    // Card próprio, logo abaixo do da TV e com hierarquia menor (sem preço grande), pra não
+    // competir com o plano principal. Sem data-action-card: não entra nas contas por produto
+    // (o valor entra em cartItems/finalizarPedido). Texto do alerta provisório (Eve ajusta).
+    // Figma "Card pontos adicionais": tag branca com contorno escuro, caixa "Valor atual", item com ícone de
+    // pacote, divisória, alerta amarelo com ícone ⓘ e "Valor com novo plano" (preço 24px).
+    return '<div class="action-card action-card--pontos">' +
+      '<span class="action-card-tag action-card-tag--info">Acompanha seu novo plano de TV</span>' +
+      '<div class="action-card-current-plan"><p><strong>Valor atual:</strong> R$ ' + formatBRL(PONTOS_ADICIONAIS.valorAtual) + '/mês</p></div>' +
+      '<div class="action-card-product"><div class="action-card-product-name"><div class="action-card-icon"><i class="mdn-Icon-pacote-adicional"></i></div><p class="action-card-name">' + nome + '</p></div></div>' +
+      '<div class="action-card-divider"></div>' +
+      '<div class="mdn-Alert mdn-Alert--danger mdn-Alert--light mdn-is-open action-card-pontos-alert" role="status">' +
+        '<div class="mdn-Alert-content"><i class="mdn-Icon-circulo-exclamacao action-card-pontos-alert-icon"></i><p class="mdn-Text mdn-Text--contentSm">Você possui ' + nome + ' de TV e ' + (n === 1 ? 'ele será atualizado' : 'eles serão atualizados') + ' para acompanhar seu novo plano.</p></div>' +
+      '</div>' +
+      '<div class="action-card-price-row"><p class="action-card-price-label">Valor com novo plano</p>' +
+        '<div class="action-card-price"><div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(PONTOS_ADICIONAIS.valorNovo) + '<span class="price-suffix">/mês</span></div></div>' +
+      '</div>' +
+    '</div>';
   }
 
   function actionCardHtml(product) {
-    var hasAddons = product.adicionais.length > 0;
     var isOwned = isOwnedCategory(product.categoria);
     var tagText = isOwned ? 'Plano alterado' : 'Novo plano adicionado';
     // Quando é troca de plano dentro de uma categoria já possuída, mostra o
@@ -2184,7 +2900,6 @@
         '<div class="action-card-product-name"><div class="action-card-icon">' + iconHtml(product.icone) + '</div><p class="action-card-name">' + product.nome + '</p></div>' +
         '<img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal(\'' + product.id + '\')">' +
       '</div>' +
-      '<div class="action-card-selected-list" data-role="selected-list" hidden></div>' +
       '<div class="action-card-divider"></div>' +
       '<div class="action-card-price-row"><p class="action-card-price-label">' + (isOwned ? 'Valor do novo plano' : 'Valor do plano') + '</p>' +
         '<div class="action-card-price">' +
@@ -2192,22 +2907,23 @@
           '<div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(displayPrice) + '<span class="price-suffix">/mês</span></div>' +
         '</div>' +
       '</div>' +
-      (hasAddons ?
-        '<div class="action-card-link" data-role="toggle"><span data-role="toggle-text">Incluir adicionais</span><i class="mdn-Icon-baixo mdn-Icon--md action-card-toggle-icon" data-role="toggle-icon"></i></div>' +
-        '<div class="action-card-addlist" data-role="addlist" hidden><div class="action-card-addlist-items" data-role="addlist-items"></div><div class="action-card-vermais" data-role="vermais" hidden><span>Ver mais</span></div></div>'
-        : '') +
     '</div>';
   }
 
   function renderActionCards() {
     document.querySelectorAll('[data-role="action-cards-mount"]').forEach(function (mount) {
-      mount.innerHTML = products.map(actionCardHtml).join('');
+      mount.innerHTML = products.map(function (p) {
+        return actionCardHtml(p) + (PONTOS_ADICIONAIS && p.categoria === 'tv' ? pontosAdicionaisHtml() : '');
+      }).join('') +
+        '<div data-role="addons-summary" hidden></div><div data-role="addons-section" hidden></div>';
     });
     document.querySelectorAll('[data-action-card]').forEach(function (root, idx) {
       // Cada seção (mobile/desktop) repete os mesmos N produtos, na mesma
       // ordem — idx % products.length mapeia de volta pro produto certo.
-      initActionCard(root, products[idx % products.length]);
+      actionCardInstances.set(root, { product: products[idx % products.length] });
     });
+    persistAddons();   // limpa o que ficou sem produto compatível
+    renderAddons();
   }
 
   // ===== Upsell — oferece o produto de menor valor entre Celular/Banda
@@ -2247,7 +2963,7 @@
   // (se ela tiver uma, ver CATEGORY_DISCOUNTS — Internet nunca tem) sempre
   // se aplica quando exibido, sem precisar checar de novo aqui.
   function upsellCardHtml(product, rowActions) {
-    var desconto = CATEGORY_DISCOUNTS[product.categoria] || 0;
+    var desconto = 0;   // regra antiga por categoria saiu; o desconto agora é por combinação com a posse
     var precoFinal = desconto ? Math.round((product.preco - desconto) * 100) / 100 : product.preco;
     var info = CATEGORIA_INFO[product.categoria] || {};
     return '<div class="upsell-card">' +
@@ -2341,11 +3057,14 @@
       sessionStorage.removeItem('pedidoEmAndamento');
     }
 
-    var adicionaisState = loadAdicionaisState();
-    if (adicionaisState[idToRemove]) {
-      delete adicionaisState[idToRemove];
-      saveAdicionaisState(adicionaisState);
-    }
+    // Adicionais são do PEDIDO: só saem se ficarem sem produto compatível
+    // (ex.: ponto adicional sem nenhum produto de TV) — streamings ficam
+    // enquanto sobrar Internet ou TV. Os que saem viram aviso após o reload.
+    var remainingProducts = remaining.map(function (id) { return PRODUCT_CATALOG[id]; }).filter(Boolean);
+    var poolDepois = buildAddonPool(remainingProducts);
+    var perdidos = addonState.selected.filter(function (n) { return !poolDepois.byId[n]; });
+    if (!remaining.length) saveAdicionaisState({});
+    else if (perdidos.length) { try { sessionStorage.setItem('addonsAviso', JSON.stringify(perdidos)); } catch (e) {} }
 
     var ofertaId = sessionStorage.getItem('pedidoOfertaId');
     if (ofertaId && typeof OFERTAS_COMBINADAS !== 'undefined') {
@@ -2386,20 +3105,24 @@
       var basePrice = parseFloat(card.dataset.basePrice) || 0;
       var iconEl = card.querySelector('.action-card-icon i');
       var icon = iconEl ? iconEl.className : 'mdn-Icon-tv';
-      var selectedItems = inst.getSelected().map(function (id) {
-        return inst.catalog.find(function (i) { return i.id === id; });
-      }).filter(Boolean);
-      var extra = selectedItems.reduce(function (sum, item) { return sum + item.preco; }, 0);
-
-      // id/categoria (2026-09-28): antes o pedido salvo só tinha
-      // name/icon/price — o upsell da tela de conclusão (ver
+      // id/categoria (2026-09-28): o upsell da tela de conclusão (ver
       // [[upsell_conclusao]]) precisa saber a categoria de cada produto já
-      // comprado pra calcular quais categorias ainda faltam, sem precisar
-      // adivinhar pelo nome.
+      // comprado pra calcular quais categorias ainda faltam.
       orderProducts.push({ id: inst.product.id, categoria: inst.product.categoria, name: inst.product.nome, icon: icon, price: basePrice });
-      selectedItems.forEach(function (item) { addons.push({ name: item.name, price: item.preco }); });
-      total += basePrice + extra;
+      total += basePrice;
     });
+    // Adicionais são do pedido (lista simples nome/preço, mesmo formato de antes).
+    addonState.selected.forEach(function (id) {
+      var item = ADDON_POOL.byId[id];
+      addons.push({ name: item.name, price: item.preco, periodo: item.periodo, promo: item.promo || null });
+      total += item.preco;
+    });
+    if (pontosAtivos()) {
+      addons.push({ grupo: 'pontos', name: PONTOS_ADICIONAIS.qtd + (PONTOS_ADICIONAIS.qtd === 1 ? ' ponto adicional de TV' : ' pontos adicionais de TV'), price: PONTOS_ADICIONAIS.valorNovo, periodo: 'mensal' });
+      total += PONTOS_ADICIONAIS.valorNovo;
+    }
+    if (bundleDiscount && bundleDiscount.linhas) total -= bundleDiscount.total;   // desconto por combinação
+    total = Math.round(total * 100) / 100;
 
     var order = {
       products: orderProducts,
@@ -2410,6 +3133,7 @@
       hasPhysicalDelivery: hasPhysicalDelivery,
       total: total,
       addons: addons,
+      descontos: (bundleDiscount && bundleDiscount.linhas) ? bundleDiscount.linhas.map(function (l) { return { label: l.label, valor: l.valor }; }) : [],
     };
     try { sessionStorage.setItem('claroCheckoutOrder', JSON.stringify(order)); } catch (e) {}
 
@@ -2444,7 +3168,17 @@
     el.hidden = installType !== 'tecnico';
   });
 
-  if (bundleDiscount) {
+  if (bundleDiscount && bundleDiscount.linhas) {
+    // Combinação por posse: uma linha por produto que continua na posse (valor positivo em verde, como no Figma).
+    document.querySelectorAll('[data-role="combo-rows"]').forEach(function (box) {
+      var mobile = box.hasAttribute('data-mobile');
+      box.innerHTML = bundleDiscount.linhas.map(function (l) {
+        return mobile
+          ? '<div class="footer-taxa-row"><p class="footer-taxa-label">' + l.label + '</p><p class="footer-taxa-value combo-desconto-value">R$ ' + formatBRL(l.valor) + '/mês</p></div>'
+          : '<div class="order-detail-row"><span class="order-detail-label">' + l.label + '</span><span class="order-detail-value combo-desconto-value">R$ ' + formatBRL(l.valor) + '/mês</span></div>';
+      }).join('');
+    });
+  } else if (bundleDiscount) {
     document.querySelectorAll('[data-role="desconto-multi-row"]').forEach(function (row) {
       row.hidden = false;
       row.querySelector('[data-role="desconto-multi-value"]').textContent = '-R$ ' + formatBRL(bundleDiscount.total);

@@ -4916,48 +4916,8 @@ const POSSE_CONFIGS = {
     ],
     "produtosCarrossel": [],
     "exibirCombo": false
-  },
-  "vitrine-piloto": {
-    "id": "vitrine-piloto",
-    "label": "Vitrine Piloto",
-    "ordem": 7,
-    "categoriasPossui": [
-      "internet",
-      "celular",
-      "telefone"
-    ],
-    "categoriaAtual": {
-      "internet": "internet-350",
-      "celular": "celular-40gb"
-    },
-    "categoriaAtualValor": {
-      "telefone": 25.9
-    },
-    "ordemSecoes": [
-      "tv",
-      "internet",
-      "aparelhos",
-      "celular",
-      "acessorios",
-      "telefone"
-    ],
-    "ordemNavegacao": [
-      "internet",
-      "tv",
-      "celular",
-      "telefone",
-      "aparelhos",
-      "acessorios"
-    ],
-    "melhoresOfertas": [
-      "pos60gb-bundle",
-      "oferta-600mega-pos100gb",
-      "oferta-box",
-      "jbl-fone"
-    ],
-    "produtosCarrossel": [],
-    "exibirCombo": true
   }
+
 };
 const ADICIONAIS_NO_PRODUTO_PRINCIPAL = {
   "internet": [
