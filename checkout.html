@@ -123,6 +123,48 @@
   .service-card-name{font-size:16px;font-weight:500;color:var(--ink);margin:0;white-space:nowrap;}
   .service-card-desc{padding-left:40px;font-size:16px;font-weight:400;color:var(--ink);margin:8px 0 0;}
 
+  /* ===== Grade de canais (só produtos de TV) ===== */
+  .pdp-grade-card{
+    background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:16px;
+    display:flex;flex-direction:column;gap:32px;
+  }
+  .pdp-grade-row{
+    display:flex;align-items:center;justify-content:center;gap:8px;padding:0;height:24px;
+    background:none;border:none;cursor:pointer;width:100%;transition:opacity 0.2s cubic-bezier(0.2,0,0,1);
+  }
+  @media (hover:hover){.pdp-grade-row:hover{opacity:0.72;}}
+  .pdp-grade-row-text{font-size:16px;font-weight:500;color:var(--ink);}
+  .pdp-grade-row i{font-size:24px;line-height:1;color:var(--ink);transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .pdp-grade-row.open i{transform:rotate(180deg);}
+
+  .grade-search.mdn-Input--actionLeft{min-width:0;}
+  .grade-search .mdn-Input-action--left,
+  .grade-search [data-mdn-action="clear-field"]{display:flex;align-items:center;justify-content:center;}
+
+  .grade-accordion{display:flex;flex-direction:column;width:100%;border:1px solid var(--gray-line);border-radius:12px;overflow:hidden;}
+  .grade-category + .grade-category{border-top:1px solid var(--gray-line);}
+  .grade-category-header{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;padding:24px;
+    background:#fff;border:none;cursor:pointer;text-align:left;
+  }
+  .grade-category-name{font-size:16px;font-weight:500;color:var(--ink);}
+  .grade-category-icon{font-size:24px;line-height:1;color:var(--ink);flex-shrink:0;transition:transform 0.2s cubic-bezier(0.2,0,0,1);}
+  .grade-category.open .grade-category-icon{transform:rotate(180deg);}
+  .grade-category-content{display:none;grid-template-columns:repeat(2,1fr);gap:16px 8px;padding:0 16px 16px;background:#fff;}
+  .grade-category.open .grade-category-content{display:grid;}
+  @media (min-width:700px){.grade-category-content{grid-template-columns:repeat(auto-fill, minmax(180px,1fr));}}
+  .grade-channel{display:flex;align-items:center;gap:12px;min-width:0;}
+  .grade-channel[hidden]{display:none;}
+  .grade-channel-logo{
+    width:40px;height:40px;flex-shrink:0;border-radius:8px;border:1px solid var(--gray-line);
+    background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .grade-channel-logo img{width:100%;height:100%;object-fit:contain;padding:6px;}
+  .grade-channel-logo--fallback{background:var(--red-lightest);color:var(--red);font-size:12px;font-weight:700;}
+  .grade-channel-name{font-size:14px;font-weight:400;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .grade-empty{font-size:16px;color:var(--gray-dark);margin:0;text-align:center;padding:24px 0;}
+  /* No checkout a grade mora dentro de "Ver detalhes do produto": bloco branco igual ao "Incluso neste plano" */
+  .detalhes-grade{background:#fff;padding:34px 16px;}
   .detalhes-swiper-nav{display:flex;gap:16px;align-self:center;}
   .swiper-arrow{width:48px;height:48px;flex-shrink:0;border:none;border-radius:12px;background:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
   .swiper-arrow i{font-size:20px;color:#fff;line-height:1;}
@@ -665,6 +707,9 @@
   .services-carousel .service-card:nth-child(6){animation-delay:300ms;}
 
   .detalhes-content.open,.termos-content.open{animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
+  .grade-search:not([hidden]),
+  #gradeAccordion:not([hidden]){animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
+  .grade-category.open .grade-category-content{animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
   [data-role="desc-extra"]:not([hidden]){animation:content-fade 0.3s cubic-bezier(0,0,0.2,1);}
   .action-card-addlist:not([hidden]),.action-card-selected-list:not([hidden]){animation:fade-in 0.3s cubic-bezier(0,0,0.2,1);}
   .footer-expanded-info:not([hidden]){animation:fade-in 0.3s cubic-bezier(0,0,0.2,1);}
@@ -776,6 +821,32 @@
         <div class="detalhes-content">
 
           <div class="detalhes-description-group" data-role="desc-group"></div>
+
+      <!-- Grade de canais: só aparece quando há um produto de TV no pedido (mesma grade da página de detalhes) -->
+          <div class="detalhes-grade" id="gradeSection" hidden>
+            <div class="pdp-grade-card">
+              <div class="detalhes-heading">
+                <p class="detalhes-heading-title">Grade de canais</p>
+                <p class="detalhes-plan-subtitle">São mais de 120 canais para curtir o seu conteúdo favorito.</p>
+              </div>
+              <div class="mdn-Input mdn-Input--actionLeft grade-search" hidden>
+                <button type="button" class="mdn-Input-action mdn-Input-action--left" tabindex="-1">
+                  <em aria-hidden="true" class="mdn-Icon-busca mdn-Icon--md"></em>
+                </button>
+                <input type="text" id="gradeSearchInput" class="mdn-Input-field" data-mdn-type="search" autocomplete="off" value="">
+                <label for="gradeSearchInput" class="mdn-Input-label">Busque no plano</label>
+                <button type="button" class="mdn-Input-action" data-mdn-action="clear-field" style="display:none" onclick="clearGradeSearch()">
+                  <em aria-hidden="true" class="mdn-Icon-fechar mdn-Icon--md"></em>
+                </button>
+              </div>
+              <div class="grade-accordion" id="gradeAccordion" hidden></div>
+              <p class="grade-empty" id="gradeEmpty" hidden>Nenhum canal encontrado.</p>
+              <button type="button" class="pdp-grade-row" id="gradeToggleBtn" onclick="toggleGrade()">
+                <span class="pdp-grade-row-text" id="gradeToggleText">Ver grade completa</span>
+                <i class="mdn-Icon-baixo" id="gradeToggleIcon"></i>
+              </button>
+            </div>
+          </div>
 
           <div class="detalhes-plan" id="streamingsSection" hidden>
             <div class="detalhes-plan-inner">
@@ -2115,7 +2186,210 @@
 
   // ===== Toggles genéricos (Detalhes / Termos) =====
   var carouselNavRefreshers = [];
-  function toggleDetalhes(headerEl) {
+  // ===== Grade de canais (acordeão + busca) — compartilhada entre produtos de TV =====
+  const CHANNELS_DATA = [
+    { name: 'Canais abertos HD', items: [
+      { label: 'Globo HD', src: 'https://mondrian.claro.com.br/channels/default/globo.svg' },
+      { label: 'Band HD', src: 'https://mondrian.claro.com.br/channels/default/band.svg' },
+      { label: 'REDE TV! HD', src: 'https://mondrian.claro.com.br/channels/default/redetv!.svg' },
+      { label: 'SBT HD', src: 'https://mondrian.claro.com.br/channels/default/sbt.svg' },
+      { label: 'Cultura HD', src: 'https://mondrian.claro.com.br/channels/default/cultura.svg' },
+      { label: 'RECORD HD', src: 'https://mondrian.claro.com.br/channels/default/record-tv.svg' },
+      { label: 'TV Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/tv-brasil.svg' },
+      { label: 'Gazeta HD', src: 'https://mondrian.claro.com.br/channels/default/gazeta.svg' },
+    ]},
+    { name: 'Documentários', items: [
+      { label: 'Animal Planet HD', src: 'https://mondrian.claro.com.br/channels/default/animal-planet.svg' },
+      { label: 'Discovery HD', src: 'https://mondrian.claro.com.br/channels/default/discovery.svg' },
+      { label: 'Discovery Science HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-science.svg' },
+      { label: 'Discovery Theater HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-theater.svg' },
+      { label: 'Discovery Turbo HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-turbo.svg' },
+      { label: 'Discovery World HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-world.svg' },
+      { label: 'Futura HD', src: 'https://mondrian.claro.com.br/channels/default/futura.svg' },
+      { label: 'H2 HD', src: 'https://mondrian.claro.com.br/channels/default/history-2.svg' },
+      { label: 'The History Channel HD', src: 'https://mondrian.claro.com.br/channels/default/history-channel.svg' },
+      { label: 'Discovery ID HD', src: 'https://mondrian.claro.com.br/channels/default/investigacao-discovery.svg' },
+    ]},
+    { name: 'Entretenimento', items: [
+      { label: 'Polishop', src: 'https://mondrian.claro.com.br/channels/default/polishop.svg' },
+      { label: 'Modo Viagem HD', src: 'https://mondrian.claro.com.br/channels/default/modo-viagem.svg' },
+      { label: 'HGTV', src: 'https://mondrian.claro.com.br/channels/default/hgtv.svg' },
+      { label: 'BIS HD', src: 'https://mondrian.claro.com.br/channels/default/bis.svg' },
+      { label: 'MTV HD', src: 'https://mondrian.claro.com.br/channels/default/mtv.svg' },
+      { label: 'Play TV', src: 'https://mondrian.claro.com.br/channels/default/play-tv.svg' },
+      { label: 'Music Box Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/music-boxbrazil.svg' },
+      { label: "MTV's00", src: 'https://mondrian.claro.com.br/channels/default/mtv-00s.svg' },
+      { label: 'MTV Live HD', src: 'https://mondrian.claro.com.br/channels/default/mtv-live-hd.svg' },
+      { label: 'Trace Brazuca HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/trace-brasil.svg' },
+    ]},
+    { name: 'Esportes', items: [
+      { label: 'ESPN HD', src: 'https://mondrian.claro.com.br/channels/default/espn.svg' },
+      { label: 'ESPN 2 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-2.svg' },
+      { label: 'ESPN 3 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-3.svg' },
+      { label: 'ESPN 4 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-4.svg' },
+      { label: 'ESPN 5 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-5.svg' },
+      { label: 'ESPN 6 HD', src: 'https://mondrian.claro.com.br/channels/default/espn-6.svg' },
+      { label: 'Band Sports HD', src: 'https://mondrian.claro.com.br/channels/default/band-sports.svg' },
+      { label: 'SporTV 3 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-3.svg' },
+      { label: 'SporTV 2 HD', src: 'https://mondrian.claro.com.br/channels/default/sportv-2.svg' },
+      { label: 'SporTV HD', src: 'https://mondrian.claro.com.br/channels/default/sportv.svg' },
+    ]},
+    { name: 'Filmes', items: [
+      { label: 'Film&Arts HD', src: 'https://mondrian.claro.com.br/channels/default/film-e-arts.svg' },
+      { label: 'Canal Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/canal-brasil.svg' },
+      { label: 'TNT HD', src: 'https://mondrian.claro.com.br/channels/default/tnt.svg' },
+      { label: 'Megapix HD', src: 'https://mondrian.claro.com.br/channels/default/megapix.svg' },
+      { label: 'Space HD', src: 'https://mondrian.claro.com.br/channels/default/space.svg' },
+      { label: 'Cinemax HD', src: 'https://mondrian.claro.com.br/channels/default/cinemax.svg' },
+      { label: 'Studio Universal HD', src: 'https://mondrian.claro.com.br/channels/default/studio-universal.svg' },
+      { label: 'Paramount Network HD', src: 'https://mondrian.claro.com.br/channels/default/paramount-network.svg' },
+      { label: 'TCM', src: 'https://mondrian.claro.com.br/channels/default/tcm.svg' },
+      { label: 'HBO2', src: 'https://mondrian.claro.com.br/channels/default/hbo-2.svg' },
+    ]},
+    { name: 'Infantil', items: [
+      { label: 'Gloobinho HD', src: 'https://mondrian.claro.com.br/channels/default/gloobinho.svg' },
+      { label: 'Discovery Kids HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-kids.svg' },
+      { label: 'Gloob HD', src: 'https://mondrian.claro.com.br/channels/default/gloob.svg' },
+      { label: 'Nickelodeon HD', src: 'https://mondrian.claro.com.br/channels/default/nickelodeon.svg' },
+      { label: 'Cartoon Network HD', src: 'https://mondrian.claro.com.br/channels/default/cartoon-network.svg' },
+      { label: 'NICK Jr HD', src: 'https://mondrian.claro.com.br/channels/default/nick-jr.svg' },
+      { label: 'Cartoonito HD', src: 'https://mondrian.claro.com.br/channels/default/cartoonito.svg' },
+      { label: 'TV Rá Tim Bum HD', src: 'https://mondrian.claro.com.br/channels/default/tv-ra-tim-bum.svg' },
+      { label: 'DumDum HD', src: 'https://mondrian.claro.com.br/channels/default/dum-dum.svg' },
+    ]},
+    { name: 'Notícias', items: [
+      { label: 'GloboNews HD', src: 'https://mondrian.claro.com.br/channels/default/globonews.svg' },
+      { label: 'CNN Brasil HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil.svg' },
+      { label: 'Record News', src: 'https://mondrian.claro.com.br/channels/default/recordnews.svg' },
+      { label: 'Band News HD', src: 'https://mondrian.claro.com.br/channels/default/band-news.svg' },
+      { label: 'AgroMais HD', src: 'https://mondrian.claro.com.br/channels/default/agroplus.svg' },
+      { label: 'BBC World News', src: 'https://mondrian.claro.com.br/channels/default/bbc-world-news.svg' },
+      { label: 'JP News HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/jp-news-vertical.svg' },
+      { label: 'Times Exclusivo CNBC', src: 'https://mondrian.claro.com.br/channels/default/times-exclusivo-cnbc.svg' },
+      { label: 'CNN Brasil Money HD', src: 'https://mondrian.claro.com.br/channels/default/cnn-brasil-money.svg' },
+      { label: 'BM&C NEWS', src: 'https://mondrian.claro.com.br/channels/default/bmec-news.svg' },
+      { label: 'Canal UOL', src: 'https://mondrian.claro.com.br/channels/default/canal-uol.svg' },
+    ]},
+    { name: 'Mundo', items: [
+      { label: 'CNN Internacional', src: 'https://mondrian.claro.com.br/channels/default/cnn-internacional.svg' },
+      { label: 'Bloomberg TV', src: 'https://mondrian.claro.com.br/channels/default/bloomberg.svg' },
+      { label: 'RAI International', src: 'https://mondrian.claro.com.br/channels/default/rai-italia.svg' },
+      { label: 'TV5 Monde', src: 'https://mondrian.claro.com.br/channels/default/tv-5-monde.svg' },
+      { label: 'TVE International', src: 'https://mondrian.claro.com.br/channels/default/tve.svg' },
+      { label: 'DW-TV', src: 'https://mondrian.claro.com.br/channels/default/dw.svg' },
+      { label: 'France 24 HD', src: 'https://mondrian.claro.com.br/channels/default/france-24.svg' },
+      { label: 'Euro Channel', src: 'https://mondrian.claro.com.br/channels/default/euro-channel.svg' },
+    ]},
+    { name: 'Séries', items: [
+      { label: 'A&E HD', src: 'https://mondrian.claro.com.br/channels/default/aee.svg' },
+      { label: 'AMC HD', src: 'https://mondrian.claro.com.br/channels/default/amc.svg' },
+      { label: 'AXN HD', src: 'https://mondrian.claro.com.br/channels/default/axn.svg' },
+      { label: 'Comedy Central HD', src: 'https://mondrian.claro.com.br/channels/default/comedy-central.svg' },
+      { label: 'Lifetime HD', src: 'https://mondrian.claro.com.br/channels/default/lifetime.svg' },
+      { label: 'Sony HD', src: 'https://mondrian.claro.com.br/channels/default/sony.svg' },
+      { label: 'TBS HD', src: null },
+      { label: 'TNT Series HD', src: 'https://mondrian.claro.com.br/channels/default/tnt-series.svg' },
+      { label: 'TNT Novelas', src: 'https://mondrian.claro.com.br/channels/default/tnt-novelas.svg' },
+      { label: 'Universal TV HD', src: 'https://mondrian.claro.com.br/channels/default/universal-channel.svg' },
+    ]},
+    { name: 'Variedades', items: [
+      { label: 'Arte 1 HD', src: 'https://mondrian.claro.com.br/channels/default/arte1.svg' },
+      { label: 'Discovery Home Health HD', src: 'https://mondrian.claro.com.br/channels/default/discovery-home-and-health.svg' },
+      { label: 'E! HD', src: 'https://mondrian.claro.com.br/channels/default/e!.svg' },
+      { label: 'Fashion TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fashion-tv.svg' },
+      { label: 'Fish TV HD (Cortesia)', src: 'https://mondrian.claro.com.br/channels/default/fish-tv.svg' },
+      { label: 'Food Network HD', src: 'https://mondrian.claro.com.br/channels/default/food-network.svg' },
+      { label: 'GNT HD', src: 'https://mondrian.claro.com.br/channels/default/gnt.svg' },
+      { label: 'Like', src: null },
+      { label: 'Multishow HD', src: 'https://mondrian.claro.com.br/channels/default/multishow.svg' },
+      { label: 'OFF HD', src: 'https://mondrian.claro.com.br/channels/default/canal-off.svg' },
+    ]},
+  ];
+
+  function normalizeSearch(str) {
+    return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+
+  function renderGradeAccordion() {
+    const container = document.getElementById('gradeAccordion');
+    if (!container) return;
+    container.innerHTML = CHANNELS_DATA.map((cat, catIndex) => `
+      <div class="grade-category" data-category-index="${catIndex}">
+        <button type="button" class="grade-category-header" onclick="toggleGradeCategory(this)">
+          <span class="grade-category-name">${cat.name}</span>
+          <i class="mdn-Icon-baixo grade-category-icon"></i>
+        </button>
+        <div class="grade-category-content">
+          ${cat.items.map((ch, chIndex) => `
+            <div class="grade-channel" data-channel-index="${chIndex}" data-search="${normalizeSearch(ch.label)}">
+              ${ch.src
+                ? `<span class="grade-channel-logo"><img src="${ch.src}" alt="" loading="lazy"></span>`
+                : `<span class="grade-channel-logo grade-channel-logo--fallback">${ch.label.slice(0, 2).toUpperCase()}</span>`
+              }
+              <span class="grade-channel-name">${ch.label}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function toggleGradeCategory(headerEl) {
+    headerEl.closest('.grade-category').classList.toggle('open');
+  }
+
+  function toggleGrade() {
+    const search = document.querySelector('.grade-search');
+    const accordion = document.getElementById('gradeAccordion');
+    const btn = document.getElementById('gradeToggleBtn');
+    const text = document.getElementById('gradeToggleText');
+    const isOpen = btn.classList.toggle('open');
+    search.hidden = !isOpen;
+    accordion.hidden = !isOpen;
+    text.textContent = isOpen ? 'Ocultar grade' : 'Ver grade completa';
+    if (!isOpen) {
+      document.getElementById('gradeSearchInput').value = '';
+      filterGradeChannels('');
+      accordion.querySelectorAll('.grade-category.open').forEach(c => c.classList.remove('open'));
+    }
+  }
+
+  function filterGradeChannels(rawQuery) {
+    const query = normalizeSearch(rawQuery.trim());
+    const categories = document.querySelectorAll('#gradeAccordion .grade-category');
+    let totalMatches = 0;
+    categories.forEach(cat => {
+      let matchesInCategory = 0;
+      cat.querySelectorAll('.grade-channel').forEach(ch => {
+        const matches = !query || ch.dataset.search.includes(query);
+        ch.hidden = !matches;
+        if (matches) matchesInCategory++;
+      });
+      cat.hidden = query && matchesInCategory === 0;
+      cat.classList.toggle('open', !!query && matchesInCategory > 0);
+      totalMatches += matchesInCategory;
+    });
+    document.getElementById('gradeEmpty').hidden = !(query && totalMatches === 0);
+    const clearBtn = document.querySelector('.grade-search [data-mdn-action="clear-field"]');
+    if (clearBtn) clearBtn.style.display = rawQuery ? 'flex' : 'none';
+  }
+
+  function clearGradeSearch() {
+    const input = document.getElementById('gradeSearchInput');
+    input.value = '';
+    input.focus();
+    filterGradeChannels('');
+  }
+// Só mostra a grade se algum produto do pedido for de TV (CHANNELS_DATA é único
+  // pra todos os produtos de TV, não vem da planilha por produto).
+  if (products.some(function (p) { return p.categoria === 'tv'; })) {
+    document.getElementById('gradeSection').hidden = false;
+    renderGradeAccordion();
+    var gradeSearchInput = document.getElementById('gradeSearchInput');
+    if (gradeSearchInput) gradeSearchInput.addEventListener('input', function (e) { filterGradeChannels(e.target.value); });
+  }
+
+    function toggleDetalhes(headerEl) {
     var contentEl = headerEl.nextElementSibling;
     var isOpen = contentEl.classList.toggle('open');
     headerEl.classList.toggle('open', isOpen);
