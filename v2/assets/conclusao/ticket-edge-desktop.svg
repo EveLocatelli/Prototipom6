@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="438" height="33" viewBox="0 0 438 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 51268">
+<path id="Subtract" d="M438 4.78125C431.908 4.88272 427 9.85081 427 15.9678C427 22.0848 431.908 27.0528 438 27.1543V33H0V27.1543C0.0632305 27.1554 0.126948 27.1592 0.19043 27.1592C6.37031 27.159 11.3799 22.1482 11.3799 15.9678C11.3798 9.78746 6.37026 4.77756 0.19043 4.77734C0.12695 4.77734 0.0632289 4.7802 0 4.78125V0H438V4.78125Z" fill="white"/>
+<path id="divider" d="M24 16L414 16" stroke="#DBDBDB" stroke-width="2" stroke-dasharray="8 8"/>
+</g>
+</svg>
