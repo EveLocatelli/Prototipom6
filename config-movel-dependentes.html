@@ -116,7 +116,24 @@
   .cm-add i{font-size:24px;line-height:1;}
   .cm-add:active{background:var(--red-lightest);}
   @media (hover:hover){.cm-add:hover{background:var(--red-lightest);}}
+  .cm-contents{display:contents;}
+  .cm-box--tight{gap:8px;}
+  /* número que o cliente já tem (campo só leitura, 32% de opacidade como no Figma) */
+  .cm-readonly{display:flex;flex-direction:column;gap:4px;padding:7px 17px;background:#fff;border:1px solid var(--ink);border-radius:12px;opacity:0.32;min-height:46px;cursor:default;}
+  .cm-ro-label{font-size:12px;line-height:1;color:var(--ink);}
+  .cm-ro-value{font-size:16px;font-weight:500;line-height:1;color:var(--ink);}
+  /* avisos (Figma 13033:3330 erro · 13065:6607 aviso) */
+  .cm-alert{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#fffaad;border:1px solid #fb9c2d;border-radius:8px;}
+  .cm-alert--aviso{border-color:#b84d01;}
+  .cm-alert i{font-size:24px;line-height:1;color:#b84d01;flex-shrink:0;}
+  .cm-alert p{flex:1;min-width:0;margin:0;font-size:14px;line-height:1.3;color:#b84d01;}
+  .cm-alert p strong{font-weight:700;}
+  .cm-btn{display:flex;align-items:center;justify-content:center;width:100%;height:40px;padding:8px 24px;background:var(--red);color:#fff;border:none;border-radius:500px;font-size:16px;font-weight:500;line-height:1.3;cursor:pointer;transition:filter 0.2s cubic-bezier(0.2,0,0,1), transform 0.15s cubic-bezier(0.05,0.7,0.1,1);}
+  .cm-btn:active{transform:scale(0.98);}
+  @media (hover:hover){.cm-btn:hover{filter:brightness(0.92);}}
+  body.no-cart .mdn-Footer{padding-bottom:32px !important;}
   @media (min-width:600px){
+    .cm-btn{width:auto;min-width:320px;height:48px;align-self:center;}
     .cm-title{font-size:24px;}
     .cm-list--2{display:grid;grid-template-columns:1fr 1fr;gap:12px 8px;}
     .cm-list--2 > .cm-box{grid-column:1 / -1;}
@@ -252,6 +269,16 @@
   <div class="cm-col">
     <h1 class="cm-title">Seu novo plano móvel</h1>
 
+    <!-- Cliente que já tem número: não escolhe "novo/manter" nem chip (cenários "Já tem número", "Erro" e "Aviso") -->
+    <div class="cm-contents" data-role="numero-existente" hidden>
+      <div class="cm-sec-head"><i class="mdn-Icon-celular-5g" aria-hidden="true"></i><h2>Número de celular</h2></div>
+      <div class="cm-box cm-box--tight">
+        <p class="cm-box-hint">Seu número continua o mesmo, mas agora com tudo que o novo plano oferece.</p>
+        <div class="cm-readonly" role="textbox" aria-readonly="true" aria-disabled="true" aria-label="DDD + Celular: 11 99999-1234"><span class="cm-ro-label">DDD + Celular</span><span class="cm-ro-value">11 99999-1234</span></div>
+      </div>
+    </div>
+
+    <div class="cm-contents" data-role="bloco-novo">
     <div class="cm-sec-head"><i class="mdn-Icon-celular-5g" aria-hidden="true"></i><h2 id="cmNumeroTitulo">Qual número você quer usar?</h2></div>
     <div class="cm-list cm-list--2" role="radiogroup" aria-labelledby="cmNumeroTitulo">
       <label class="cm-opt" data-role="numero-novo">
@@ -326,6 +353,8 @@
       </div>
     </div>
 
+    </div>
+
     <!-- Linhas dependentes: só Pós-pago (regras em CENARIOS (script abaixo)); Controle não mostra esta seção -->
     <div class="cm-deps" data-role="deps" hidden>
       <div class="cm-divider"></div>
@@ -335,6 +364,13 @@
       </div>
       <div class="cm-dep-list" data-role="dep-list"></div>
       <button type="button" class="cm-add" data-role="dep-add"><i class="mdn-Icon-mais" aria-hidden="true"></i><span data-role="dep-add-label">Adicionar dependente</span></button>
+    </div>
+
+    <!-- Avisos: erro (mais dependentes que o plano permite) e aviso (já possui dependentes) -->
+    <div class="cm-contents" data-role="bloco-alerta" hidden>
+      <div class="cm-divider"></div>
+      <div class="cm-alert" data-role="alerta" role="alert"><i class="mdn-Icon-triangulo-exclamacao" aria-hidden="true"></i><p data-role="alerta-texto"></p></div>
+      <button type="button" class="cm-btn" data-role="btn-vitrine" hidden>Voltar para a vitrine</button>
     </div>
   </div>
 </main>
@@ -435,12 +471,17 @@
   //   gratis = quantas dessas linhas (as primeiras) não têm custo adicional
   // Preços dos planos são só ilustrativos (para o total do rodapé).
   var DEP_PRECO = 55;
+  // modo: 'novo' (padrão: escolhe número e chip) · 'temnumero' (já tem número: só dependentes) ·
+  //       'erro' (mais dependentes que o plano permite: só volta à vitrine) · 'aviso' (informa dependentes atuais)
   var CENARIOS = [
-    { id: 'dep1',   label: 'Permite 1 dependente',                      plano: 'Pós 50GB',  preco: 124.9, max: 1, gratis: 0 },
-    { id: 'dep2',   label: 'Permite 2 dependentes (R$ 55 cada)',        plano: 'Pós 150GB', preco: 239.9, max: 2, gratis: 0 },
-    { id: 'dep2g',  label: 'Permite 2 dependentes (1º grátis)',         plano: 'Pós 100GB', preco: 179.9, max: 2, gratis: 1 },
-    { id: 'dep3g',  label: 'Permite 3 dependentes (1º grátis)',         plano: 'Pós 200GB', preco: 339.9, max: 3, gratis: 1 },
-    { id: 'semdep', label: 'Sem dependentes (Controle)',                plano: 'Controle 40GB', preco: 59.9, max: 0, gratis: 0 }
+    { id: 'dep1',      modo: 'novo',      label: 'Permite 1 dependente',                  plano: 'Pós 50GB',  preco: 124.9, max: 1, gratis: 0 },
+    { id: 'dep2',      modo: 'novo',      label: 'Permite 2 dependentes (R$ 55 cada)',    plano: 'Pós 150GB', preco: 239.9, max: 2, gratis: 0 },
+    { id: 'dep2g',     modo: 'novo',      label: 'Permite 2 dependentes (1º grátis)',     plano: 'Pós 100GB', preco: 179.9, max: 2, gratis: 1 },
+    { id: 'dep3g',     modo: 'novo',      label: 'Permite 3 dependentes (1º grátis)',     plano: 'Pós 200GB', preco: 339.9, max: 3, gratis: 1 },
+    { id: 'semdep',    modo: 'novo',      label: 'Sem dependentes (Controle)',            plano: 'Controle 40GB', preco: 59.9, max: 0, gratis: 0 },
+    { id: 'temnumero', modo: 'temnumero', label: 'Já tem número (permite 1 dependente)',  plano: 'Pós 50GB',  preco: 124.9, max: 1, gratis: 0 },
+    { id: 'erro',      modo: 'erro',      label: 'Erro: mais dependentes que o plano',    plano: 'Pós 50GB',  preco: 124.9, max: 0, gratis: 0, atuais: 2 },
+    { id: 'aviso',     modo: 'aviso',     label: 'Aviso: já possui dependentes',          plano: 'Pós 100GB', preco: 179.9, max: 0, gratis: 0, atuais: 2 }
   ];
   var CENARIO_KEY = 'cenarioDependentes';
   function depCustoLinha(c, idx) { return idx < c.gratis ? 0 : DEP_PRECO; }
@@ -470,7 +511,7 @@
     if (d.length < 11) return 'Digite DDD + 9 dígitos, por exemplo (11) 99999-1234.';
     return '';
   }
-  function manterOk() { return st.numeroOption !== 'manter' || (!telErro(st.numero) && !!st.operadora); }
+  function manterOk() { return cenario.modo !== 'novo' || st.numeroOption !== 'manter' || (!telErro(st.numero) && !!st.operadora); }
 
   // ----- UI -----
   function setChecked(id, v) { document.getElementById(id).checked = v; }
@@ -550,7 +591,25 @@
     document.querySelectorAll('#cenario-dropdown .posse-dropdown-item').forEach(function (b) {
       b.classList.toggle('active', b.getAttribute('data-cenario-id') === c.id);
     });
+    var novo = c.modo === 'novo', erro = c.modo === 'erro', aviso = c.modo === 'aviso';
+    q('bloco-novo').hidden = !novo;
+    q('numero-existente').hidden = novo;
+    q('bloco-alerta').hidden = !(erro || aviso);
+    q('btn-vitrine').hidden = !erro;
+    var alerta = q('alerta');
+    alerta.classList.toggle('cm-alert--aviso', aviso);
+    if (erro) {
+      q('alerta-texto').innerHTML = '<strong>Você já possui mais dependentes no seu plano atual do que o permitido nesse novo plano.</strong><br><br>Que tal conferir outras ofertas em nossa vitrine?';
+    } else if (aviso) {
+      var n = c.atuais || 1;
+      q('alerta-texto').innerHTML = 'Identificamos que você possui <strong>' + n + (n === 1 ? ' dependente' : ' dependentes') + '</strong> no seu plano atual.<br><br>Na próxima etapa, você poderá conferir os detalhes e possíveis reajustes nos valores antes de finalizar o pedido.';
+    }
+    // no erro não há carrinho nem Continuar: a única saída é voltar à vitrine
+    document.getElementById('vitrineCartFooter').hidden = erro;
+    document.getElementById('vitrineCartBar').hidden = erro;
+    document.body.classList.toggle('no-cart', erro);
     renderDeps();
+    updateContinue();
   }
   (function initSeletor() {
     var toggle = document.getElementById('cenario-toggle');
@@ -617,14 +676,19 @@
 
   // Continuar: só valida (a tela é isolada, não leva a lugar nenhum)
   var toastTimer;
+  function mostrarToast(msg) {
+    var el = document.getElementById('cmToast');
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.hidden = true; }, 3000);
+  }
+  q('btn-vitrine').addEventListener('click', function () { mostrarToast('Demonstração: este botão levaria de volta à vitrine para o cliente fazer outro pedido.'); });
   function confirmConfigMovel() {
     st.numeroTouched = true;
     renderErro();
     if (!manterOk()) { if (st.numeroOption === 'manter' && telErro(st.numero)) numeroInput.focus(); return; }
-    var el = document.getElementById('cmToast');
-    el.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { el.hidden = true; }, 3000);
+    mostrarToast('Configuração válida. Nesta versão de demonstração, o Continuar não leva a outra tela.');
   }
 
   // ===== Total do carrinho: plano + dependentes =====
