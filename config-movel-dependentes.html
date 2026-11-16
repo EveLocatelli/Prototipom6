@@ -39,6 +39,9 @@
   .topbar-utility .topbar-inner{height:100%;}
   .topbar-location{display:flex;align-items:center;gap:4px;color:#fff;font-size:16px;font-weight:500;position:relative;cursor:pointer;user-select:none;}
   .topbar-location i{font-size:24px;line-height:1;}
+  .topbar-location{min-width:0;}
+  .topbar-location > span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 230px);}
+  @media (min-width:600px){.topbar-location > span{max-width:none;}}
   .posse-dropdown{position:absolute;top:calc(100% + 8px);left:0;min-width:300px;background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:8px;z-index:200;}
   .posse-dropdown-item{display:block;width:100%;text-align:left;background:none;border:none;padding:10px 12px;border-radius:6px;color:var(--ink);font-size:14px;font-family:inherit;cursor:pointer;}
   .posse-dropdown-item:hover{background:var(--bg-page);}
