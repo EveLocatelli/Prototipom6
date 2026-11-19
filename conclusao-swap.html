@@ -164,9 +164,9 @@
   /* Um .summary-product-block por produto do pedido — só 1 nos produtos de
      TV, 2+ em checkouts com bundle (ex.: Internet + Celular). */
   .summary-mig-note{font-size:14px;color:var(--gray-dark);margin:0;line-height:1.4;}
-  .summary-products{display:flex;flex-direction:column;gap:16px;}
+  .summary-products{display:flex;flex-direction:column;gap:0;}
   .summary-product-block{display:flex;flex-direction:column;gap:8px;}
-  .summary-product-block + .summary-product-block{padding-top:16px;border-top:1px solid var(--gray-line);}
+  .summary-product-block + .summary-product-block{margin-top:24px;padding-top:24px;border-top:1px dashed var(--gray-line);}
   .summary-product{display:flex;align-items:center;gap:8px;}
   .summary-product-icon{
     width:32px;height:32px;flex-shrink:0;
@@ -332,6 +332,22 @@
      agendamento-btn, mesmos nomes, sem conflito aqui — este arquivo não
      tinha essas classes) pro estado "Confirme sua instalação". Ver
      [[upsell_conclusao]]. ===== */
+  /* Card da oferta (Figma Cross Sell 10606:21294): mesmo card do resumo do checkout */
+  .mg-offer{background:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:16px;color:var(--ink);align-items:flex-start;}
+  .mg-tag{background:#ddf9ed;border:1px solid #ddf9ed;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:500;color:#006b4f;width:fit-content;}
+  .mg-current{background:#f8f8f8;border-radius:12px;padding:12px;width:100%;box-sizing:border-box;}
+  .mg-current p{font-size:12px;line-height:1.3;margin:0;}
+  .mg-product{display:flex;align-items:center;gap:8px;width:100%;}
+  .mg-product-icon{width:32px;height:32px;border:1px solid var(--gray-line);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;}
+  .mg-product-icon i{font-size:18px;line-height:1;}
+  .mg-product-name{font-size:20px;font-weight:700;margin:0;}
+  .mg-divider{width:100%;height:1px;background:var(--gray-line);}
+  .mg-price-row{display:flex;align-items:flex-end;justify-content:space-between;width:100%;}
+  .mg-price-row .lbl{font-size:12px;font-weight:700;margin:0;}
+  .mg-price-row .val{display:flex;align-items:flex-end;gap:2px;}
+  .mg-price-row .val .pre,.mg-price-row .val .suf{font-size:16px;font-weight:700;}
+  .mg-price-row .val .amt{font-size:24px;font-weight:700;font-family:'AMX';line-height:1;}
+  .mg-note{font-size:16px;font-weight:500;margin:0;color:#fff;line-height:1.3;}
   .uc-card{background:var(--red-dark);border-radius:24px;padding:32px;width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:24px;color:#fff;margin-top:24px;}
   .uc-header{display:flex;flex-direction:column;gap:8px;}
   .uc-header-row{display:flex;align-items:center;gap:4px;}
@@ -955,14 +971,7 @@
 
     const productsEl = document.getElementById('summaryProducts');
     const products = Array.isArray(order.products) && order.products.length ? order.products : DEFAULT_ORDER.products;
-    productsEl.innerHTML = products.map(p => p.id === 'migracao-fibra' ? `
-      <div class="summary-product-block">
-        <div class="summary-product">
-          <div class="summary-product-icon"><i class="${p.icon}"></i></div>
-          <p class="summary-product-name">${p.name}</p>
-        </div>
-        <p class="summary-mig-note">Sem custo adicional. O valor da sua internet continua o mesmo.</p>
-      </div>` : `
+    productsEl.innerHTML = products.map(p => `
       <div class="summary-product-block">
         <div class="summary-product">
           <div class="summary-product-icon"><i class="${p.icon}"></i></div>
@@ -1105,7 +1114,7 @@
     } else {
       document.getElementById('tecnicoCardTitle').textContent = 'Agendamento da instalação';
     }
-    document.getElementById('tecnicoCardNote').hidden = !migNaMesmaVisita;
+    document.getElementById('tecnicoCardNote').hidden = true;
     document.getElementById('stepMigracao').hidden = !migPropria;
     // Renumera os passos visíveis (1, 2, 3...)
     Array.prototype.filter.call(document.querySelectorAll('.steps-bullets .step-bullet'), function (b) { return !b.hidden; })
@@ -1155,14 +1164,14 @@
   //  - Se o pedido já tem visita técnica -> migra na mesma visita (sem 2º picker).
   //  - Sem visita -> mesmo picker/horários da instalação, com título próprio.
 
-  var MIG_ITEM = { id: 'migracao-fibra', categoria: 'internet', name: 'Migração para fibra 100%', icon: 'mdn-Icon-wifi', price: 0 };
+  var MIG_ITEM = { id: 'migracao-fibra', categoria: 'internet', name: '200 Mega - Fibra', icon: 'mdn-Icon-wifi', price: 99.90 };
 
   function mkDia(offset) { var t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate() + offset); }
 
   // Estudo: carrinho com 1 produto, a Box Claro tv+ (entrega, sem instalação).
   var ORD_TV = {
-    products: [{ id: 'tv-box', categoria: 'tv', name: 'Claro tv+ Box', icon: 'mdn-Icon-tv', price: 159.90 }],
-    shortName: 'Box', installType: 'auto', hasMobilePlan: false, hasCelularPlanChange: false, hasPhysicalDelivery: true, total: 159.90, addons: [],
+    products: [{ id: 'tv-box', categoria: 'tv', name: 'Claro tv+ Box', icon: 'mdn-Icon-tv', price: 139.90 }],
+    shortName: 'Box', installType: 'auto', hasMobilePlan: false, hasCelularPlanChange: false, hasPhysicalDelivery: true, total: 139.90, addons: [],
   };
   var CENARIOS = [
     { id: 'box', order: ORD_TV, elegivel: true, vel: { de: 200, para: 200 }, agend: null },
@@ -1199,9 +1208,8 @@
       card.innerHTML =
         '<div class="uc-done"><i class="mdn-Icon-check-circulo"></i><p class="uc-done-title">Pedido atualizado</p></div>' +
         '<div class="uc-done-details">' +
-          '<p>Migração para fibra 100%</p>' +
-          (velMaior() ? '<p>Velocidade de ' + cenario.vel.para + ' Mega</p>' : '') +
-          '<p>' + mgDoneVisit + '</p>' +
+          '<p>200 Mega - Fibra</p>' +
+          '<p class="mg-note">Sem custo adicional. O valor da sua internet continua o mesmo.</p>' +
         '</div>';
       return;
     }
@@ -1260,46 +1268,22 @@
       return;
     }
 
-    // ----- Oferta -----
-    var visita = temVisita();
-    var d = visita ? new Date(window.__agend.date) : null;
-    var subtitle = 'Mude para uma internet com fibra óptica do início ao fim, pelo mesmo preço.';
-    var checkLabel = '200 Mega - Fibra';
-    var speedHtml = velMaior()
-      ? '<p class="mig-speed">Sua velocidade passa de <strong>' + cenario.vel.de + ' Mega</strong> para <strong>' + cenario.vel.para + ' Mega</strong></p>'
-      : '';
-    var visitaHtml = visita
-      ? '<p class="mig-visit"><i class="mdn-Icon-calendario"></i>Na mesma visita: ' + ucFormatDayMonth(d) + ' - ' + UC_PERIODS[window.__agend.period].label + '</p>'
-      : '';
-    var footerHtml = mgChecked
-      ? '<div class="uc-divider"></div>' +
-        '<div class="uc-footer">' +
-          '<div class="uc-price-block">' +
-            '<p class="uc-price-label">1 oferta selecionada</p>' +
-            '<p class="uc-price-value">+ R$ <span class="big">0,00</span> /mês</p>' +
-          '</div>' +
-          '<button type="button" class="uc-btn-yellow" onclick="mgAtualizar()">Atualizar meu pedido</button>' +
-        '</div>'
-      : '';
+    // ----- Oferta (Figma Cross Sell 10606:21294) -----
     card.innerHTML =
       '<div class="uc-header">' +
         '<p class="uc-title">A fibra da Claro chegou até a sua casa</p>' +
-        '<p class="uc-subtitle">' + subtitle + '</p>' +
+        '<p class="uc-subtitle">Mude para uma internet com fibra óptica do início ao fim, pelo mesmo preço.</p>' +
       '</div>' +
-      '<label class="uc-product-card mig-card' + (mgChecked ? ' active' : '') + '">' +
-        '<i class="mdn-Icon-wifi uc-product-icon"></i>' +
-        '<div class="uc-product-title">' +
-          '<p class="uc-product-cat">Internet</p>' +
-          '<p class="uc-product-name">' + checkLabel + '</p>' +
-        '</div>' +
-        speedHtml + visitaHtml +
-        '<p class="uc-product-price">Sem custo adicional</p>' +
-        '<span class="uc-checkbox-wrap">' +
-          '<input type="checkbox" class="uc-checkbox" ' + (mgChecked ? 'checked' : '') + ' onchange="mgToggle()">' +
-          '<i class="mdn-Icon-check uc-checkbox-check"></i>' +
-        '</span>' +
-      '</label>' +
-      footerHtml;
+      '<div class="mg-offer">' +
+        '<span class="mg-tag">Upgrade gratuito</span>' +
+        '<div class="mg-current"><p><strong>Valor do plano atual:</strong> R$ 99,90/mês</p></div>' +
+        '<div class="mg-product"><div class="mg-product-icon"><i class="mdn-Icon-wifi"></i></div><p class="mg-product-name">200 Mega - Fibra</p></div>' +
+        '<div class="mg-divider"></div>' +
+        '<div class="mg-price-row"><p class="lbl">Valor do plano</p>' +
+          '<div class="val"><span class="pre">R$</span><span class="amt">99</span><span class="suf">,90/mês</span></div></div>' +
+      '</div>' +
+      '<p class="mg-note">Sem custo adicional. O valor da sua internet continua o mesmo.</p>' +
+      '<button type="button" class="uc-btn-yellow" onclick="mgAtualizar()">Atualizar meu pedido</button>';
   }
 
   function mgToggle() { mgChecked = !mgChecked; renderMigracao(); }
@@ -1307,7 +1291,6 @@
   function mgSelectDay(ts) { ucDraft.date = new Date(ts); renderMigracao(); }
 
   function mgAtualizar() {
-    if (!mgChecked) return;
     if (temVisita()) { mgFinalizar(); return; }   // mesma visita: não abre 2º picker
     mgStep = 'confirm'; mgFormOpen = false;
     renderMigracao();
@@ -1326,6 +1309,7 @@
     mgDoneVisit = 'Instalação: ' + ucFormatDayMonth(d) + ' - ' + UC_PERIODS[window.__agend.period].label;
     currentOrder = Object.assign({}, order, {
       products: (order.products || []).concat([MIG_ITEM]),
+      total: Math.round(((order.total || 0) + MIG_ITEM.price) * 100) / 100,
       installType: 'tecnico',
       hasPhysicalDelivery: false,   // a Box passa a ser instalada pelo técnico: Entrega -> Instalação
       hasMigracao: true,
