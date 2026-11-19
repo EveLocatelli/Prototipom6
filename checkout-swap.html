@@ -1123,8 +1123,8 @@
            misto, ver [[combo_install_type_rule]]) -->
       <div class="agendamento-container" id="agendamentoContainer" hidden>
         <div>
-          <h3 class="agendamento-title">Agendamento da troca para fibra</h3>
-          <p class="agendamento-subtitle">O técnico fará a troca na sua casa. Ajuste a data e o período, se preferir.</p>
+          <h3 class="agendamento-title">Agendamento da instalação</h3>
+          <p class="agendamento-subtitle">Este pedido requer instalação. Ajuste a data e o período, se preferir.</p>
         </div>
 
         <div class="agendamento-section">
@@ -1279,7 +1279,7 @@
         <div class="order-divider"></div>
 
         <div class="order-total">
-          <p class="order-total-label">Valor a mais na sua fatura</p>
+          <p class="order-total-label">Total do seu carrinho</p>
           <div class="order-total-price">
             <p class="total-was" data-role="total-was" hidden></p>
             <div class="order-total-value">
@@ -1316,7 +1316,7 @@
       <i class="mdn-Icon-cima" id="footerToggleIcon"></i>
     </button>
     <div class="footer-total-text">
-      <p class="footer-cart-text">Valor a mais na sua fatura:</p>
+      <p class="footer-cart-text">Total do seu carrinho:</p>
       <div class="footer-price-group">
         <p class="total-was total-was--footer" data-role="total-was" hidden></p>
         <div class="footer-price">
@@ -1377,9 +1377,11 @@
     var base = PRODUCT_CATALOG['internet-350'];
     PRODUCT_CATALOG['swap-upgrade'] = Object.assign({}, base, {
       id: 'swap-upgrade', nome: 'Upgrade para fibra óptica', descricaoCurta: 'Upgrade para fibra óptica',
-      subtitulo: '200 Mega', preco: 0, installType: 'tecnico', swapUpgrade: true
+      subtitulo: '200 Mega', preco: 99.9, installType: 'tecnico', swapUpgrade: true
     });
-    var ids = oferta === 'upgrade-box' ? ['swap-upgrade', 'tv-box'] : ['swap-upgrade'];
+    // Box da oferta exclusiva: mesmo produto do catálogo, com o preço da Swap (R$ 49,90).
+    PRODUCT_CATALOG['swap-box'] = Object.assign({}, PRODUCT_CATALOG['tv-box'], { id: 'swap-box', preco: 49.9 });
+    var ids = oferta === 'upgrade-box' ? ['swap-upgrade', 'swap-box'] : ['swap-upgrade'];
     try { sessionStorage.setItem('pedidoEmAndamento', JSON.stringify(ids)); sessionStorage.removeItem('pedidoOfertaId'); } catch (e) {}
   })();
 
@@ -3178,16 +3180,16 @@
     // ESTUDO SWAP: o upgrade não é "plano alterado" nem tem preço próprio — o valor
     // da internet continua o mesmo; o que muda na fatura é só o "por mais" (R$ 0,00).
     if (product.swapUpgrade) {
-      return '<div class="action-card" data-action-card data-base-price="0">' +
+      return '<div class="action-card" data-action-card data-base-price="99.9">' +
         '<span class="action-card-tag">Upgrade gratuito</span>' +
-        '<div class="action-card-current-plan"><p><strong>Seu plano atual:</strong> 200 Mega - R$ 99,90/mês</p></div>' +
+        '<div class="action-card-current-plan"><p><strong>Valor do plano atual:</strong> R$ 99,90/mês</p></div>' +
         '<div class="action-card-product">' +
-          '<div class="action-card-product-name"><div class="action-card-icon">' + iconHtml(product.icone) + '</div><p class="action-card-name">200 Mega · Fibra óptica</p></div>' +
+          '<div class="action-card-product-name"><div class="action-card-icon">' + iconHtml(product.icone) + '</div><p class="action-card-name">200 Mega - Fibra</p></div>' +
           '<img class="action-card-delete" src="assets/action-card/lixeira.svg" alt="Remover" onclick="openRemoveModal(\'' + product.id + '\')">' +
         '</div>' +
         '<div class="action-card-divider"></div>' +
-        '<div class="action-card-price-row"><p class="action-card-price-label">Por mais:</p>' +
-          '<div class="action-card-price"><div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(0) + '<span class="price-suffix">/mês</span></div></div>' +
+        '<div class="action-card-price-row"><p class="action-card-price-label">Valor do plano</p>' +
+          '<div class="action-card-price"><div class="action-card-price-inner"><span class="price-prefix">R$</span>' + priceAmountHtml(99.9) + '<span class="price-suffix">/mês</span></div></div>' +
         '</div>' +
       '</div>';
     }
