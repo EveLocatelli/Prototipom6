@@ -1,0 +1,88 @@
+/* =====================================================================
+   SKELETON KIT — estilos reutilizáveis (qualquer página da jornada)
+
+   Camada 1 · TOKENS  → só aqui você troca cor/ritmo. Ao oficializar no
+                        Mondrian, substitua pelos tokens do design system.
+   Camada 2 · PRIMITIVOS → .sk-line, .sk-title, .sk-block, .sk-circle,
+                        .sk-pill. Tudo que é skeleton é montado com eles.
+   Camada 3 · COMPOSIÇÃO → .sk-overlay cobre o componente real enquanto
+                        carrega (montado por skeleton.js, sem mexer no HTML).
+   ===================================================================== */
+
+:root {
+  /* Camada 1 — tokens (valores provisórios: trocar pelos cinzas do Mondrian) */
+  --sk-base: #dbdbdb;        /* cor do bloco (igual ao Figma) ← token Mondrian (cinza claro) */
+  --sk-shine: #ededed;       /* cor do brilho que corre       ← token Mondrian (cinza mais claro) */
+  --sk-bg: #fff;             /* fundo atrás dos blocos  ← superfície do card */
+  --sk-duration: 1.5s;       /* velocidade do shimmer */
+  --sk-fade: 0.25s;          /* saída: skeleton → conteúdo */
+  --sk-radius-text: 4px;
+  --sk-radius-block: 8px;
+}
+
+/* Camada 2 — primitivos */
+.sk-line, .sk-title, .sk-block, .sk-circle, .sk-pill {
+  display: block;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, var(--sk-base) 0%, var(--sk-shine) 50%, var(--sk-base) 100%);
+  background-size: 200% 100%;
+  animation: sk-shimmer var(--sk-duration) linear infinite;
+}
+.sk-line   { height: 14px; border-radius: var(--sk-radius-text); }
+.sk-title  { height: 24px; border-radius: var(--sk-radius-text); }
+.sk-block  { border-radius: var(--sk-radius-block); }
+.sk-circle { border-radius: 50%; }
+.sk-pill   { height: 24px; border-radius: 500px; }
+
+/* Camada 2b — formas posicionadas (usadas pela página de aprovação, geradas
+   a partir do desenho do Figma). Mesmo gradiente/animação dos primitivos. */
+.sk-shape {
+  position: absolute;
+  background: linear-gradient(90deg, var(--sk-base) 0%, var(--sk-shine) 50%, var(--sk-base) 100%);
+  background-size: 200% 100%;
+  animation: sk-shimmer var(--sk-duration) linear infinite;
+}
+.sk-shape.sk-on-color {   /* versão para fundo colorido (ex.: Cross Sell vermelho) */
+  background-image: linear-gradient(90deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,.6) 50%, rgba(255,255,255,.35) 100%);
+  background-color: transparent;
+  background-size: 200% 100%;
+}
+
+@keyframes sk-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Camada 3 — overlay que cobre o componente real */
+.sk-host { position: relative; }
+.sk-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  background: var(--sk-bg);
+  border-radius: inherit;
+  pointer-events: none;            /* clique não passa a ser engolido por engano */
+  transition: opacity var(--sk-fade) cubic-bezier(0.2, 0, 0, 1);
+}
+.sk-overlay.sk-leaving { opacity: 0; }
+
+/* Estrutura do card (espelha .card-top / .card-middle / .card-bottom) */
+.sk-top    { padding: 12px 16px 4px; display: flex; flex-direction: column; gap: 8px; }
+.sk-tags   { display: flex; justify-content: space-between; align-items: center; }
+.sk-middle { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.sk-bottom {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--gray-line, #dbdbdb);
+  display: flex; flex-direction: column; gap: 16px;
+}
+.sk-price-row { display: flex; align-items: center; justify-content: space-between; min-height: 88px; }
+.sk-price-col { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+/* Acessibilidade: quem pede "reduzir movimento" vê o skeleton parado */
+@media (prefers-reduced-motion: reduce) {
+  .sk-line, .sk-title, .sk-block, .sk-circle, .sk-pill, .sk-shape { animation: none; }
+  .sk-overlay { transition: none; }
+}

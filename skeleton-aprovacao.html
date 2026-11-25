@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skeleton · Estados de carregamento (em aprovação)</title>
+<link rel="stylesheet" href="skeleton.css">
+<style>
+  :root{
+    --red:#da291c; --red-dark:#b41e13; --ink:#1f1d1d; --gray-dark:#525252;
+    --gray-line:#dbdbdb; --bg-page:#f8f8f8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg-page);color:var(--ink);}
+  a{color:inherit;}
+
+  header{background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 100%);color:#fff;padding:40px 24px 36px;text-align:center;}
+  header h1{margin:0 0 8px;font-size:28px;}
+  header p{margin:0 auto;max-width:720px;opacity:.92;font-size:15px;line-height:1.5;}
+  .back{display:inline-block;margin-bottom:16px;font-size:13px;color:#fff;opacity:.85;text-decoration:none;}
+  .back:hover{opacity:1;text-decoration:underline;}
+
+  /* barra fixa: navegação por página + pausar */
+  .bar{position:sticky;top:0;z-index:20;background:rgba(248,248,248,.94);backdrop-filter:blur(8px);
+       border-bottom:1px solid var(--gray-line);}
+  .bar-in{max-width:1400px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;flex:1;}
+  .chip{font-size:14px;font-weight:600;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--gray-line);
+        border-radius:999px;padding:8px 16px;transition:background .15s,color .15s,border-color .15s;}
+  .chip:hover{border-color:var(--red);color:var(--red);}
+  .chip.on{background:var(--red);border-color:var(--red);color:#fff;}
+  .toggle{font:inherit;font-size:14px;font-weight:600;background:#fff;border:1px solid var(--gray-line);border-radius:999px;
+          padding:8px 16px;cursor:pointer;color:var(--ink);}
+  .toggle:hover{border-color:var(--red);color:var(--red);}
+
+  main{max-width:1400px;margin:0 auto;padding:32px 24px 80px;}
+
+  .intro{background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:24px;margin-bottom:48px;
+         display:grid;grid-template-columns:1.2fr 1fr;gap:32px;}
+  .intro h2{margin:0 0 8px;font-size:18px;}
+  .intro p{margin:0 0 8px;font-size:14px;line-height:1.55;color:var(--gray-dark);}
+  .spec{list-style:none;margin:0;padding:0;font-size:14px;display:grid;gap:8px;}
+  .spec li{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #eee;padding-bottom:8px;}
+  .spec li span:first-child{color:var(--gray-dark);}
+  .spec b{font-weight:600;text-align:right;}
+  .tag-prop{font-size:11px;font-weight:700;color:var(--red);background:#fdeceb;border-radius:4px;padding:1px 6px;margin-left:6px;}
+
+  section.page{margin-bottom:72px;scroll-margin-top:72px;}
+  section.page > h2{margin:0 0 4px;font-size:26px;}
+  section.page > p{margin:0 0 24px;color:var(--gray-dark);font-size:15px;}
+
+  .row{margin-bottom:40px;}
+  .row-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+  .row-head h3{margin:0;font-size:17px;}
+  .row-head .d{font-size:13px;color:var(--gray-dark);}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  .pair.stack{grid-template-columns:1fr;}
+  .panel{background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:12px 24px 24px;}
+  .panel.skel{background:#fff;}
+  .lab{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 14px;}
+  .lab b{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--gray-dark);}
+  .panel.skel .lab b{color:var(--red);}
+  .lab span{font-size:12px;color:#8a8a8a;}
+  .lab .diff{color:#b26a00;font-weight:600;}
+  .well{background:#f1f1f1;border-radius:8px;padding:24px;display:flex;justify-content:center;overflow:hidden;}
+  .stage{position:relative;flex-shrink:0;}
+  .stage img{position:absolute;display:block;max-width:none;}
+  .stage .clip{position:absolute;inset:0;overflow:hidden;}
+  .stage .surf{position:absolute;}
+
+  body.paused .sk-shape{animation-play-state:paused;}
+
+  @media (max-width:900px){
+    .intro{grid-template-columns:1fr;}
+    .pair{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back" href="index.html">← Voltar ao índice</a>
+  <h1>Skeleton · Estados de carregamento</h1>
+  <p>Todos os componentes da jornada com o <b>original</b> à esquerda e o <b>skeleton</b> à direita, na mesma linha. O skeleton aqui é o desenho do Figma, reproduzido em HTML com a animação funcionando.</p>
+</header>
+
+<div class="bar">
+  <div class="bar-in">
+    <nav class="chips" id="chips"></nav>
+    <button class="toggle" id="pause" type="button" aria-pressed="false">Pausar animação</button>
+  </div>
+</div>
+
+<main>
+  <div class="intro">
+    <div>
+      <h2>Como ler esta página</h2>
+      <p><b>Original</b> é o componente como aparece com os dados carregados (exportado do Figma). <b>Skeleton</b> é o que aparece no lugar dele enquanto os dados chegam.</p>
+      <p>Skeleton só existe para o que depende de dado. Menus, rodapés, botões soltos e textos fixos não têm. Quando um componente tem versão mobile e desktop, cada uma tem o seu skeleton.</p>
+      <p>Abaixo de cada linha, o rótulo mostra o tamanho dos dois. Se a altura do skeleton é diferente da do original, aparece em laranja: nesses casos o conteúdo vai “empurrar” o que vem depois quando chegar.</p>
+    </div>
+    <div>
+      <h2>Comportamento <span class="tag-prop">proposta</span></h2>
+      <ul class="spec">
+        <li><span>Animação</span><b>brilho da esquerda p/ direita · 1,5 s · repete</b></li>
+        <li><span>Quando aparece</span><b>só se carregar em mais de ~300 ms</b></li>
+        <li><span>Tempo mínimo na tela</span><b>800 ms</b></li>
+        <li><span>Saída</span><b>fade de 250 ms</b></li>
+        <li><span>Se passar de ~10 s</span><b>erro com “Tentar novamente”</b></li>
+        <li><span>Acessibilidade</span><b>sem animação se o usuário reduziu movimento</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="root"></div>
+</main>
+
+<script src="skeleton-aprovacao-data.js"></script>
+<script>
+(function () {
+  var IMG = 'assets/skeleton-aprovacao/';
+  var SIDE_MAX = 800;           // acima disso, original e skeleton ficam um sobre o outro
+  var root = document.getElementById('root');
+  var chips = document.getElementById('chips');
+  var stages = [];
+
+  function el(tag, cls, css) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (css) e.style.cssText = css;
+    return e;
+  }
+  function px(v) { return v + 'px'; }
+
+  // ----- original: imagem exportada do Figma (inclui a sombra, por isso o deslocamento) -----
+  function buildOriginal(it) {
+    var st = el('div', 'stage', 'width:' + px(it.w) + ';height:' + px(it.h));
+    var img = new Image();
+    img.src = IMG + it.img + '.png';
+    img.alt = it.t + ' · original';
+    img.style.left = px(-(it.iw - it.w) / 2);
+    img.style.top = px(-(it.ih - it.h) / 2);
+    img.style.width = px(it.iw);
+    img.style.height = px(it.ih);
+    st.appendChild(img);
+    return st;
+  }
+
+  // ----- skeleton: formas do Figma, animadas com o shimmer do skeleton.css -----
+  function buildSkeleton(it) {
+    var sk = it.sk;
+    var st = el('div', 'stage', 'width:' + px(sk.w) + ';height:' + px(sk.h));
+    st.setAttribute('role', 'img');
+    st.setAttribute('aria-label', it.t + ' · carregando');
+    var host = st;
+    if (sk.clip) { host = el('div', 'clip'); st.appendChild(host); }
+
+    // base branca quando nenhuma superfície cobre o componente inteiro
+    var full = sk.s.some(function (s) { return s[0] === 0 && s[1] === 0 && s[2] === sk.w && s[3] === sk.h; });
+    if (!full && !it.flat) host.appendChild(el('div', 'surf', 'left:0;top:0;width:' + px(sk.w) + ';height:' + px(sk.h) + ';background:#fff'));
+
+    sk.s.forEach(function (s) {
+      var css = 'left:' + px(s[0]) + ';top:' + px(s[1]) + ';width:' + px(s[2]) + ';height:' + px(s[3]) + ';' + s[4];
+      if (s[4].indexOf('background') === -1) css += 'background:#fff;';
+      host.appendChild(el('div', 'surf', css));
+    });
+
+    var total = sk.w + sk.h;
+    sk.k.forEach(function (k) {
+      var type = k[0], light = /w$/.test(type); type = type.charAt(0);
+      var r = type === 'b' ? px(k[5] || 4) : '999px';
+      var delay = -(1.5 - ((k[1] + k[2]) / total) * 0.9).toFixed(2);   // onda diagonal suave
+      var e = el('div', 'sk-shape' + (light ? ' sk-on-color' : ''),
+        'left:' + px(k[1]) + ';top:' + px(k[2]) + ';width:' + px(k[3]) + ';height:' + px(k[4]) +
+        ';border-radius:' + r + ';animation-delay:' + delay + 's');
+      host.appendChild(e);
+    });
+    return st;
+  }
+
+  function panel(kind, label, meta, stageEl, extraCls) {
+    var p = el('div', 'panel' + (kind === 'skel' ? ' skel' : ''));
+    var lab = el('div', 'lab');
+    var b = el('b'); b.textContent = label;
+    var s = el('span' + (extraCls ? '' : ''));
+    s.innerHTML = meta;
+    lab.appendChild(b); lab.appendChild(s);
+    var well = el('div', 'well');
+    well.appendChild(stageEl);
+    p.appendChild(lab); p.appendChild(well);
+    stages.push({ stage: stageEl, well: well, w: parseInt(stageEl.style.width, 10), h: parseInt(stageEl.style.height, 10) });
+    return p;
+  }
+
+  // ----- monta a página -----
+  window.SK_DATA.forEach(function (sec, si) {
+    var a = el('a', 'chip'); a.href = '#' + sec.id; a.textContent = sec.title; a.dataset.id = sec.id;
+    chips.appendChild(a);
+
+    var s = el('section', 'page'); s.id = sec.id;
+    s.innerHTML = '<h2></h2><p></p>';
+    s.querySelector('h2').textContent = sec.title;
+    s.querySelector('p').textContent = sec.desc;
+
+    sec.items.forEach(function (it) {
+      var row = el('div', 'row');
+      var head = el('div', 'row-head');
+      head.innerHTML = '<h3></h3><span class="d"></span>';
+      head.querySelector('h3').textContent = it.t;
+      head.querySelector('.d').textContent = it.d;
+      row.appendChild(head);
+
+      var pair = el('div', 'pair' + (Math.max(it.w, it.sk.w) > SIDE_MAX ? ' stack' : ''));
+      var dh = it.sk.h - it.h;
+      var diff = dh !== 0 ? ' <span class="diff">(' + (dh > 0 ? '+' : '−') + Math.abs(dh) + ' px)</span>' : '';
+      pair.appendChild(panel('orig', 'ORIGINAL', it.w + ' × ' + it.h, buildOriginal(it)));
+      pair.appendChild(panel('skel', 'SKELETON', it.sk.w + ' × ' + it.sk.h + diff, buildSkeleton(it)));
+      row.appendChild(pair);
+      s.appendChild(row);
+    });
+    root.appendChild(s);
+  });
+
+  // ----- encolhe o componente (mesmo fator nos dois) quando a coluna é mais estreita -----
+  function fit() {
+    for (var i = 0; i < stages.length; i += 2) {
+      var a = stages[i], b = stages[i + 1];
+      var avail = Math.min(a.well.clientWidth, b.well.clientWidth) - 48;
+      var z = Math.min(1, avail / Math.max(a.w, b.w));
+      a.stage.style.zoom = z; b.stage.style.zoom = z;
+    }
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+
+  // ----- destaque do chip da seção visível -----
+  var secs = Array.prototype.slice.call(document.querySelectorAll('section.page'));
+  var chipEls = Array.prototype.slice.call(chips.children);
+  function mark() {
+    var cur = secs[0].id;
+    secs.forEach(function (s) { if (s.getBoundingClientRect().top < 140) cur = s.id; });
+    chipEls.forEach(function (c) { c.classList.toggle('on', c.dataset.id === cur); });
+  }
+  window.addEventListener('scroll', mark, { passive: true });
+  mark();
+
+  // ----- pausar / retomar -----
+  var btn = document.getElementById('pause');
+  btn.addEventListener('click', function () {
+    var p = document.body.classList.toggle('paused');
+    btn.textContent = p ? 'Retomar animação' : 'Pausar animação';
+    btn.setAttribute('aria-pressed', p ? 'true' : 'false');
+  });
+})();
+</script>
+</body>
+</html>
